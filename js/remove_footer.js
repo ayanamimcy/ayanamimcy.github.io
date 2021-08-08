@@ -1,0 +1,6 @@
+let classArr = document.getElementsByClassName("power-by")
+classArr[0].remove()
+classArr = document.getElementsByClassName("theme-info")
+classArr[0].remove()
+classArr = document.getElementsByClassName("division")
+classArr[0].remove()
