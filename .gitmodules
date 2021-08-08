@@ -1,6 +1,0 @@
-[submodule "themes/tranquilpeak"]
-	path = themes/tranquilpeak
-	url = https://github.com/kakawait/hugo-tranquilpeak-theme.git
-[submodule "themes/even"]
-	path = themes/even
-	url = https://github.com/olOwOlo/hugo-theme-even
