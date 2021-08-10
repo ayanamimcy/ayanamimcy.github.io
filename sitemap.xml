@@ -1,67 +1,14 @@
-<?xml-stylesheet type="text/xsl" href="https://blog.ayanamimcy.top/sitemap.xsl"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  
-  <url>
-    <loc>https://blog.ayanamimcy.top/categories/</loc>
-    <lastmod>2018-06-08T23:58:53+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.ayanamimcy.top/tags/elasticsearch/</loc>
-    <lastmod>2018-06-08T23:58:53+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.ayanamimcy.top/tags/java/</loc>
-    <lastmod>2018-06-08T23:58:53+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.ayanamimcy.top/tags/lucene/</loc>
-    <lastmod>2018-06-08T23:58:53+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.ayanamimcy.top/post/</loc>
-    <lastmod>2018-06-08T23:58:53+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.ayanamimcy.top/tags/</loc>
-    <lastmod>2018-06-08T23:58:53+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.ayanamimcy.top/post/backend/full-text-search-engine/</loc>
-    <lastmod>2018-06-08T23:58:53+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.ayanamimcy.top/categories/%E5%90%8E%E7%AB%AF%E6%8A%80%E6%9C%AF/</loc>
-    <lastmod>2018-06-08T23:58:53+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.ayanamimcy.top/</loc>
-    <lastmod>2018-06-08T23:58:53+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-</urlset>
+<urlset
+    xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+    xmlns:xhtml="http://www.w3.org/1999/xhtml"
+    ><url>
+            <loc>https://blog.ayanamimcy.top/categories/</loc><lastmod>2018-06-08T23:58:53&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.ayanamimcy.top/tags/elasticsearch/</loc><lastmod>2018-06-08T23:58:53&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.ayanamimcy.top/tags/java/</loc><lastmod>2018-06-08T23:58:53&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.ayanamimcy.top/tags/lucene/</loc><lastmod>2018-06-08T23:58:53&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.ayanamimcy.top/posts/</loc><lastmod>2018-06-08T23:58:53&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.ayanamimcy.top/tags/</loc><lastmod>2018-06-08T23:58:53&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.ayanamimcy.top/full-text-search-engine/</loc><lastmod>2018-06-08T23:58:53&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.ayanamimcy.top/categories/%E5%90%8E%E7%AB%AF%E6%8A%80%E6%9C%AF/</loc><lastmod>2018-06-08T23:58:53&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.ayanamimcy.top/</loc><lastmod>2018-06-08T23:58:53&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.ayanamimcy.top/offline/</loc><changefreq>weekly</changefreq><priority>0.5</priority></url></urlset>

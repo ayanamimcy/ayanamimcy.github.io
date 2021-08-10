@@ -1,20 +1,14 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>java on 强哥的猫</title>
-    <link>https://blog.ayanamimcy.top/tags/java/</link>
-    <description>Recent content in java on 强哥的猫</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>zh-ch</language>
-    <lastBuildDate>Fri, 08 Jun 2018 23:58:53 +0800</lastBuildDate><atom:link href="https://blog.ayanamimcy.top/tags/java/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>全文搜索引擎简介</title>
-      <link>https://blog.ayanamimcy.top/post/backend/full-text-search-engine/</link>
-      <pubDate>Fri, 08 Jun 2018 23:58:53 +0800</pubDate>
-      
-      <guid>https://blog.ayanamimcy.top/post/backend/full-text-search-engine/</guid>
-      <description>全文检索概念 1. 什么是全文检索 对 非结构化数据 搜索/结构化数据就要全文检索，狭义的理解主要针对文本数据的搜索。 结构化数据： 业界指关系模型数据，即</description>
-    </item>
-    
-  </channel>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>java - 标签 - 强哥的猫</title>
+        <link>https://blog.ayanamimcy.top/tags/java/</link>
+        <description>java - 标签 - 强哥的猫</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>ayanamimcy@gmail.com (一只老猫)</managingEditor>
+            <webMaster>ayanamimcy@gmail.com (一只老猫)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Fri, 08 Jun 2018 23:58:53 &#43;0800</lastBuildDate><atom:link href="https://blog.ayanamimcy.top/tags/java/" rel="self" type="application/rss+xml" /><item>
+    <title>全文搜索引擎简介</title>
+    <link>https://blog.ayanamimcy.top/full-text-search-engine/</link>
+    <pubDate>Fri, 08 Jun 2018 23:58:53 &#43;0800</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/full-text-search-engine/</guid>
+    <description><![CDATA[全文检索概念 1. 什么是全文检索 对 非结构化数据 搜索/结构化数据就要全文检索，狭义的理解主要针对文本数据的搜索。 结构化数据： 业界指关系模型数据，即]]></description>
+</item>
+</channel>
 </rss>

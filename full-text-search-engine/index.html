@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>全文搜索引擎简介 - 强哥的猫</title><meta name="description" content="一只老猫的学习记录之旅"><meta property="og:title" content="全文搜索引擎简介" />
+<meta property="og:description" content="全文检索概念 1. 什么是全文检索 对 非结构化数据 搜索/结构化数据就要全文检索，狭义的理解主要针对文本数据的搜索。 结构化数据： 业界指关系模型数据，即" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.ayanamimcy.top/full-text-search-engine/" /><meta property="og:image" content="https://blog.ayanamimcy.top/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2018-06-08T23:58:53+08:00" />
+<meta property="article:modified_time" content="2018-06-08T23:58:53+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://blog.ayanamimcy.top/logo.png"/>
+
+<meta name="twitter:title" content="全文搜索引擎简介"/>
+<meta name="twitter:description" content="全文检索概念 1. 什么是全文检索 对 非结构化数据 搜索/结构化数据就要全文检索，狭义的理解主要针对文本数据的搜索。 结构化数据： 业界指关系模型数据，即"/>
+<meta name="application-name" content="强哥的猫">
+<meta name="apple-mobile-web-app-title" content="强哥的猫"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://blog.ayanamimcy.top/full-text-search-engine/" /><link rel="stylesheet" href="/css/page.min.css"><link rel="stylesheet" href="/css/home.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "全文搜索引擎简介",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/blog.ayanamimcy.top\/full-text-search-engine\/"
+        },"image": ["https:\/\/blog.ayanamimcy.top\/images\/Apple-Devices-Preview.webp"],"genre": "posts","keywords": "java, Lucene, ElasticSearch","wordcount":  8393 ,
+        "url": "https:\/\/blog.ayanamimcy.top\/full-text-search-engine\/","datePublished": "2018-06-08T23:58:53+08:00","dateModified": "2018-06-08T23:58:53+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": "https:\/\/blog.ayanamimcy.top\/images\/w.webp"},"author": {
+                "@type": "Person",
+                "name": "一只老猫"
+            },"description": ""
+    }
+    </script></head><body data-header-desktop="fixed" data-header-mobile="auto"><script>(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="强哥的猫"><span class="header-title-pre"><i class='fas fa-hand-holding-heart fa-fw'></i></span>强哥的猫</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="https://github.com/ayanamimcy" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="#" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a class="menu-item" href="/index.xml" title="RSS"><i class="fas fa-rss fa-fw" title="RSS"></i> </a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="强哥的猫"><span class="header-title-pre"><i class='fas fa-hand-holding-heart fa-fw'></i></span>强哥的猫</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="#" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="#" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="https://github.com/ayanamimcy" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><div class="menu-item"><a href="/index.xml" title="RSS"><i class="fas fa-rss fa-fw" title="RSS"></i> </a>
+                <span>&nbsp;|&nbsp;</span><a href="javascript:void(0);" class="theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div></div>
+    </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single" data-toc="enable"><div class="single-card" ><h2 class="single-title animated flipInX">全文搜索引擎简介</h2><div class="post-meta">
+                <div class="post-meta-line"><span class="post-author"><a href="http://blog.ayanamimcy.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>一只老猫</a></span>&nbsp;<span class="post-category">出版于  <a href="/categories/%E5%90%8E%E7%AB%AF%E6%8A%80%E6%9C%AF/"><i class="far fa-folder fa-fw"></i>后端技术</a></span></div>
+                <div class="post-meta-line"><span><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2018-06-08">2018-06-08</time></span>&nbsp;<span><i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 8393 字</span>&nbsp;
+                    <span><i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 17 分钟</span>&nbsp;<span id="/full-text-search-engine/" class="leancloud_visitors" data-flag-title="全文搜索引擎简介">
+                            <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+                        </span>&nbsp;</div>
+            </div>
+            
+            <hr><div class="details toc" id="toc-static"  data-kept="">
+                    <div class="details-summary toc-title">
+                        <span>目录</span>
+                        <span><i class="details-icon fas fa-angle-right"></i></span>
+                    </div>
+                    <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#全文检索概念">全文检索概念</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#1-什么是全文检索">1. 什么是全文检索</a></li>
+            <li><a href="#2-全文检索的特点">2. 全文检索的特点</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#全文搜索实现">全文搜索实现</a>
+      <ul>
+        <li><a href="#lucene">Lucene</a>
+          <ul>
+            <li><a href="#1-概念">1. 概念</a></li>
+            <li><a href="#2-lucene的工作流程">2. Lucene的工作流程</a></li>
+            <li><a href="#3-lucene的hello-world基本使用">3. Lucene的Hello-world基本使用</a></li>
+          </ul>
+        </li>
+        <li><a href="#elasticsearch">ElasticSearch</a>
+          <ul>
+            <li><a href="#1-elasticsearch-简介">1. ElasticSearch 简介</a></li>
+            <li><a href="#2-elasticsearch使用">2. ElasticSearch使用</a>
+              <ul>
+                <li><a href="#1-安装elasticsearch">1. 安装ElasticSearch</a></li>
+                <li><a href="#2-elasticsearch-简单使用">2. ElasticSearch 简单使用</a>
+                  <ul>
+                    <li><a href="#21-基本的增删改">2.1 基本的增删改</a></li>
+                    <li><a href="#22-dsl查询相关">2.2 DSL查询相关</a></li>
+                    <li><a href="#23-mapping">2.3 Mapping</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li><a href="#3-使用java-api-操作-elasticsearch">3. 使用JAVA API 操作 ElasticSearch</a>
+              <ul>
+                <li><a href="#4-集成-springboot-使用-elasticsearch">4. 集成 SpringBoot 使用 Elasticsearch</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+                </div><div class="content" id="content"><h2 id="全文检索概念">全文检索概念</h2>
+<h4 id="1-什么是全文检索">1. 什么是全文检索</h4>
+<p>对 非结构化数据 搜索/结构化数据就要全文检索，狭义的理解主要针对文本数据的搜索。</p>
+<ul>
+<li>结构化数据：
+业界指关系模型数据，即以关系数据库表形式管理的数据</li>
+<li>半结构数据：
+非关系模型的、有基本固定结构模式的数据，例如日志文件、XML文档、JSON文档、Email等。</li>
+<li>非结构化数据：
+没有固定模式的数据，如WORD、PDF、PPT、EXL，各种格式的图片、视频等。</li>
+</ul>
+<p>非结构化数据是数据结构不规则或不完整，没有预定义的数据模型，不方便用数据库二维逻辑表来表现的数据。包括所有格式的办公文档、文本、图片、XML, HTML、各类报表、图像和音频/视频信息等等</p>
+<h4 id="2-全文检索的特点">2. 全文检索的特点</h4>
+<ul>
+<li>相关度最高的排在最前面，官网中相关的网页排在最前面； java</li>
+<li>关键词的高亮。</li>
+<li>只处理文本,不处理语义。 以单词方式进行搜索
+比如在输入框中输入“中国的首都在哪里”，搜索引擎不会以对话的形式告诉你“在北京”，而仅仅是列出包含了搜索关键字的网页。</li>
+</ul>
+<h2 id="全文搜索实现">全文搜索实现</h2>
+<h3 id="lucene">Lucene</h3>
+<h4 id="1-概念">1. 概念</h4>
+<p>Lucene是apache下的一个开源的全文检索引擎工具包(一堆jar包)。它为软件开发人员提供一个简单易用的工具包（类库），以方便的在小型目标系统中实现全文检索的功能。虽然Lucene是当前业界公认的性能最好的全文搜索引擎，但是它只是一个工具包，你还需要对它进行整合封装进自己的项目中才可以使用，十分的复杂。这里对它进行一个简介。</p>
+<h4 id="2-lucene的工作流程">2. Lucene的工作流程</h4>
+<ul>
+<li>索引创建</li>
+</ul>
+<p>将现实世界中所有的结构化和非结构化数据提取信息，创建索引的过程。那么索引里面究竟存的什么，以及如何创建索引呢？在这通过下面的例子来解答这个问题。
+首先构造三个不同的句子，有长有短：</p>
+<p>在①处分别为3个句子加上编号，然后进行分词，把被一个单词分解出来与编号对应放在②处；在搜索的过程总，对于搜索的过程中大写和小写指的都是同一个单词，在这就没有区分的必要，按规则统一变为小写放在③处；要加快搜索速度，就必须保证这些单词的排列时有一定规则，这里按照字母顺序排列后放在④处；最后再简化索引，合并相同的单词，就得到如下结果：</p>
+<p>通常在数据库中我们都是根据文档找到内容，而这里是通过词，能够快速找到包含他的文档，这就是文档倒排链表。</p>
+<p>以上就是lucene索引结构中最核心的部分。我们注意到关键字是按字符顺序排列的（lucene没有使用B树结构），因此lucene可以用二元搜索算法快速定位关键词。</p>
+<ul>
+<li>索引搜索</li>
+</ul>
+<p>就是得到用户的查询请求，搜索创建的索引，然后返回结果的过程。</p>
+<p>比如我们要搜索java world两个关键词，符合java的有1,2两个文档，符合world的有1,3两个文档，在搜索引擎中直接这样排列两个词他们之间是OR的关系，出现其中一个都可以被找到，所以这里3个都会出来。全文检索中是有相关性排序的，那么结果在是怎么排列的呢？hello java world中包含两个关键字排在第一，另两个都包含一个关键字，得到结果，hello lucene world排在第二，java在最长的句子中占的权重最低排在结果集的第三。从这里可以看出相关度排序还是有一定规则的。</p>
+<h4 id="3-lucene的hello-world基本使用">3. Lucene的Hello-world基本使用</h4>
+<p>在 Lucene 中，索引库的创建和维护使用 IndexWriter，而索引库的搜索则使用 IndexSearcher。数据是以 document 的形式保存到 Lucene 中的，一个 document 数据可以理解为是一条数据，而 document 则是由 Field 组成，也就是字段。</p>
+<ul>
+<li>创建索引</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 获取保存索引库的位置信息
+</span><span class="c1"></span><span class="n">Path</span> <span class="n">path</span> <span class="o">=</span> <span class="n">Paths</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">&#34;/Users/chenyangm/Documents/JavaLearning/Day64_LuceneDemo/index&#34;</span><span class="o">);</span>
+<span class="c1">// 创建索引库的目录
+</span><span class="c1"></span><span class="n">Directory</span> <span class="n">directory</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">=</span> <span class="n">FSDirectory</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="n">path</span><span class="o">);</span>
+<span class="n">String</span> <span class="n">str1</span> <span class="o">=</span> <span class="s">&#34;hello world&#34;</span><span class="o">;</span>
+<span class="n">String</span> <span class="n">str2</span> <span class="o">=</span> <span class="s">&#34;hello java&#34;</span><span class="o">;</span>
+<span class="n">String</span> <span class="n">str3</span> <span class="o">=</span> <span class="s">&#34;Hello new Java&#34;</span><span class="o">;</span>
+
+<span class="c1">// 定义分词器，这里使用最基本的分词器
+</span><span class="c1"></span><span class="n">IndexWriterConfig</span> <span class="n">indexWriterConfig</span> <span class="o">=</span> <span class="k">new</span> <span class="n">IndexWriterConfig</span><span class="o">(</span><span class="k">new</span> <span class="n">SimpleAnalyzer</span><span class="o">());</span>
+
+<span class="c1">// 创建 indexWriter 对象，写入和创建索引
+</span><span class="c1"></span><span class="n">IndexWriter</span> <span class="n">indexWriter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">IndexWriter</span><span class="o">(</span><span class="n">directory</span><span class="o">,</span> <span class="n">indexWriterConfig</span><span class="o">);</span>
+
+<span class="c1">// 创建字段
+</span><span class="c1"></span><span class="n">TextField</span> <span class="n">context1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TextField</span><span class="o">(</span><span class="s">&#34;context&#34;</span><span class="o">,</span> <span class="n">str1</span><span class="o">,</span> <span class="n">Field</span><span class="o">.</span><span class="na">Store</span><span class="o">.</span><span class="na">YES</span><span class="o">);</span>
+<span class="n">TextField</span> <span class="n">context2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TextField</span><span class="o">(</span><span class="s">&#34;context&#34;</span><span class="o">,</span> <span class="n">str2</span><span class="o">,</span> <span class="n">Field</span><span class="o">.</span><span class="na">Store</span><span class="o">.</span><span class="na">YES</span><span class="o">);</span>
+<span class="n">TextField</span> <span class="n">context3</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TextField</span><span class="o">(</span><span class="s">&#34;context&#34;</span><span class="o">,</span> <span class="n">str3</span><span class="o">,</span> <span class="n">Field</span><span class="o">.</span><span class="na">Store</span><span class="o">.</span><span class="na">YES</span><span class="o">);</span>
+
+<span class="c1">// 定义 document 对象， 一个 document 对象就相当于一条数据
+</span><span class="c1"></span><span class="n">Document</span> <span class="n">doc1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Document</span><span class="o">();</span>
+<span class="n">Document</span> <span class="n">doc2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Document</span><span class="o">();</span>
+<span class="n">Document</span> <span class="n">doc3</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Document</span><span class="o">();</span>
+
+<span class="n">doc1</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">context1</span><span class="o">);</span>
+<span class="n">doc2</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">context2</span><span class="o">);</span>
+<span class="n">doc3</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">context3</span><span class="o">);</span>
+
+<span class="c1">// 写入数据，创建索引
+</span><span class="c1"></span><span class="n">indexWriter</span><span class="o">.</span><span class="na">addDocument</span><span class="o">(</span><span class="n">doc1</span><span class="o">);</span>
+<span class="n">indexWriter</span><span class="o">.</span><span class="na">addDocument</span><span class="o">(</span><span class="n">doc2</span><span class="o">);</span>
+<span class="n">indexWriter</span><span class="o">.</span><span class="na">addDocument</span><span class="o">(</span><span class="n">doc3</span><span class="o">);</span>
+
+<span class="c1">// 提交数据
+</span><span class="c1"></span><span class="n">indexWriter</span><span class="o">.</span><span class="na">commit</span><span class="o">();</span>
+
+<span class="c1">// 关闭
+</span><span class="c1"></span><span class="n">indexWriter</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>搜索文档</li>
+</ul>
+<p>在搜索文档的时候也会对查询短语进行分词，同时根据匹配的程度，进行排序和打分。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 获取保存索引库的位置信息
+</span><span class="c1"></span><span class="n">Path</span> <span class="n">path</span> <span class="o">=</span> <span class="n">Paths</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">&#34;/Users/chenyangm/Documents/JavaLearning/Day64_LuceneDemo/index&#34;</span><span class="o">);</span>
+<span class="c1">// 创建索引库的目录
+</span><span class="c1"></span><span class="n">Directory</span> <span class="n">directory</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">=</span> <span class="n">FSDirectory</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="n">path</span><span class="o">);</span>
+<span class="c1">// 创建默认解析器
+</span><span class="c1"></span><span class="n">QueryParser</span> <span class="n">parser</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QueryParser</span><span class="o">(</span><span class="s">&#34;context&#34;</span><span class="o">,</span> <span class="k">new</span> <span class="n">SimpleAnalyzer</span><span class="o">());</span>
+
+<span class="c1">// 查询对象
+</span><span class="c1"></span><span class="n">Query</span> <span class="n">query</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="s">&#34;context:hello java&#34;</span><span class="o">);</span>
+
+<span class="c1">// 通过 indexSearch 查询数据
+</span><span class="c1">// 创建 indexSearch 对象
+</span><span class="c1"></span><span class="n">IndexReader</span> <span class="n">open</span> <span class="o">=</span> <span class="n">DirectoryReader</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="n">directory</span><span class="o">);</span>
+<span class="n">IndexSearcher</span> <span class="n">indexSearcher</span> <span class="o">=</span> <span class="k">new</span> <span class="n">IndexSearcher</span><span class="o">(</span><span class="n">open</span><span class="o">);</span>
+
+<span class="c1">// 通过查询对象查询索引
+</span><span class="c1"></span><span class="n">TopDocs</span> <span class="n">topDocs</span> <span class="o">=</span> <span class="n">indexSearcher</span><span class="o">.</span><span class="na">search</span><span class="o">(</span><span class="n">query</span><span class="o">,</span> <span class="n">100</span><span class="o">);</span>
+
+<span class="k">for</span> <span class="o">(</span><span class="n">ScoreDoc</span> <span class="n">scoreDoc</span> <span class="o">:</span> <span class="n">topDocs</span><span class="o">.</span><span class="na">scoreDocs</span><span class="o">)</span> <span class="o">{</span>
+	<span class="kt">float</span> <span class="n">score</span> <span class="o">=</span> <span class="n">scoreDoc</span><span class="o">.</span><span class="na">score</span><span class="o">;</span>
+	<span class="kt">int</span> <span class="n">docIndex</span> <span class="o">=</span> <span class="n">scoreDoc</span><span class="o">.</span><span class="na">doc</span><span class="o">;</span>
+	<span class="n">Document</span> <span class="n">doc</span> <span class="o">=</span> <span class="n">indexSearcher</span><span class="o">.</span><span class="na">doc</span><span class="o">(</span><span class="n">docIndex</span><span class="o">);</span>
+	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;索引为： &#34;</span> <span class="o">+</span> <span class="n">docIndex</span> <span class="o">+</span> <span class="s">&#34; ; 分数为：&#34;</span> <span class="o">+</span> <span class="n">score</span> <span class="o">+</span> <span class="s">&#34; ；内容为：&#34;</span> <span class="o">+</span> <span class="n">doc</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">&#34;context&#34;</span><span class="o">));</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="elasticsearch">ElasticSearch</h3>
+<h4 id="1-elasticsearch-简介">1. ElasticSearch 简介</h4>
+<p>虽然全文搜索领域，Lucene可以被认为是迄今为止最先进、性能最好的、功能最全的搜索引擎库。但是，Lucene只是一个库。想要使用它，你必须使用Java来作为开发语言并将其直接集成到你的应用中，更糟糕的是，Lucene的配置及使用非常复杂，你需要深入了解检索的相关知识来理解它是如何工作的。</p>
+<p>实际项目中，我们建立一个网站或应用程序，并要添加搜索功能，令我们受打击的是：搜索工作是很难的。我们希望我们的搜索解决方案要快，我们希望有一个零配置和一个完全免费的搜索模式，我们希望能够简单地使用JSON/XML通过HTTP的索引数据，我们希望我们的搜索服务器始终可用，我们希望能够从一台开始并在需要扩容时方便地扩展到数百，我们要实时搜索，我们要简单的多租户，我们希望建立一个云的解决方案。</p>
+<p>ES即为了解决原生Lucene使用的不足，优化Lucene的调用方式，并实现了高可用的分布式集群的搜索方案，其第一个版本于2010年2月出现在GitHub上并迅速成为最受欢迎的项目之一。
+首先，ES的索引库管理支持依然是基于Apache Lucene(TM)的开源搜索引擎。ES也使用Java开发并使用Lucene作为其核心来实现所有索引和搜索的功能，但是它的目的是通过简单的 RESTful API来隐藏Lucene的复杂性，从而让全文搜索变得简单。</p>
+<p>不过，ES的核心不在于Lucene，其特点更多的体现为：</p>
+<ul>
+<li>分布式的实时文件存储，每个字段都被索引并可被搜索</li>
+<li>分布式的实时分析搜索引擎</li>
+<li>可以扩展到上百台服务器，处理PB级结构化或非结构化数据：KB-MB-GB-TB-PB</li>
+<li>高度集成化的服务，你的应用可以通过简单的 RESTful API、各种语言的客户端甚至命令行与之交互。</li>
+</ul>
+<h4 id="2-elasticsearch使用">2. ElasticSearch使用</h4>
+<h5 id="1-安装elasticsearch">1. 安装ElasticSearch</h5>
+<p>这里为了学习和测试，所以使用docker来进行安装，同时版本也是安装的最新版本 7.8.0 版本。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">docker run -d --name es -p 9200:9200 -p 9300:9300 -e <span class="nv">ES_JAVA_OPTS</span><span class="o">=</span><span class="s2">&#34;-Xms512m -Xmx512m&#34;</span> -e <span class="s2">&#34;discovery.type=single-node&#34;</span> --restart<span class="o">=</span>always --name elasticsearch-dev  elasticsearch:7.8.0
+</code></pre></td></tr></table>
+</div>
+</div><p>同时也可以将 kibana 安装上，用来进行测试。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">docker run --restart<span class="o">=</span>always --link elasticsearch-dev:elasticsearch -d -p 5601:5601 kibana:7.8.0
+</code></pre></td></tr></table>
+</div>
+</div><h5 id="2-elasticsearch-简单使用">2. ElasticSearch 简单使用</h5>
+<p>ElasticSearch使用 restful 风格的 API 来进行操作的，这里我们简单的使用一下</p>
+<blockquote>
+<p>Tips:
+需要注意的是 在 ElasticSearch 7.8 的版本中 ，_type 属性被移除了。根据官网的解释，在
+ES最初开发的时候，借用了关系型数据库的一些概念，比如说 index 类比为库， type 类比为表
+document 则类比为 一行数据。但是在 Lucene 中，是没有 type 这个概念的，所以如果 不同
+type 中 多个字段相同的话则会发生冲突，会在查询的时候都进行搜索。</p>
+<p>关于解决方案：</p>
+<ol>
+<li>使用多个index，将不同类型的数据放到不同的index中</li>
+<li>使用 mapping 自定义属性</li>
+</ol>
+</blockquote>
+<h6 id="21-基本的增删改">2.1 基本的增删改</h6>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="err">#</span> <span class="err">创建一个index</span>
+<span class="err">PUT</span> <span class="err">/employee</span>
+
+<span class="err">#</span> <span class="err">创建一个元素</span>
+<span class="err">PUT</span> <span class="err">/employee/_doc/</span><span class="mi">1</span>
+<span class="p">{</span>
+  <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;老王&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;age&#34;</span><span class="p">:</span> <span class="mi">18</span>
+<span class="p">}</span>
+
+<span class="err">#批量创建元素</span>
+<span class="err">PUT</span> <span class="err">/employee/_bulk?pretty&amp;&amp;refresh</span>
+<span class="p">{</span><span class="nt">&#34;index&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;_id&#34;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}}</span>
+<span class="p">{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;老孙2&#34;</span><span class="p">,</span> <span class="nt">&#34;age&#34;</span><span class="p">:</span> <span class="s2">&#34;19&#34;</span><span class="p">}</span>
+<span class="p">{</span><span class="nt">&#34;index&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;_id&#34;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}}</span>
+<span class="p">{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;老孙3&#34;</span><span class="p">,</span> <span class="nt">&#34;age&#34;</span><span class="p">:</span> <span class="s2">&#34;20&#34;</span><span class="p">}</span>
+<span class="p">{</span><span class="nt">&#34;index&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;_id&#34;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}}</span>
+<span class="p">{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;老王2&#34;</span><span class="p">,</span> <span class="nt">&#34;age&#34;</span><span class="p">:</span> <span class="s2">&#34;31&#34;</span><span class="p">}</span>
+
+<span class="err">#</span> <span class="err">更新一个元素</span> <span class="err">这个会强制更新所有的内容，如果字段被删除了则更新后也会被删除</span>
+<span class="err">POST</span> <span class="err">/employee/_doc/</span><span class="mi">2</span>
+<span class="p">{</span>
+  <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;老王1&#34;</span>
+<span class="p">}</span>
+
+<span class="err">#</span> <span class="err">更新部分的文档</span> <span class="err">只会更新当前字段不会进行覆盖</span>
+<span class="err">POST</span> <span class="err">/employee/_update/</span><span class="mi">2</span>
+<span class="p">{</span>
+  <span class="nt">&#34;doc&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;age&#34;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="nt">&#34;count&#34;</span><span class="p">:</span> <span class="mi">14</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="err">#</span> <span class="err">更新部分的文档</span>
+<span class="err">POST</span> <span class="err">/employee/_update/</span><span class="mi">2</span>
+<span class="p">{</span>
+  <span class="nt">&#34;doc&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;count&#34;</span><span class="p">:</span> <span class="mi">20</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="err">#</span> <span class="err">使用脚本进行更新，可以进行简单的计算</span>
+<span class="err">POST</span> <span class="err">/employee/_update/</span><span class="mi">2</span>
+<span class="p">{</span>
+  <span class="nt">&#34;script&#34;</span><span class="p">:</span> <span class="s2">&#34;ctx._source.count += 1&#34;</span>
+<span class="p">}</span>
+
+<span class="err">#</span> <span class="err">批量获取</span>
+<span class="err">GET</span> <span class="err">/employee/_mget</span>
+<span class="p">{</span>
+  <span class="nt">&#34;ids&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;1&#34;</span><span class="p">,</span> <span class="s2">&#34;2&#34;</span><span class="p">,</span> <span class="s2">&#34;3&#34;</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="err">#删除一个元素</span>
+<span class="err">DELETE</span> <span class="err">/employee/_doc/</span><span class="mi">1</span>
+
+<span class="err">#删除index</span>
+<span class="err">DELETE</span> <span class="err">/employee/</span>
+
+<span class="err">#</span> <span class="err">获取一个元素</span>
+<span class="err">GET</span> <span class="err">/employee/_doc/</span><span class="mi">1</span>
+
+<span class="err">#</span> <span class="err">查找所有的元素</span>
+<span class="err">GET</span> <span class="err">/employee/_search</span>
+
+<span class="err">#</span> <span class="err">以年龄进行倒序排列</span>
+<span class="err">GET</span> <span class="err">/employee/_search</span>
+<span class="p">{</span>
+  <span class="nt">&#34;query&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;match_all&#34;</span><span class="p">:</span> <span class="p">{}},</span>
+  <span class="nt">&#34;sort&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;age&#34;</span><span class="p">:</span> <span class="s2">&#34;desc&#34;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="err">#</span> <span class="err">批量插入大量数据</span>
+<span class="err">PUT</span> <span class="err">/account/_bulk</span>
+
+<span class="err">#</span> <span class="err">使用uri进行简单的查询</span>
+<span class="err">GET</span> <span class="err">/account/_search?q=account_number:</span><span class="mi">1</span>
+
+<span class="err">#</span> <span class="err">使用_source</span> <span class="err">对返回的数据进行限制</span>
+<span class="err">GET</span> <span class="err">/account/_search?q=account_number:</span><span class="mi">1</span><span class="err">&amp;&amp;_source=account_number,firstname</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><h6 id="22-dsl查询相关">2.2 DSL查询相关</h6>
+<p>DSL 是 ES 的一种查询语法，可以对 ES 进行复杂查询。
+在 ES 中，查询分为 DSL 查询和 DSL 过滤。</p>
+<ol>
+<li>DSL查询和DSL过滤的区别</li>
+</ol>
+<ul>
+<li>DSL 查询
+在查询上下文中，查询子句回答以下问题：“此文档与该查询子句的匹配程度如何？”。除了确定文档是否匹配之外，查询子句还计算_score元字段中的相关性得分。</li>
+</ul>
+<p>只要将查询子句传递到查询参数（例如搜索API中的查询参数），查询上下文就有效。</p>
+<ul>
+<li>DSL 过滤
+在过滤器上下文中，查询子句回答问题“此文档是否与此查询子句匹配？” 答案是简单的“是”或“否”，即不计算分数。 过滤器上下文主要用于过滤结构化数据，例如</li>
+</ul>
+<blockquote>
+<p>此时间戳记是否在2015年至2016年的范围内？
+状态字段设置为“已发布”吗？</p>
+</blockquote>
+<p>常用过滤器将由Elasticsearch自动缓存，以提高性能。
+只要将查询子句传递到过滤器参数（例如bool查询中的filter或must_not参数，constant_score查询中的filter参数或过滤器聚合），过滤器上下文即有效。</p>
+<ol start="2">
+<li>关于 match 和 term的区别</li>
+</ol>
+<ul>
+<li>term</li>
+</ul>
+<p>先看看term的定义，term是代表完全匹配，也就是精确查询，搜索前不会再对搜索词进行分词拆解。可以先看几个例子:</p>
+<p>如果执行下面的搜索</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="err">GET</span> <span class="err">/account/_search</span>
+<span class="p">{</span>
+  <span class="nt">&#34;query&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;term&#34;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;address&#34;</span><span class="p">:</span> <span class="s2">&#34;kings&#34;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们可以查出来下面的数据</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+        <span class="nt">&#34;_index&#34;</span> <span class="p">:</span> <span class="s2">&#34;account&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;_type&#34;</span> <span class="p">:</span> <span class="s2">&#34;_doc&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;_id&#34;</span> <span class="p">:</span> <span class="s2">&#34;20&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;_score&#34;</span> <span class="p">:</span> <span class="mf">5.990829</span><span class="p">,</span>
+        <span class="nt">&#34;_source&#34;</span> <span class="p">:</span> <span class="p">{</span>
+          <span class="nt">&#34;age&#34;</span> <span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+          <span class="nt">&#34;gender&#34;</span> <span class="p">:</span> <span class="s2">&#34;M&#34;</span><span class="p">,</span>
+          <span class="nt">&#34;address&#34;</span> <span class="p">:</span> <span class="s2">&#34;282 Kings Place&#34;</span><span class="p">,</span>
+          <span class="nt">&#34;employer&#34;</span> <span class="p">:</span> <span class="s2">&#34;Scentric&#34;</span><span class="p">,</span>
+          <span class="nt">&#34;city&#34;</span> <span class="p">:</span> <span class="s2">&#34;Ribera&#34;</span><span class="p">,</span>
+          <span class="nt">&#34;state&#34;</span> <span class="p">:</span> <span class="s2">&#34;WA&#34;</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>但是如果我们搜索 <code>&quot;address&quot;: &quot;Kings&quot;</code> 这个语句的话，我们搜索出来的就是一个空的文档。因为 address 这个字段在保存的时候已经进行了分词的操作，会将单词转为小写，而使用 <code>term</code> 进行查询的话，是不会对查询语句进行分词操作的，所以还是会去匹配 Kings 这个关键字，自然匹配不到。</p>
+<p>而如果我们需要匹配多个词呢，使用 <code>term</code> 还能够帮我们匹配出来吗。答案是不能的。我们可以尝试一下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="err">GET</span> <span class="err">/account/_search</span>
+<span class="p">{</span>
+  <span class="nt">&#34;query&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;term&#34;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;address&#34;</span><span class="p">:</span> <span class="s2">&#34;kings place&#34;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>查出来的结果如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+  <span class="nt">&#34;took&#34;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="nt">&#34;timed_out&#34;</span> <span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+  <span class="nt">&#34;_shards&#34;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;total&#34;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nt">&#34;successful&#34;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nt">&#34;skipped&#34;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&#34;failed&#34;</span> <span class="p">:</span> <span class="mi">0</span>
+  <span class="p">},</span>
+  <span class="nt">&#34;hits&#34;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;total&#34;</span> <span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;value&#34;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+      <span class="nt">&#34;relation&#34;</span> <span class="p">:</span> <span class="s2">&#34;eq&#34;</span>
+    <span class="p">},</span>
+    <span class="nt">&#34;max_score&#34;</span> <span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&#34;hits&#34;</span> <span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>执行发现无数据，从概念上看，term属于精确匹配，只能查单个词。我想用term匹配多个词怎么做？可以使用terms来：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="err">GET</span> <span class="err">/account/_search</span>
+<span class="p">{</span>
+  <span class="nt">&#34;query&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;terms&#34;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;address&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;kings&#34;</span><span class="p">,</span> <span class="s2">&#34;place&#34;</span><span class="p">]</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>发现全部查询出来，为什么。因为terms里的[ ] 多个是或者的关系，只要满足其中一个词就可以。想要通知满足两个词的话，就得使用bool的must来做。这里就不做演示了</p>
+<ul>
+<li>match</li>
+</ul>
+<p>我们先来用用看，和上面一样我们来匹配 <code>kings place</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="err">GET</span> <span class="err">/account/_search</span>
+<span class="p">{</span>
+  <span class="nt">&#34;query&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;match&#34;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;address&#34;</span><span class="p">:</span> <span class="s2">&#34;Kings Place&#34;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>你会发现和之前的 terms 一样，将所有的 包含了 kings 和 place 的所有文档都搜索出来了。因为match进行搜索的时候，会先进行分词拆分，拆完后，再来匹配，上面两个内容，他们address的词条为： Kings Place ，我们搜索的为Kings Place 我们进行分词处理得到为kings place ，并且属于或的关系，只要任何一个词条在里面就能匹配到。如果想 kings 和 place 同时匹配到的话，怎么做？使用 match_phrase。下面有做演示，这里就不详细描述了</p>
+<ol start="3">
+<li>DSL的基本使用演示。</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span><span class="lnt">88
+</span><span class="lnt">89
+</span><span class="lnt">90
+</span><span class="lnt">91
+</span><span class="lnt">92
+</span><span class="lnt">93
+</span><span class="lnt">94
+</span><span class="lnt">95
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="err">###</span> <span class="err">DSL</span> <span class="err">相关</span>
+<span class="err">#</span> <span class="err">以账号进行排序</span> <span class="err">默认情况下会返回前</span><span class="mi">10</span><span class="err">条数据</span>
+<span class="err">GET</span> <span class="err">/account/_search</span>
+<span class="p">{</span>
+  <span class="nt">&#34;query&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;match_all&#34;</span><span class="p">:</span> <span class="p">{}},</span>
+  <span class="nt">&#34;sort&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;account_number&#34;</span><span class="p">:</span> <span class="s2">&#34;asc&#34;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="err">#</span> <span class="err">对单个字段进行查询</span>
+<span class="err">GET</span> <span class="err">/account/_search</span>
+<span class="p">{</span>
+  <span class="nt">&#34;query&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;match&#34;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;address&#34;</span><span class="p">:</span> <span class="s2">&#34;mill lane&#34;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="err">#</span> <span class="err">会对短语进行匹配，而不是对关键字进行分词查询</span>
+<span class="err">GET</span> <span class="err">/account/_search</span>
+<span class="p">{</span>
+  <span class="nt">&#34;query&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;match_phrase&#34;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;address&#34;</span><span class="p">:</span> <span class="s2">&#34;mill lane&#34;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="err">#</span> <span class="err">对查询结果进行分页</span>
+<span class="err">#</span> <span class="err">from</span> <span class="err">：</span> <span class="err">从第几条开始，size：每页的大小</span>
+<span class="err">GET</span> <span class="err">/account/_search</span>
+<span class="p">{</span>
+  <span class="nt">&#34;query&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;match&#34;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;gender&#34;</span><span class="p">:</span> <span class="s2">&#34;F&#34;</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="nt">&#34;from&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="nt">&#34;size&#34;</span><span class="p">:</span> <span class="mi">20</span>
+<span class="p">}</span>
+
+<span class="err">#</span> <span class="err">使用bool可以进行多条件判断。</span> <span class="err">must</span> <span class="err">与</span> <span class="err">should</span> <span class="err">或</span> <span class="err">must_not</span> <span class="err">非</span>
+<span class="err">#</span> <span class="err">年龄是</span><span class="mi">40</span> <span class="err">且state不是ID的</span>
+<span class="err">GET</span> <span class="err">/account/_search</span>
+<span class="p">{</span>
+  <span class="nt">&#34;query&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;bool&#34;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;must&#34;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&#34;match&#34;</span><span class="p">:</span> <span class="p">{</span>
+          <span class="nt">&#34;age&#34;</span><span class="p">:</span> <span class="s2">&#34;40&#34;</span>
+        <span class="p">}}</span>
+      <span class="p">],</span>
+      <span class="nt">&#34;must_not&#34;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&#34;match&#34;</span><span class="p">:</span> <span class="p">{</span>
+          <span class="nt">&#34;state&#34;</span><span class="p">:</span> <span class="s2">&#34;ID&#34;</span>
+        <span class="p">}}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="err">#</span> <span class="err">进行模糊查询,</span> <span class="err">多条件查询</span>
+<span class="err">GET</span> <span class="err">/account/_search</span>
+<span class="p">{</span>
+  <span class="nt">&#34;query&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;bool&#34;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;must&#34;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&#34;match&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;address&#34;</span><span class="p">:</span> <span class="s2">&#34;244&#34;</span><span class="p">}},</span>
+        <span class="p">{</span><span class="nt">&#34;match&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;employer&#34;</span><span class="p">:</span> <span class="s2">&#34;Euron&#34;</span><span class="p">}}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="err">#</span> <span class="err">过滤器</span>
+<span class="err">GET</span> <span class="err">/account/_search</span>
+<span class="p">{</span>
+  <span class="nt">&#34;query&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;bool&#34;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;must&#34;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&#34;match_all&#34;</span><span class="p">:</span> <span class="p">{}}</span>
+      <span class="p">],</span>
+      <span class="nt">&#34;filter&#34;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">&#34;range&#34;</span><span class="p">:</span> <span class="p">{</span>
+          <span class="nt">&#34;balance&#34;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&#34;gte&#34;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">,</span>
+            <span class="nt">&#34;lte&#34;</span><span class="p">:</span> <span class="mi">20000</span>
+          <span class="p">}</span>
+        <span class="p">}}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h6 id="23-mapping">2.3 Mapping</h6>
+<p>映射是定义文档及其包含的字段的存储和索引方式的过程。 例如，使用映射定义：</p>
+<ul>
+<li>哪些字符串字段应视为全文字段。</li>
+<li>哪些字段包含数字，日期或地理位置。</li>
+<li>日期的<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-date-format.html" target="_blank" rel="noopener noreffer">格式</a>。</li>
+<li>自定义规则来控制<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/dynamic-mapping.html" target="_blank" rel="noopener noreffer">动态添加字段的映射</a>。</li>
+</ul>
+<p>映射定义具有：</p>
+<ul>
+<li>元字段
+元字段用于自定义如何处理文档的相关元数据。 元字段的示例包括文档的_index，_id和_source字段。</li>
+<li>字段或属性
+映射包含与文档相关的字段或属性的列表。</li>
+</ul>
+<ol>
+<li>字段的数据类型</li>
+</ol>
+<p>每个字段的数据类型可以是：</p>
+<ul>
+<li>
+<p>一个简单的类型，例如text, keyword, date, long, double, boolean or ip</p>
+</li>
+<li>
+<p>一种支持JSON的分层特性的类型，例如object or nested</p>
+</li>
+<li>
+<p>或特殊的类型，例如 geo_point, geo_shape, or completion.</p>
+</li>
+</ul>
+<p>为不同的目的以不同的方式对同一字段建立索引通常很有用。 例如，可以将字符串字段索引为全文搜索的文本字段，以及作为排序或聚合的关键字字段。 另外，您可以使用标准分析器，英语分析器和法语分析器为字符串字段建立索引。</p>
+<p>这是多字段的目的。 大多数数据类型通过fields参数支持多字段。</p>
+<ol start="2">
+<li>创建一个index，同时制定 mapping 类型</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="err">PUT</span> <span class="err">/testindex</span>
+<span class="p">{</span>
+  <span class="nt">&#34;mappings&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;properties&#34;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;age&#34;</span><span class="p">:</span>    <span class="p">{</span> <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;integer&#34;</span> <span class="p">},</span> 
+      <span class="nt">&#34;email&#34;</span><span class="p">:</span>  <span class="p">{</span> <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;keyword&#34;</span>  <span class="p">},</span>
+      <span class="nt">&#34;name&#34;</span><span class="p">:</span>   <span class="p">{</span> <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;text&#34;</span>  <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>给已有的 index 添加 mapping</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="err">PUT</span> <span class="err">/testindex/_mapping</span>
+<span class="p">{</span>
+  <span class="nt">&#34;properties&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;create_date&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;date&#34;</span><span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>可以给字段添加一个显示的 type 属性，来代替之前版本的 _type 属性</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="err">PUT</span> <span class="err">twitter</span>
+<span class="p">{</span>
+  <span class="nt">&#34;mappings&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;_doc&#34;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;properties&#34;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="p">{</span> <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;keyword&#34;</span> <span class="p">},</span> 
+        <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="p">{</span> <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;text&#34;</span> <span class="p">},</span>
+        <span class="nt">&#34;user_name&#34;</span><span class="p">:</span> <span class="p">{</span> <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;keyword&#34;</span> <span class="p">},</span>
+        <span class="nt">&#34;email&#34;</span><span class="p">:</span> <span class="p">{</span> <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;keyword&#34;</span> <span class="p">},</span>
+        <span class="nt">&#34;content&#34;</span><span class="p">:</span> <span class="p">{</span> <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;text&#34;</span> <span class="p">},</span>
+        <span class="nt">&#34;tweeted_at&#34;</span><span class="p">:</span> <span class="p">{</span> <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;date&#34;</span> <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="3-使用java-api-操作-elasticsearch">3. 使用JAVA API 操作 ElasticSearch</h4>
+<p>ElasticSearch给我们提供了两种API，一种是 RESTFul 的API 一种是 TransportClient 的API。在 8.0 之后的版本中，TransportClient 的API 将会被移除，而只会保留 Restful 风格的 API了，需要注意。在这里我们使用 HighRestApi 进行演示。HighRestAPI 其实就是对 RESTAPI 的进一步封装</p>
+<ol>
+<li>引入对应版本的 jar 包，这里使用maven</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.elasticsearch.client<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>elasticsearch-rest-high-level-client<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>7.8.0<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>同时你还需要引入 log4j 的依赖</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.logging.log4j<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>log4j-core<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.11.1<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在 classpath 中添加对应的 properties 配置文件 <code>log4j2.properties</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">appender.console.type = Console
+appender.console.name = console
+appender.console.layout.type = PatternLayout
+appender.console.layout.pattern = [%d{ISO8601}][%-5p][%-25c] %marker%m%n
+
+rootLogger.level = info
+rootLogger.appenderRef.console.ref = console
+</code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>基本的增删改查使用</li>
+</ol>
+<ul>
+<li>创建客户端</li>
+</ul>
+<p><code>RestHighLevelClient</code> 的客户端实例需要依赖于  <code>REST low-level client builder</code> 来创建。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">RestHighLevelClient</span> <span class="n">client</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RestHighLevelClient</span><span class="o">(</span>
+        <span class="n">RestClient</span><span class="o">.</span><span class="na">builder</span><span class="o">(</span>
+            <span class="k">new</span> <span class="n">HttpHost</span><span class="o">(</span><span class="s">&#34;localhost&#34;</span><span class="o">,</span> <span class="n">9200</span><span class="o">,</span> <span class="s">&#34;http&#34;</span><span class="o">),</span>
+            <span class="k">new</span> <span class="n">HttpHost</span><span class="o">(</span><span class="s">&#34;localhost&#34;</span><span class="o">,</span> <span class="n">9201</span><span class="o">,</span> <span class="s">&#34;http&#34;</span><span class="o">)));</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>关闭客户端</li>
+</ul>
+<p>高级客户端将基于提供的构建器在内部创建用于执行请求的低级客户端。 该低级客户端维护一个连接池并启动一些线程，因此您应该在完全正确地使用它之后关闭高级客户端，这反过来又将关闭内部低级客户端以释放这些资源。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">client</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>创建索引和保存数据</li>
+</ul>
+<p>使用 indexAPI 需要构造一个 IndexRequest 对象。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 创建 map 对象保存文档数据
+</span><span class="c1"></span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;();</span>
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;id&#34;</span><span class="o">,</span> <span class="n">i</span><span class="o">);</span>
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;username&#34;</span><span class="o">,</span> <span class="s">&#34;rei&#34;</span><span class="o">);</span>
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;sex&#34;</span><span class="o">,</span> <span class="n">1</span><span class="o">);</span>
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;age&#34;</span><span class="o">,</span> <span class="n">15</span><span class="o">);</span>
+
+<span class="c1">// 创建 index 的请求对象
+</span><span class="c1"></span><span class="n">IndexRequest</span> <span class="n">request</span> <span class="o">=</span> <span class="k">new</span> <span class="n">IndexRequest</span><span class="o">(</span><span class="s">&#34;javatest&#34;</span><span class="o">).</span><span class="na">id</span><span class="o">(</span><span class="s">&#34;1&#34;</span><span class="o">).</span><span class="na">source</span><span class="o">(</span><span class="n">map</span><span class="o">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<ol>
+<li>使用有参构造，传入 索引库的名称，如果不存在会自动创建</li>
+<li>使用 id 来指定当前需要插入的文档的 id，如果不使用这个参数会创建默认 id</li>
+<li>使用 source 来传入需要添加的文档内容，支持方式，这里演示的是 map 类型</li>
+</ol>
+</blockquote>
+<p>构造完 IndexRequest 后可以通过 客户端来发送请求了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">IndexResponse</span> <span class="n">index</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="na">index</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">RequestOptions</span><span class="o">.</span><span class="na">DEFAULT</span><span class="o">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里会拿到一个 响应。可以通过 <code>getResult</code> 拿到执行的结果。</p>
+<ul>
+<li>查询一篇文档</li>
+</ul>
+<p>同上使用getAPi 也需要构造一个 GetRequest 对象。传入要查的索引库以及文档 id</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 创建获取请求
+</span><span class="c1"></span><span class="n">GetRequest</span> <span class="n">getRequest</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GetRequest</span><span class="o">(</span><span class="s">&#34;javatest&#34;</span><span class="o">,</span> <span class="s">&#34;1&#34;</span><span class="o">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>执行请求</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 执行请求
+</span><span class="c1"></span><span class="n">GetResponse</span> <span class="n">getResponse</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">getRequest</span><span class="o">,</span> <span class="n">RequestOptions</span><span class="o">.</span><span class="na">DEFAULT</span><span class="o">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>通过 <code>getSource()</code> 可以获取一个map类型的文档结果，而使用 <code>getSourceAsString()</code> 可以得到一个 <code>json</code> 字符串</p>
+<ul>
+<li>更新一篇文档</li>
+</ul>
+<p>构造 <code>UpdateRequest</code> 对象，传入索引库和文档 id。默认情况下会使用 局部更新。也就是不回去删除没有的字段</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;();</span>
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;username&#34;</span><span class="o">,</span> <span class="s">&#34;rei&#34;</span><span class="o">);</span>
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;age&#34;</span><span class="o">,</span> <span class="n">18</span><span class="o">);</span>
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;address&#34;</span><span class="o">,</span> <span class="s">&#34;新东京&#34;</span><span class="o">);</span>
+<span class="n">UpdateRequest</span> <span class="n">updateRequest</span> <span class="o">=</span> <span class="k">new</span> <span class="n">UpdateRequest</span><span class="o">(</span><span class="s">&#34;javatest&#34;</span><span class="o">,</span> <span class="s">&#34;Fo-k1nIBqD72ELOU5jJC&#34;</span><span class="o">).</span><span class="na">doc</span><span class="o">(</span><span class="n">map</span><span class="o">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>执行请求</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">UpdateResponse</span> <span class="n">update</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="na">update</span><span class="o">(</span><span class="n">updateRequest</span><span class="o">,</span> <span class="n">RequestOptions</span><span class="o">.</span><span class="na">DEFAULT</span><span class="o">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>同 <code>IndexResponse</code>，使用 <code>getResult</code> 可以拿到对应的执行结果。</p>
+<ul>
+<li>删除一篇文档</li>
+</ul>
+<p>构造 <code>DeleteRequest</code> 对象，传入索引库和需要删除文档的 ID</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">DeleteRequest</span> <span class="n">deleteRequest</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DeleteRequest</span><span class="o">(</span><span class="s">&#34;javatest&#34;</span><span class="o">,</span> <span class="s">&#34;1&#34;</span><span class="o">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>执行请求</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">DeleteResponse</span> <span class="n">delete</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="na">delete</span><span class="o">(</span><span class="n">deleteRequest</span><span class="o">,</span> <span class="n">RequestOptions</span><span class="o">.</span><span class="na">DEFAULT</span><span class="o">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>同 <code>IndexResponse</code>，使用 <code>getResult</code> 可以拿到对应的执行结果。</p>
+<ol start="3">
+<li>DSL查询基本使用</li>
+</ol>
+<p>DSL查询是使用 ES 的一个重点，这里会拿一个例子做简单的演示。和基本的 CRUD 一样，要使用 DSL 查询需要构造一个 <code>SearchRequest</code> 来发送查询请求，同时还需要构造一些 <code>QueryBuilder</code> 对象来构建查询参数。下面是查询的需求：</p>
+<p>查询 <code>username</code> 中含有 rei 的，年龄在 10-20 之间性别为 男 的数据。同时进行分页，分页大小为 20 页，查询 第1页。</p>
+<p>需求分析：<code>username</code> 为匹配查询，可以使用 <code>match</code>。其他查询条件可以使用 <code>filter</code>。一同时有多个查询条件，需要使用 bool。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 构造 SearchRequest 对象，传入需要查询的索引库，如果使用五参构造会默认查询所有的索引库
+</span><span class="c1"></span><span class="n">SearchRequest</span> <span class="n">searchRequest</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SearchRequest</span><span class="o">(</span><span class="s">&#34;javatest&#34;</span><span class="o">);</span>
+<span class="c1">// 创建 文档搜索建造类
+</span><span class="c1"></span><span class="n">SearchSourceBuilder</span> <span class="n">searchSourceBuilder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SearchSourceBuilder</span><span class="o">();</span>
+<span class="c1">// 创建一个 bool搜索
+</span><span class="c1"></span><span class="n">BoolQueryBuilder</span> <span class="n">boolQueryBuilder</span> <span class="o">=</span> <span class="n">QueryBuilders</span><span class="o">.</span><span class="na">boolQuery</span><span class="o">();</span>
+<span class="c1">// 匹配 username 为 kei 的内容
+</span><span class="c1"></span><span class="n">boolQueryBuilder</span><span class="o">.</span><span class="na">must</span><span class="o">(</span><span class="n">QueryBuilders</span><span class="o">.</span><span class="na">matchQuery</span><span class="o">(</span><span class="s">&#34;username&#34;</span><span class="o">,</span> <span class="s">&#34;rei&#34;</span><span class="o">));</span>
+<span class="c1">// 创建一个过滤器
+</span><span class="c1"></span><span class="n">List</span><span class="o">&lt;</span><span class="n">QueryBuilder</span><span class="o">&gt;</span> <span class="n">filter</span> <span class="o">=</span> <span class="n">boolQueryBuilder</span><span class="o">.</span><span class="na">filter</span><span class="o">();</span>
+<span class="c1">// 匹配性别为男的
+</span><span class="c1"></span><span class="n">filter</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">QueryBuilders</span><span class="o">.</span><span class="na">termQuery</span><span class="o">(</span><span class="s">&#34;sex&#34;</span><span class="o">,</span> <span class="n">1</span><span class="o">));</span>
+<span class="c1">// 年龄在10-20之间的
+</span><span class="c1"></span><span class="n">filter</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">QueryBuilders</span><span class="o">.</span><span class="na">rangeQuery</span><span class="o">(</span><span class="s">&#34;age&#34;</span><span class="o">).</span><span class="na">gte</span><span class="o">(</span><span class="n">10</span><span class="o">).</span><span class="na">lte</span><span class="o">(</span><span class="n">20</span><span class="o">));</span>
+<span class="c1">// 传入查询条件
+</span><span class="c1"></span><span class="n">searchSourceBuilder</span><span class="o">.</span><span class="na">query</span><span class="o">(</span><span class="n">boolQueryBuilder</span><span class="o">);</span>
+<span class="c1">// 分页
+</span><span class="c1"></span><span class="n">searchSourceBuilder</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">0</span><span class="o">).</span><span class="na">size</span><span class="o">(</span><span class="n">20</span><span class="o">);</span>
+<span class="n">searchRequest</span><span class="o">.</span><span class="na">source</span><span class="o">(</span><span class="n">searchSourceBuilder</span><span class="o">);</span>
+<span class="c1">// 执行搜索
+</span><span class="c1"></span><span class="n">SearchResponse</span> <span class="n">search</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="na">search</span><span class="o">(</span><span class="n">searchRequest</span><span class="o">,</span> <span class="n">RequestOptions</span><span class="o">.</span><span class="na">DEFAULT</span><span class="o">);</span>
+<span class="c1">// 获取搜索到的结果
+</span><span class="c1"></span><span class="n">SearchHits</span> <span class="n">hits</span> <span class="o">=</span> <span class="n">search</span><span class="o">.</span><span class="na">getHits</span><span class="o">();</span>
+<span class="c1">// 搜索到的总数
+</span><span class="c1"></span><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;搜索到的结果总数为：&#34;</span><span class="o">+</span> <span class="n">hits</span><span class="o">.</span><span class="na">getTotalHits</span><span class="o">().</span><span class="na">value</span><span class="o">);</span>
+<span class="c1">// 搜索到的文档内容
+</span><span class="c1"></span><span class="n">SearchHit</span><span class="o">[]</span> <span class="n">hits1</span> <span class="o">=</span> <span class="n">hits</span><span class="o">.</span><span class="na">getHits</span><span class="o">();</span>
+<span class="k">for</span> <span class="o">(</span><span class="n">SearchHit</span> <span class="n">documentFields</span> <span class="o">:</span> <span class="n">hits1</span><span class="o">)</span> <span class="o">{</span>
+	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">documentFields</span><span class="o">.</span><span class="na">getSourceAsString</span><span class="o">());</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<ol>
+<li>使用 searchSourceBuilder 可以使用更多的控制查询的选项。</li>
+<li>使用 QueryBuilders 工具类可以更加方便的构建各种类型的查询</li>
+</ol>
+</blockquote>
+<p>关于 java API 的使用暂时介绍道这里，更加详细的内容可以查看 <a href="https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-overview.html" target="_blank" rel="noopener noreffer">官方文档</a></p>
+<h5 id="4-集成-springboot-使用-elasticsearch">4. 集成 SpringBoot 使用 Elasticsearch</h5>
+<p>环境版本：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>spring-boot</td>
+<td>2.0.5-Release</td>
+</tr>
+<tr>
+<td>spring-data</td>
+<td>3.0.10.RELEASE</td>
+</tr>
+<tr>
+<td>elasticsearch</td>
+<td>5.5</td>
+</tr>
+</tbody>
+</table>
+<p>由于 spring-data 的版本和 elasticsearch 的版本是绑定的， 所以这里将 elasticsearch 换成了 5.5 可能有些地方会和 7.8 有些出入。</p>
+<ol>
+<li>导入 spring-data 的依赖</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;parent&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-parent<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>2.0.5.RELEASE<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/parent&gt;</span>
+<span class="c">&lt;!--集成elasticsearch--&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-data-elasticsearch<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="c">&lt;!--引入 test--&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-test<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>修改 application.yml 配置文件</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yml" data-lang="yml"><span class="nt">spring</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">data</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">elasticsearch</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">cluster-name</span><span class="p">:</span><span class="w"> </span><span class="l">elasticsearch</span><span class="w">
+</span><span class="w">      </span><span class="nt">cluster-nodes</span><span class="p">:</span><span class="w"> </span><span class="l">centos-linux:9300</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>需要注意的是，如果你的 es 是通过 docker 或者 部署在远端上的话，直接访问可能会出现 <code>NoNodeAvailableException</code> 异常，也就是没有办法链接到你的那个集群上去。这里有几个地方可以排查下：</p>
+<ol>
+<li>默认情况下的话，spring-data 会连接到集群名为<code>elasticsearch</code>的节点上，如果你在部署的时候修改了集群名，这里需要修改一下</li>
+<li>如果是远端访问，有可能是因为  es 默认没有开启 <code>transportclient</code> 的访问权限，可以修改配置文件 <code>config/elasticsearch.yml</code> 将 <code>transport.host: 0.0.0.0</code> 这个配置放开即可。</li>
+</ol>
+</blockquote>
+<ol start="2">
+<li>创建实体类</li>
+</ol>
+<p>在 spring-data 中，是通过注解来实现 elaticsearch 的映射关系的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 当前实体类的索引库的名称和类型
+</span><span class="c1"></span><span class="nd">@Document</span><span class="o">(</span><span class="n">indexName</span> <span class="o">=</span> <span class="s">&#34;test&#34;</span><span class="o">,</span> <span class="n">type</span> <span class="o">=</span> <span class="s">&#34;test&#34;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">TestDoc</span> <span class="o">{</span>
+
+    <span class="nd">@Id</span> <span class="c1">//对应文档的id
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">Long</span> <span class="n">id</span><span class="o">;</span>
+
+    <span class="nd">@Field</span><span class="o">(</span><span class="n">type</span> <span class="o">=</span> <span class="n">FieldType</span><span class="o">.</span><span class="na">Keyword</span><span class="o">)</span>    <span class="c1">//指定为 不分词
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">String</span> <span class="n">userName</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">age</span><span class="o">;</span>
+
+    <span class="nd">@Field</span><span class="o">(</span><span class="n">type</span> <span class="o">=</span><span class="n">FieldType</span><span class="o">.</span><span class="na">Text</span><span class="o">,</span><span class="n">analyzer</span> <span class="o">=</span> <span class="s">&#34;ik_max_word&#34;</span><span class="o">,</span><span class="n">searchAnalyzer</span> <span class="o">=</span> <span class="s">&#34;ik_max_word&#34;</span><span class="o">)</span> <span class="c1">//指定类型为text，需要分词，同时指定分词器
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">String</span> <span class="n">intro</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>使用 ElasticsearchTemplate 创建索引库，添加映射</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Autowired</span>
+<span class="kd">private</span> <span class="n">ElasticsearchTemplate</span> <span class="n">elasticsearchTemplate</span><span class="o">;</span>
+
+<span class="nd">@Test</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">testElasticsearchIndex</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+<span class="c1">// 创建索引和map
+</span><span class="c1"></span>  <span class="n">elasticsearchTemplate</span><span class="o">.</span><span class="na">createIndex</span><span class="o">(</span><span class="n">TestDoc</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+  <span class="n">elasticsearchTemplate</span><span class="o">.</span><span class="na">putMapping</span><span class="o">(</span><span class="n">TestDoc</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>创建操作接口</li>
+</ol>
+<p>spring-data 中提供了一系列的 Repository 接口来实现对数据的操作。Spring Data存储库的中心接口是Repository。 它需要实体类以及实体类的id类型作为类型参数来管理。 该接口主要用作标记接口，以捕获要使用的类型并帮助您发现扩展该接口的接口。 CrudRepository为正在管理的实体类提供了基本的CRUD功能。</p>
+<p>PagingAndSortingRepository 接口提供了基本的 分页和排序通能，它同时还继承了 CrudRepository。</p>
+<p>在这里，我们使用 ElasticsearchRepository 接口，它除了继承了 PagingAndSortingRepository 接口提供了基础的 crud 之外，还提供了一些方法可以实现 DSL 查询和过滤。不过 spring-data 提供的接口都加了 <code>NoRepositoryBean</code> 注解，不让我们直接注入，所以我们可以自己创建一些接口继承，并将其交给spring管理。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">//操作接口
+</span><span class="c1"></span><span class="cm">/**
+</span><span class="cm">*  由于 spring data 提供的api 无法被创建为bean交给spring管理，所以我们自己写一个接口，并将其交给spring管理
+</span><span class="cm">*/</span>
+<span class="nd">@Repository</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">TestElasticsearchRepository</span> <span class="kd">extends</span> <span class="n">ElasticsearchRepository</span><span class="o">&lt;</span><span class="n">TestDoc</span><span class="o">,</span> <span class="n">Long</span><span class="o">&gt;</span> <span class="o">{</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="5">
+<li>实现基本的增删改查</li>
+</ol>
+<ul>
+<li>新增数据</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Test</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">testSave</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+  <span class="n">TestDoc</span> <span class="n">testDoc</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TestDoc</span><span class="o">();</span>
+  <span class="n">testDoc</span><span class="o">.</span><span class="na">setAge</span><span class="o">(</span><span class="n">10</span><span class="o">);</span>
+  <span class="n">testDoc</span><span class="o">.</span><span class="na">setId</span><span class="o">(</span><span class="n">1L</span><span class="o">);</span>
+  <span class="n">testDoc</span><span class="o">.</span><span class="na">setIntro</span><span class="o">(</span><span class="s">&#34;测试1&#34;</span><span class="o">);</span>
+  <span class="n">testDoc</span><span class="o">.</span><span class="na">setUserName</span><span class="o">(</span><span class="s">&#34;测试1&#34;</span><span class="o">);</span>
+
+  <span class="n">testElasticsearchRepository</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="n">testDoc</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>修改数据</li>
+</ul>
+<p>修改数据其实就是将修改后的数据重新保存一遍就可以了。</p>
+<ul>
+<li>删除数据</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Test</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">testDelete</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+	<span class="n">testElasticsearchRepository</span><span class="o">.</span><span class="na">deleteById</span><span class="o">(</span><span class="n">1L</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>查找数据</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Test</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">testGetById</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+  <span class="n">Optional</span><span class="o">&lt;</span><span class="n">TestDoc</span><span class="o">&gt;</span> <span class="n">byId</span> <span class="o">=</span> <span class="n">testElasticsearchRepository</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="n">1L</span><span class="o">);</span>
+  <span class="n">TestDoc</span> <span class="n">testDoc</span> <span class="o">=</span> <span class="n">byId</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
+  <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">testDoc</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="6">
+<li>DSL的查询</li>
+</ol>
+<p>DSL查询是我们使用 es 的重点，而在 spring-data 中使用它也和使用原生api差不多，通过 QueryBuilds 工具类构建一系列的查询参数，并传给查询接口。这里可以使用 <code>SearchQuery</code> 接口，它是对 QueryBuild 的进一步封装，提供了如排序 分页等等功能。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Test</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">testQuery</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+    <span class="c1">// 查找需求： 找到 名字包含 java 年龄在10 到 40 之间的数据，通过年龄进行倒序排列，同时进行分页 20 条数据一列 查询第一列
+</span><span class="c1"></span>    <span class="c1">// 创建bool查询
+</span><span class="c1"></span>    <span class="n">BoolQueryBuilder</span> <span class="n">boolQueryBuilder</span> <span class="o">=</span> <span class="n">QueryBuilders</span><span class="o">.</span><span class="na">boolQuery</span><span class="o">();</span>
+
+		<span class="c1">// 创建 匹配查询，并添加到 must条件中去
+</span><span class="c1"></span>    <span class="n">MatchQueryBuilder</span> <span class="n">matchQueryBuilder</span> <span class="o">=</span> <span class="n">QueryBuilders</span><span class="o">.</span><span class="na">matchQuery</span><span class="o">(</span><span class="s">&#34;userName&#34;</span><span class="o">,</span> <span class="s">&#34;php&#34;</span><span class="o">);</span>
+
+		<span class="c1">// 设置 过滤条件
+</span><span class="c1"></span>    <span class="c1">// RangeQueryBuilder age = QueryBuilders.rangeQuery(&#34;age&#34;).from(&#34;10&#34;).to(&#34;40&#34;);
+</span><span class="c1"></span>
+    <span class="n">boolQueryBuilder</span><span class="o">.</span><span class="na">must</span><span class="o">(</span><span class="n">matchQueryBuilder</span><span class="o">);</span>
+    <span class="c1">// boolQueryBuilder.filter(age);
+</span><span class="c1"></span>		<span class="c1">// 通过 NativeSearchQueryBuilder建造者构造 SearchQuery对象，并指定分页和排序
+</span><span class="c1"></span>    <span class="n">SearchQuery</span> <span class="n">query</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NativeSearchQueryBuilder</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">withQuery</span><span class="o">(</span><span class="n">boolQueryBuilder</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">withSort</span><span class="o">(</span><span class="n">SortBuilders</span><span class="o">.</span><span class="na">fieldSort</span><span class="o">(</span><span class="s">&#34;age&#34;</span><span class="o">).</span><span class="na">order</span><span class="o">(</span><span class="n">SortOrder</span><span class="o">.</span><span class="na">DESC</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">withPageable</span><span class="o">(</span><span class="n">PageRequest</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">0</span><span class="o">,</span> <span class="n">10</span><span class="o">)).</span><span class="na">build</span><span class="o">();</span>
+
+    <span class="n">Page</span><span class="o">&lt;</span><span class="n">TestDoc</span><span class="o">&gt;</span> <span class="n">search</span> <span class="o">=</span> <span class="n">testElasticsearchRepository</span><span class="o">.</span><span class="na">search</span><span class="o">(</span><span class="n">query</span><span class="o">);</span>
+
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;总的条数: &#34;</span> <span class="o">+</span> <span class="n">search</span><span class="o">.</span><span class="na">getTotalElements</span><span class="o">());</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;总的页数: &#34;</span> <span class="o">+</span> <span class="n">search</span><span class="o">.</span><span class="na">getTotalPages</span><span class="o">());</span>
+
+    <span class="n">List</span><span class="o">&lt;</span><span class="n">TestDoc</span><span class="o">&gt;</span> <span class="n">content</span> <span class="o">=</span> <span class="n">search</span><span class="o">.</span><span class="na">getContent</span><span class="o">();</span>
+    <span class="n">content</span><span class="o">.</span><span class="na">forEach</span><span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div></div><div class="post-footer" id="post-footer">
+    <div class="post-info"><div class="post-info-tag"><span><a href="/tags/java/">java</a>
+                </span><span><a href="/tags/lucene/">Lucene</a>
+                </span><span><a href="/tags/elasticsearch/">ElasticSearch</a>
+                </span></div><div class="post-info-line"><div class="post-info-mod">
+                <span>更新于 2018-06-08</span>
+            </div><div class="post-info-mod"><span>
+                            <a class="link-to-markdown" href="/full-text-search-engine/index.md" target="_blank">阅读原始文档</a>
+                        </span><span>
+                        &nbsp;|&nbsp;
+                        <a class="link-to-markdown" href="https://github.com/khusika/FeelIt/edit/main/exampleSite/content/posts/backend/full-text-search-engine.md" target="_blank">Improve Article</a>
+                    </span></div>
+        </div><div class="post-info-share">
+            <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://blog.ayanamimcy.top/full-text-search-engine/" data-title="全文搜索引擎简介" data-hashtags="java,Lucene,ElasticSearch"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://blog.ayanamimcy.top/full-text-search-engine/" data-hashtag="java"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://blog.ayanamimcy.top/full-text-search-engine/" data-title="全文搜索引擎简介"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://blog.ayanamimcy.top/full-text-search-engine/" data-title="全文搜索引擎简介"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://blog.ayanamimcy.top/full-text-search-engine/" data-title="全文搜索引擎简介"><i class="fab fa-weibo fa-fw"></i></a></span>
+        </div></div><div class="post-nav"></div></div>
+</div><div id="comments" class="single-card"><div id="valine"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript></div></article></div>
+            </main>
+            <footer class="footer"><div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.85.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/khusika/FeelIt" target="_blank" rel="noopener noreffer" title="FeelIt 1.0.1"><i class="fas fa-hand-holding-heart fa-fw"></i> FeelIt</a>
+        </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="http://blog.ayanamimcy.top">一只老猫</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker
+        .register('/sw.min.js?version=1.0.1', { scope: '/' })
+        .then(() => {
+            console.info('强哥的猫\u00A0Service Worker Registered');
+        }, err => console.error('强哥的猫\u00A0Service Worker registration failed: ', err));
+
+    navigator.serviceWorker
+        .ready
+        .then(() => {
+            console.info('强哥的猫\u00A0Service Worker Ready');
+        });
+}
+</script>
+</footer>
+        </div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-chevron-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment-alt fa-fw"></i>
+            </a></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><link rel="stylesheet" href="/lib/valine/valine.min.css"><script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script><script src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.0/dist/autocomplete.min.js"></script><script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.8.5/dist/algoliasearch-lite.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script><script src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.1/sharer.min.js"></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"valine":{"appId":"0pPusmmAwGgfI3UumS1TPOdU-gzGzoHsz","appKey":"EhdNEkkUWjIpFlzsKFzb5EPR","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":false,"highlight":true,"lang":"zh-cn","pageSize":10,"placeholder":"你的评论 ...","recordIP":true,"serverURLs":"https://leancloud.hugoloveit.com","visitor":true}},"search":{"algoliaAppID":"88XAZXA5VT","algoliaIndex":"mcyblog","algoliaSearchKey":"a9134cae6f193946727628a7ce2ad0a2","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script src="/js/theme.min.js"></script></body></html>
