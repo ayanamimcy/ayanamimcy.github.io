@@ -1,0 +1,14 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>并发 - 标签 - 强哥的猫</title>
+        <link>https://blog.ayanamimcy.top/tags/%E5%B9%B6%E5%8F%91/</link>
+        <description>并发 - 标签 - 强哥的猫</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>ayanamimcy@gmail.com (一只老猫)</managingEditor>
+            <webMaster>ayanamimcy@gmail.com (一只老猫)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 19 Jun 2018 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://blog.ayanamimcy.top/tags/%E5%B9%B6%E5%8F%91/" rel="self" type="application/rss+xml" /><item>
+    <title>java基础并发系列-初识线程</title>
+    <link>https://blog.ayanamimcy.top/java-basic-thread/</link>
+    <pubDate>Tue, 19 Jun 2018 00:00:00 &#43;0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/java-basic-thread/</guid>
+    <description><![CDATA[1. 线程的8大核心基础知识 1.实现多线程的几种方式 实现多线程的正确方法是2种： 实现 Runnable 接口 继承 Thread 类 实现Runnable接口好在哪里？ 继承Thre]]></description>
+</item>
+</channel>
+</rss>

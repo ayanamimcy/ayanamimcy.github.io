@@ -4,9 +4,21 @@
         <link>https://blog.ayanamimcy.top/</link>
         <description>一只老猫的学习记录之旅</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>ayanamimcy@gmail.com (一只老猫)</managingEditor>
-            <webMaster>ayanamimcy@gmail.com (一只老猫)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Fri, 08 Jun 2018 23:58:53 &#43;0800</lastBuildDate>
+            <webMaster>ayanamimcy@gmail.com (一只老猫)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 19 Jun 2018 00:00:00 &#43;0000</lastBuildDate>
             <atom:link href="https://blog.ayanamimcy.top/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>java基础并发系列-初识线程</title>
+    <link>https://blog.ayanamimcy.top/java-basic-thread/</link>
+    <pubDate>Tue, 19 Jun 2018 00:00:00 &#43;0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/java-basic-thread/</guid>
+    <description><![CDATA[1. 线程的8大核心基础知识 1.实现多线程的几种方式 实现多线程的正确方法是2种： 实现 Runnable 接口 继承 Thread 类 实现Runnable接口好在哪里？ 继承Thre]]></description>
+</item>
+<item>
+    <title>权限系统初识-基于rbac模型设计一个简单的权限</title>
+    <link>https://blog.ayanamimcy.top/rbac-simple-permission-system/</link>
+    <pubDate>Sun, 10 Jun 2018 00:00:00 &#43;0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/rbac-simple-permission-system/</guid>
+    <description><![CDATA[1. 认识权限 1. 什么是权限 权限在一个系统中占据着十分重要的地位，一些功能只有特定角色用户才能访问，要做权限判断。 2. 权限的分类 登录权限 这个是所有权]]></description>
+</item>
+<item>
     <title>全文搜索引擎简介</title>
     <link>https://blog.ayanamimcy.top/full-text-search-engine/</link>
     <pubDate>Fri, 08 Jun 2018 23:58:53 &#43;0800</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/full-text-search-engine/</guid>

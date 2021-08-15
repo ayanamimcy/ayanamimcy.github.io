@@ -1,0 +1,14 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>rbac - 标签 - 强哥的猫</title>
+        <link>https://blog.ayanamimcy.top/tags/rbac/</link>
+        <description>rbac - 标签 - 强哥的猫</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>ayanamimcy@gmail.com (一只老猫)</managingEditor>
+            <webMaster>ayanamimcy@gmail.com (一只老猫)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 10 Jun 2018 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://blog.ayanamimcy.top/tags/rbac/" rel="self" type="application/rss+xml" /><item>
+    <title>权限系统初识-基于rbac模型设计一个简单的权限</title>
+    <link>https://blog.ayanamimcy.top/rbac-simple-permission-system/</link>
+    <pubDate>Sun, 10 Jun 2018 00:00:00 &#43;0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/rbac-simple-permission-system/</guid>
+    <description><![CDATA[1. 认识权限 1. 什么是权限 权限在一个系统中占据着十分重要的地位，一些功能只有特定角色用户才能访问，要做权限判断。 2. 权限的分类 登录权限 这个是所有权]]></description>
+</item>
+</channel>
+</rss>

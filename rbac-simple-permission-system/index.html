@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>权限系统初识-基于rbac模型设计一个简单的权限 - 强哥的猫</title><meta name="description" content="一只老猫的学习记录之旅"><meta property="og:title" content="权限系统初识-基于rbac模型设计一个简单的权限" />
+<meta property="og:description" content="1. 认识权限 1. 什么是权限 权限在一个系统中占据着十分重要的地位，一些功能只有特定角色用户才能访问，要做权限判断。 2. 权限的分类 登录权限 这个是所有权" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.ayanamimcy.top/rbac-simple-permission-system/" /><meta property="og:image" content="https://blog.ayanamimcy.top/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2018-06-10T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-06-10T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://blog.ayanamimcy.top/logo.png"/>
+
+<meta name="twitter:title" content="权限系统初识-基于rbac模型设计一个简单的权限"/>
+<meta name="twitter:description" content="1. 认识权限 1. 什么是权限 权限在一个系统中占据着十分重要的地位，一些功能只有特定角色用户才能访问，要做权限判断。 2. 权限的分类 登录权限 这个是所有权"/>
+<meta name="application-name" content="强哥的猫">
+<meta name="apple-mobile-web-app-title" content="强哥的猫"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://blog.ayanamimcy.top/rbac-simple-permission-system/" /><link rel="prev" href="https://blog.ayanamimcy.top/full-text-search-engine/" /><link rel="next" href="https://blog.ayanamimcy.top/java-basic-thread/" /><link rel="stylesheet" href="/css/page.min.css"><link rel="stylesheet" href="/css/home.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "权限系统初识-基于rbac模型设计一个简单的权限",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/blog.ayanamimcy.top\/rbac-simple-permission-system\/"
+        },"image": ["https:\/\/blog.ayanamimcy.top\/images\/Apple-Devices-Preview.webp"],"genre": "posts","keywords": "权限, rbac","wordcount":  2865 ,
+        "url": "https:\/\/blog.ayanamimcy.top\/rbac-simple-permission-system\/","datePublished": "2018-06-10T00:00:00+00:00","dateModified": "2018-06-10T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": "https:\/\/blog.ayanamimcy.top\/images\/w.webp"},"author": {
+                "@type": "Person",
+                "name": "一只老猫"
+            },"description": ""
+    }
+    </script></head><body data-header-desktop="fixed" data-header-mobile="auto"><script>(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="强哥的猫"><span class="header-title-pre"><i class='fas fa-hand-holding-heart fa-fw'></i></span>强哥的猫</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="https://github.com/ayanamimcy" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="#" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a class="menu-item" href="/index.xml" title="RSS"><i class="fas fa-rss fa-fw" title="RSS"></i> </a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="强哥的猫"><span class="header-title-pre"><i class='fas fa-hand-holding-heart fa-fw'></i></span>强哥的猫</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="#" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="#" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="https://github.com/ayanamimcy" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><div class="menu-item"><a href="/index.xml" title="RSS"><i class="fas fa-rss fa-fw" title="RSS"></i> </a>
+                <span>&nbsp;|&nbsp;</span><a href="javascript:void(0);" class="theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div></div>
+    </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single" data-toc="enable"><div class="single-card" ><h2 class="single-title animated flipInX">权限系统初识-基于rbac模型设计一个简单的权限</h2><div class="post-meta">
+                <div class="post-meta-line"><span class="post-author"><a href="http://blog.ayanamimcy.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>一只老猫</a></span>&nbsp;<span class="post-category">出版于  <a href="/categories/%E5%90%8E%E7%AB%AF%E6%8A%80%E6%9C%AF/"><i class="far fa-folder fa-fw"></i>后端技术</a></span></div>
+                <div class="post-meta-line"><span><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2018-06-10">2018-06-10</time></span>&nbsp;<span><i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2865 字</span>&nbsp;
+                    <span><i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟</span>&nbsp;<span id="/rbac-simple-permission-system/" class="leancloud_visitors" data-flag-title="权限系统初识-基于rbac模型设计一个简单的权限">
+                            <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+                        </span>&nbsp;</div>
+            </div>
+            
+            <hr><div class="details toc" id="toc-static"  data-kept="">
+                    <div class="details-summary toc-title">
+                        <span>目录</span>
+                        <span><i class="details-icon fas fa-angle-right"></i></span>
+                    </div>
+                    <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-认识权限">1. 认识权限</a>
+          <ul>
+            <li><a href="#1-什么是权限">1. 什么是权限</a></li>
+            <li><a href="#2-权限的分类">2. 权限的分类</a></li>
+          </ul>
+        </li>
+        <li><a href="#2-权限的设计原理">2. 权限的设计原理</a>
+          <ul>
+            <li><a href="#1-rbac-权限模型">1. RBAC 权限模型</a></li>
+            <li><a href="#2-domain之间的关系分析">2. domain之间的关系分析</a></li>
+          </ul>
+        </li>
+        <li><a href="#3-项目解析">3. 项目解析</a>
+          <ul>
+            <li><a href="#1-mybatis的分页插件---pagehelper">1. Mybatis的分页插件 - PageHelper</a></li>
+            <li><a href="#2-对角色进行授权">2. 对角色进行授权</a></li>
+            <li><a href="#3-授权的保存">3. 授权的保存</a></li>
+            <li><a href="#4-动态菜单的一个实现">4. 动态菜单的一个实现</a></li>
+            <li><a href="#5-登录拦截器的配置">5. 登录拦截器的配置</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+                </div><div class="content" id="content"><h3 id="1-认识权限">1. 认识权限</h3>
+<h4 id="1-什么是权限">1. 什么是权限</h4>
+<p>权限在一个系统中占据着十分重要的地位，一些功能只有特定角色用户才能访问，要做权限判断。</p>
+<h4 id="2-权限的分类">2. 权限的分类</h4>
+<ol>
+<li>登录权限</li>
+</ol>
+<p>这个是所有权限的基础，也是接触最多的权限了， 所以这里就不在描述了</p>
+<ol start="2">
+<li>功能系权限</li>
+</ol>
+<p>对每个用户的系统权限精准控制。不同的人拥有不同的权限。
+粗粒度权限管理，对资源类型的权限管理。资源类型比如：菜单、url连接、用户添加页面、用户信息、类方法、页面中按钮。 如：超级管理员可以访问用户添加页面、用户信息等全部页面。 部门管理员可以访问用户信息页面包括 页面中所有按钮。</p>
+<p>细粒度权限管理，对资源实例的权限管理。数据级别的权限管理。如：部门经理只可以访问本部门的员工基本信息但不能查看身份证，用户只可以看到自己的全部信息。</p>
+<h3 id="2-权限的设计原理">2. 权限的设计原理</h3>
+<h4 id="1-rbac-权限模型">1. RBAC 权限模型</h4>
+<p>权限的设计模型有很多方式，本案例中使用的是 RBAC 权限模型。RBAC 权限模型就是基于角色的访问控制。其基本思想是，对系统操作的各种权限不是直接授予具体的用户，而是在用户集合与权限集合之间建立一个角色集合。每一种角色对应一组相应的权限。一旦用户被分配了适当的角色后，该用户就拥有此角色的所有操作权限。这样做的好处是，不必在每次创建用户时都进行分配权限的操作，只要分配用户相应的角色即可，而且角色的权限变更比用户的权限变更要少得多，这样将简化用户的权限管理，减少系统的开销。</p>
+<ul>
+<li>模型设计：
+用户&mdash;&gt; 角色 &mdash;&gt; 权限 &mdash;&gt; 功能</li>
+</ul>
+<p>而用户和角色 角色和权限 从双方的角度看都是多对多的关系，所以都需要添加中间表进行关联</p>
+<ul>
+<li>
+<p>模型设计：
+用户&mdash;&gt;用户角色关联表&mdash;&gt;角色&mdash;&gt;角色权限关联表&mdash;&gt;权限&mdash;&gt;功能</p>
+</li>
+<li>
+<p>优点：简化权限和用户之间的关系，易扩展和维护。</p>
+</li>
+</ul>
+<h4 id="2-domain之间的关系分析">2. domain之间的关系分析</h4>
+<p>用户与角色：站在用户的角度，一个用户可能存在多个角色。站在角色的角度，一个角色有多个用户。用户与角色多对多的关系。</p>
+<p>角色与权限：多对多的关系。</p>
+<h3 id="3-项目解析">3. 项目解析</h3>
+<p>这里对项目中的一些思路和一些知识点进行一个总结，而关于前端的一些内容这里就不做描述了</p>
+<h4 id="1-mybatis的分页插件---pagehelper">1. Mybatis的分页插件 - PageHelper</h4>
+<p>PageHelper是Mybatis集成的一款分页插件。支持常见的RowBounds(PageRowBounds)，
+PageHelper.startPage 方法调用，Mapper 接口参数调用等等，使用起来十分方便。</p>
+<ol>
+<li>在 maven 中导入依赖</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependency&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>com.github.pagehelper<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>pagehelper-spring-boot-starter<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>1.2.5<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>使用 PageHelper.startPage() 来进行分页</li>
+</ol>
+<p>PageHelper.startPage(startPage, limitSize) 这个方法在调用之后会自动的将紧跟着 startPage 之后的第一个 select 语句进行分页，同时会将集合封装成 Page 对象。同时在 Page 对象中有查询条数、查询结果等等一系列的结果。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">//要进行分页
+</span><span class="c1"></span><span class="n">PageHelper</span><span class="o">.</span><span class="na">startPage</span><span class="o">(</span><span class="n">roleQuery</span><span class="o">.</span><span class="na">getCurrentPage</span><span class="o">(),</span><span class="n">roleQuery</span><span class="o">.</span><span class="na">getPageSize</span><span class="o">());</span>
+<span class="c1">//查询数据
+</span><span class="c1"></span><span class="n">List</span><span class="o">&lt;</span><span class="n">Role</span><span class="o">&gt;</span> <span class="n">roles</span> <span class="o">=</span> <span class="n">roleMapper</span><span class="o">.</span><span class="na">selectAllByRoleName</span><span class="o">(</span><span class="n">roleQuery</span><span class="o">.</span><span class="na">getRoleName</span><span class="o">());</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>PageInfo结果封装。</li>
+</ol>
+<p>PageInfo 类是对 Page 结果的进一步封装。里面提供了很多实用的属性例如是否是最后一页，是否是第一页等等。。
+要使用 PageInfo 作为返回结果只需要在 进行一次封装就可以。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">//把集合封装到PageInfo里面
+</span><span class="c1"></span><span class="n">PageInfo</span><span class="o">&lt;</span><span class="n">Role</span><span class="o">&gt;</span> <span class="n">pageInfo</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PageInfo</span><span class="o">&lt;&gt;(</span><span class="n">roles</span><span class="o">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>PageHelper的函数式接口，ISelect 接口方式</li>
+</ol>
+<ul>
+<li>doSelectPage()</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="n">Page</span><span class="o">&lt;</span><span class="n">Country</span><span class="o">&gt;</span> <span class="n">page</span> <span class="o">=</span> <span class="n">PageHelper</span><span class="o">.</span><span class="na">startPage</span><span class="o">(</span><span class="n">1</span><span class="o">,</span> <span class="n">10</span><span class="o">).</span><span class="na">doSelectPage</span><span class="o">(</span><span class="k">new</span> <span class="n">ISelect</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">doSelect</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">countryMapper</span><span class="o">.</span><span class="na">selectGroupBy</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+<span class="c1">//jdk8 lambda用法
+</span><span class="c1"></span><span class="n">Page</span><span class="o">&lt;</span><span class="n">Country</span><span class="o">&gt;</span> <span class="n">page</span> <span class="o">=</span> <span class="n">PageHelper</span><span class="o">.</span><span class="na">startPage</span><span class="o">(</span><span class="n">1</span><span class="o">,</span> <span class="n">10</span><span class="o">).</span><span class="na">doSelectPage</span><span class="o">(()-&gt;</span> <span class="n">countryMapper</span><span class="o">.</span><span class="na">selectGroupBy</span><span class="o">());</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>doSelectPageInfo()</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">//也可以直接返回PageInfo，注意doSelectPageInfo方法和doSelectPage
+</span><span class="c1"></span><span class="n">pageInfo</span> <span class="o">=</span> <span class="n">PageHelper</span><span class="o">.</span><span class="na">startPage</span><span class="o">(</span><span class="n">1</span><span class="o">,</span> <span class="n">10</span><span class="o">).</span><span class="na">doSelectPageInfo</span><span class="o">(</span><span class="k">new</span> <span class="n">ISelect</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">doSelect</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">countryMapper</span><span class="o">.</span><span class="na">selectGroupBy</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+<span class="c1">//对应的lambda用法
+</span><span class="c1"></span><span class="n">pageInfo</span> <span class="o">=</span> <span class="n">PageHelper</span><span class="o">.</span><span class="na">startPage</span><span class="o">(</span><span class="n">1</span><span class="o">,</span> <span class="n">10</span><span class="o">).</span><span class="na">doSelectPageInfo</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="n">countryMapper</span><span class="o">.</span><span class="na">selectGroupBy</span><span class="o">());</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="2-对角色进行授权">2. 对角色进行授权</h4>
+<p>角色授权页面的一个主要的点就是对权限的父权限和子权限进行封装。这里是要进行自关联查询，
+要以父权限为主表。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span><span class="w"> </span><span class="n">parent</span><span class="p">.</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="n">child</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="n">child_id</span><span class="p">,</span><span class="w"> </span><span class="n">child</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="n">child_name</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">permission</span><span class="w"> </span><span class="n">parent</span><span class="w">
+</span><span class="w">        </span><span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">permission</span><span class="w"> </span><span class="n">child</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">parent</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">child</span><span class="p">.</span><span class="n">parent_id</span><span class="w">
+</span><span class="w">        </span><span class="k">WHERE</span><span class="w"> </span><span class="n">parent</span><span class="p">.</span><span class="n">parent_id</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">null</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>而将结果封装到 domain 中去的话还需要进行一个 结果集的映射</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Permission</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">Long</span> <span class="n">id</span><span class="o">;</span>
+    <span class="c1">//权限名
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+
+    <span class="c1">//权限url地址
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">String</span> <span class="n">url</span><span class="o">;</span>
+
+    <span class="c1">//权限对应的菜单
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">Menu</span> <span class="n">menu</span><span class="o">;</span>
+
+    <span class="c1">//子权限对应的父权限
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">Permission</span> <span class="n">parent</span><span class="o">;</span>
+
+    <span class="c1">//装子权限的
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Permission</span><span class="o">&gt;</span> <span class="n">children</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;resultMap</span> <span class="na">id=</span><span class="s">&#34;selectAllPermissionsType&#34;</span> <span class="na">type=</span><span class="s">&#34;Permission&#34;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;id</span> <span class="na">column=</span><span class="s">&#34;id&#34;</span> <span class="na">property=</span><span class="s">&#34;id&#34;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;result</span> <span class="na">property=</span><span class="s">&#34;name&#34;</span> <span class="na">column=</span><span class="s">&#34;name&#34;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;result</span> <span class="na">property=</span><span class="s">&#34;url&#34;</span> <span class="na">column=</span><span class="s">&#34;url&#34;</span><span class="nt">/&gt;</span>
+        
+        <span class="nt">&lt;collection</span> <span class="na">property=</span><span class="s">&#34;children&#34;</span> <span class="na">columnPrefix=</span><span class="s">&#34;child_&#34;</span> <span class="na">ofType=</span><span class="s">&#34;Permission&#34;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;id</span> <span class="na">column=</span><span class="s">&#34;id&#34;</span> <span class="na">property=</span><span class="s">&#34;id&#34;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;result</span> <span class="na">property=</span><span class="s">&#34;name&#34;</span> <span class="na">column=</span><span class="s">&#34;name&#34;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/collection&gt;</span>
+<span class="nt">&lt;/resultMap&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>而回显的话，则是根据 角色id 直接查询 role_permission 关联表就可以了，如果要稳妥一点可以在 关联 permission表，从 permission 表中获取其权限id。</p>
+<h4 id="3-授权的保存">3. 授权的保存</h4>
+<p>为了简化逻辑，可以在授权的时候直接将 当前角色的所有权限全部删除，在重新授权保存role_permission表中的数据。</p>
+<h4 id="4-动态菜单的一个实现">4. 动态菜单的一个实现</h4>
+<p>动态菜单的实现主要还是多表查询，根据用户id查出对应的角色信息，而通过角色信息查出权限，最后在根据权限就可以筛选出对应权限的菜单了。
+当然这里的 sql 只是一个示例。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="n">mp</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="n">mp_id</span><span class="p">,</span><span class="w"> </span><span class="n">mp</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="n">mp_name</span><span class="p">,</span><span class="w"> </span><span class="n">mp</span><span class="p">.</span><span class="n">url</span><span class="w"> </span><span class="n">mp_url</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">employee</span><span class="w"> </span><span class="n">e</span><span class="w">
+</span><span class="w">        </span><span class="k">JOIN</span><span class="w"> </span><span class="n">employee_role</span><span class="w"> </span><span class="n">er</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">er</span><span class="p">.</span><span class="n">employee_id</span><span class="w">
+</span><span class="w">        </span><span class="k">JOIN</span><span class="w"> </span><span class="n">role_permission</span><span class="w"> </span><span class="n">rp</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">rp</span><span class="p">.</span><span class="n">role_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">er</span><span class="p">.</span><span class="n">role_id</span><span class="w">
+</span><span class="w">        </span><span class="k">JOIN</span><span class="w"> </span><span class="n">permission</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">rp</span><span class="p">.</span><span class="n">permission_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">id</span><span class="w">
+</span><span class="w">        </span><span class="k">JOIN</span><span class="w"> </span><span class="n">menu</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">menu_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">id</span><span class="w">
+</span><span class="w">        </span><span class="k">JOIN</span><span class="w"> </span><span class="n">menu</span><span class="w"> </span><span class="n">mp</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">parent_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mp</span><span class="p">.</span><span class="n">id</span><span class="w">
+</span><span class="w">        </span><span class="k">WHERE</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">#</span><span class="err">{</span><span class="n">id</span><span class="err">}</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>将结果封装到 domain 中</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Menu</span> <span class="o">{</span>
+
+    <span class="cm">/**主键id*/</span>
+    <span class="kd">private</span> <span class="n">Long</span> <span class="n">id</span><span class="o">;</span>
+    <span class="cm">/**菜单名*/</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="cm">/**菜单url*/</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">url</span><span class="o">;</span>
+    <span class="cm">/**菜单图标*/</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">icon</span><span class="o">;</span>
+    <span class="cm">/**父及菜单*/</span>
+    <span class="kd">private</span> <span class="n">Menu</span> <span class="n">parentMenu</span><span class="o">;</span>
+    <span class="cm">/**子菜单*/</span>
+    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Menu</span><span class="o">&gt;</span> <span class="n">children</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;resultMap</span> <span class="na">id=</span><span class="s">&#34;menuType&#34;</span> <span class="na">type=</span><span class="s">&#34;Menu&#34;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;id</span> <span class="na">column=</span><span class="s">&#34;id&#34;</span> <span class="na">property=</span><span class="s">&#34;id&#34;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;result</span> <span class="na">property=</span><span class="s">&#34;name&#34;</span> <span class="na">column=</span><span class="s">&#34;name&#34;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;result</span> <span class="na">property=</span><span class="s">&#34;url&#34;</span> <span class="na">column=</span><span class="s">&#34;url&#34;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;result</span> <span class="na">property=</span><span class="s">&#34;icon&#34;</span> <span class="na">column=</span><span class="s">&#34;icon&#34;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;association</span> <span class="na">property=</span><span class="s">&#34;parentMenu&#34;</span> <span class="na">javaType=</span><span class="s">&#34;Menu&#34;</span> <span class="na">columnPrefix=</span><span class="s">&#34;mp_&#34;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;id</span> <span class="na">column=</span><span class="s">&#34;id&#34;</span> <span class="na">property=</span><span class="s">&#34;id&#34;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;result</span> <span class="na">property=</span><span class="s">&#34;name&#34;</span> <span class="na">column=</span><span class="s">&#34;name&#34;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;result</span> <span class="na">property=</span><span class="s">&#34;url&#34;</span> <span class="na">column=</span><span class="s">&#34;url&#34;</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/association&gt;</span>
+<span class="nt">&lt;/resultMap&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>而由于前台需要的数据格式是 父菜单-子菜单，所以还需要在进行一层封装</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">//创建一个空集合(专门来装一级菜单的)
+</span><span class="c1"></span><span class="n">List</span><span class="o">&lt;</span><span class="n">Menu</span><span class="o">&gt;</span> <span class="n">parents</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+<span class="n">List</span><span class="o">&lt;</span><span class="n">Menu</span><span class="o">&gt;</span> <span class="n">menus</span> <span class="o">=</span> <span class="n">menuMapper</span><span class="o">.</span><span class="na">selectMenuByEmployeeId</span><span class="o">(</span><span class="n">employee</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+<span class="c1">//定义一个map集合，该map集合是专门来装父级菜单的
+</span><span class="c1"></span><span class="n">Map</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">,</span> <span class="n">Menu</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="k">for</span> <span class="o">(</span><span class="n">Menu</span> <span class="n">menu</span> <span class="o">:</span> <span class="n">menus</span><span class="o">)</span> <span class="o">{</span>
+  <span class="c1">//父级菜单
+</span><span class="c1"></span>  <span class="n">Menu</span> <span class="n">parent</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="na">getParent</span><span class="o">();</span>
+  <span class="c1">//判断map   key中是否有父菜单对应的id,如果没有，则把父菜单添加到map集合中
+</span><span class="c1"></span>  <span class="k">if</span><span class="o">(!</span><span class="n">map</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">parent</span><span class="o">.</span><span class="na">getId</span><span class="o">())){</span>
+    <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">parent</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span> <span class="n">parent</span><span class="o">);</span>
+  <span class="o">}</span>
+  <span class="c1">//拿到对应的父菜单
+</span><span class="c1"></span>  <span class="n">Menu</span> <span class="n">p</span> <span class="o">=</span>  <span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">parent</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+  <span class="c1">//父菜单获取到子菜单集合之后，再进行添加子菜单
+</span><span class="c1"></span>  <span class="n">p</span><span class="o">.</span><span class="na">getChildren</span><span class="o">().</span><span class="na">add</span><span class="o">(</span><span class="n">menu</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="c1">//拿到map中所有的v值
+</span><span class="c1"></span><span class="n">Collection</span><span class="o">&lt;</span><span class="n">Menu</span><span class="o">&gt;</span> <span class="n">values</span> <span class="o">=</span> <span class="n">map</span><span class="o">.</span><span class="na">values</span><span class="o">();</span>
+<span class="c1">//集合添加元素
+</span><span class="c1"></span><span class="n">parents</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">values</span><span class="o">);</span>
+<span class="k">return</span> <span class="n">parents</span><span class="o">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="5-登录拦截器的配置">5. 登录拦截器的配置</h4>
+<p>在 SpringBoot 中由于没有了 application.xml 配置文件，所以要注册拦截器就需要写一个配置类，同时去实现 WebMvcConfigurer 这个接口，重写其中的 <code>addInterceptors</code> 方法就可以了。</p>
+<ul>
+<li>编写拦截器</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">//将拦截器交给 spring 管理
+</span><span class="c1"></span><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">LoginInterceptor</span> <span class="kd">implements</span> <span class="n">HandlerInterceptor</span> <span class="o">{</span>
+
+    <span class="cm">/**
+</span><span class="cm">     * 在执行目标方法之前，先执行此方法
+</span><span class="cm">     * @param request
+</span><span class="cm">     * @param response
+</span><span class="cm">     * @param handler
+</span><span class="cm">     * @return
+</span><span class="cm">     * @throws Exception
+</span><span class="cm">     */</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">preHandle</span><span class="o">(</span><span class="n">HttpServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="n">HttpServletResponse</span> <span class="n">response</span><span class="o">,</span> <span class="n">Object</span> <span class="n">handler</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="n">HttpSession</span> <span class="n">session</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">getSession</span><span class="o">();</span>
+        <span class="c1">//在session中获取登录用户
+</span><span class="c1"></span>        <span class="n">Object</span> <span class="n">loginUser</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="na">getAttribute</span><span class="o">(</span><span class="s">&#34;USER_IN_SESSION&#34;</span><span class="o">);</span>
+        <span class="k">if</span><span class="o">(</span><span class="n">loginUser</span> <span class="o">==</span> <span class="kc">null</span><span class="o">){</span>
+            <span class="n">response</span><span class="o">.</span><span class="na">sendRedirect</span><span class="o">(</span><span class="s">&#34;/login&#34;</span><span class="o">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span><span class="c1">//不放行
+</span><span class="c1"></span>        <span class="o">}</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span><span class="c1">//放行
+</span><span class="c1"></span>    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>注册拦截器</li>
+</ul>
+<p>添加一个类实现 WebMvcConfigurer 接口，在类上添加 <code>@Configuration</code> 注解，表示这就是SpringBoot的配置类。类似于之前的 application.xml 配置文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Configuration</span><span class="c1">//配置类  类似于以前的xml文件
+</span><span class="c1"></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyWebMvcConfigurer</span> <span class="kd">implements</span> <span class="n">WebMvcConfigurer</span> <span class="o">{</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="kd">private</span> <span class="n">LoginInterceptor</span> <span class="n">loginInterceptor</span><span class="o">;</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="kd">private</span> <span class="n">PermissionInterceptor</span> <span class="n">permissionInterceptor</span><span class="o">;</span>
+
+    <span class="cm">/**
+</span><span class="cm">     * 注册拦截器
+</span><span class="cm">     * @param registry
+</span><span class="cm">     */</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addInterceptors</span><span class="o">(</span><span class="n">InterceptorRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">//添加登录拦截器
+</span><span class="c1"></span>        <span class="n">registry</span><span class="o">.</span><span class="na">addInterceptor</span><span class="o">(</span><span class="n">loginInterceptor</span><span class="o">).</span><span class="na">addPathPatterns</span><span class="o">(</span><span class="s">&#34;/**&#34;</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">excludePathPatterns</span><span class="o">(</span><span class="s">&#34;/login&#34;</span><span class="o">).</span><span class="na">excludePathPatterns</span><span class="o">(</span><span class="s">&#34;/assets/**&#34;</span><span class="o">);</span>
+
+        <span class="c1">//添加权限拦截器
+</span><span class="c1"></span>        <span class="n">registry</span><span class="o">.</span><span class="na">addInterceptor</span><span class="o">(</span><span class="n">permissionInterceptor</span><span class="o">).</span><span class="na">addPathPatterns</span><span class="o">(</span><span class="s">&#34;/**&#34;</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">excludePathPatterns</span><span class="o">(</span><span class="s">&#34;/login&#34;</span><span class="o">).</span><span class="na">excludePathPatterns</span><span class="o">(</span><span class="s">&#34;/assets/**&#34;</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+</span><span class="cm">     * 避免  单独写个controller去转发请求
+</span><span class="cm">     * @param registry
+</span><span class="cm">     */</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addViewControllers</span><span class="o">(</span><span class="n">ViewControllerRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">//如果你请求的资源是/nopermission，我就跳转到nopermission.html的界面
+</span><span class="c1"></span>        <span class="n">registry</span><span class="o">.</span><span class="na">addViewController</span><span class="o">(</span><span class="s">&#34;/nopermission&#34;</span><span class="o">).</span><span class="na">setViewName</span><span class="o">(</span><span class="s">&#34;nopermission&#34;</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>对权限进行拦截</li>
+</ul>
+<p>如果当前页面在权限控制下，并且当前用户没有该权限则跳转到没有权限页面，否则放行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">@Component
+public class PermissionInterceptor implements HandlerInterceptor {
+
+    @Autowired
+    private PermissionMapper permissionMapper;
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        //获取当前请求的uri
+        String uri = request.getRequestURI();
+        //获取所有的权限(特点资源)
+        List&lt;String&gt; urls = permissionMapper.selectAllPermissionUrl();
+        //如果包含，则判断当前用户是否有权限访问uri的资源
+        if(urls.contains(uri)){
+            //获取当前登录人
+            Employee employee = (Employee) request.getSession().getAttribute(&#34;USER_IN_SESSION&#34;);
+            //获取当前用户拥有的权限
+            List&lt;String&gt; permissions = permissionMapper.selectAllPermissionUrlByEmployeeId(employee.getId());
+            if(permissions.contains(uri)){
+                return true;
+            }else{
+                //跳转到没有权限的页面
+                response.sendRedirect(&#34;/nopermission&#34;);
+                return false;
+            }
+        }
+        return true;
+    }
+}
+</code></pre></td></tr></table>
+</div>
+</div></div><div class="post-footer" id="post-footer">
+    <div class="post-info"><div class="post-info-tag"><span><a href="/tags/%E6%9D%83%E9%99%90/">权限</a>
+                </span><span><a href="/tags/rbac/">rbac</a>
+                </span></div><div class="post-info-line"><div class="post-info-mod">
+                <span>更新于 2018-06-10</span>
+            </div><div class="post-info-mod"><span>
+                            <a class="link-to-markdown" href="/rbac-simple-permission-system/index.md" target="_blank">阅读原始文档</a>
+                        </span><span>
+                        &nbsp;|&nbsp;
+                        <a class="link-to-markdown" href="https://github.com/khusika/FeelIt/edit/main/exampleSite/content/posts/backend/rbac-simple-permission-system.md" target="_blank">Improve Article</a>
+                    </span></div>
+        </div><div class="post-info-share">
+            <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://blog.ayanamimcy.top/rbac-simple-permission-system/" data-title="权限系统初识-基于rbac模型设计一个简单的权限" data-hashtags="权限,rbac"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://blog.ayanamimcy.top/rbac-simple-permission-system/" data-hashtag="权限"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://blog.ayanamimcy.top/rbac-simple-permission-system/" data-title="权限系统初识-基于rbac模型设计一个简单的权限"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://blog.ayanamimcy.top/rbac-simple-permission-system/" data-title="权限系统初识-基于rbac模型设计一个简单的权限"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://blog.ayanamimcy.top/rbac-simple-permission-system/" data-title="权限系统初识-基于rbac模型设计一个简单的权限"><i class="fab fa-weibo fa-fw"></i></a></span>
+        </div></div><div class="post-nav"><a href="/full-text-search-engine/" class="prev" rel="prev" title="全文搜索引擎简介"><i class="fas fa-angle-left fa-fw"></i>Previous Post</a>
+            <a href="/java-basic-thread/" class="next" rel="next" title="java基础并发系列-初识线程">Next Post<i class="fas fa-angle-right fa-fw"></i></a></div></div>
+</div><div id="comments" class="single-card"><div id="valine"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript></div></article></div>
+            </main>
+            <footer class="footer"><div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.85.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/khusika/FeelIt" target="_blank" rel="noopener noreffer" title="FeelIt 1.0.1"><i class="fas fa-hand-holding-heart fa-fw"></i> FeelIt</a>
+        </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="http://blog.ayanamimcy.top">一只老猫</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker
+        .register('/sw.min.js?version=1.0.1', { scope: '/' })
+        .then(() => {
+            console.info('强哥的猫\u00A0Service Worker Registered');
+        }, err => console.error('强哥的猫\u00A0Service Worker registration failed: ', err));
+
+    navigator.serviceWorker
+        .ready
+        .then(() => {
+            console.info('强哥的猫\u00A0Service Worker Ready');
+        });
+}
+</script>
+</footer>
+        </div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-chevron-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment-alt fa-fw"></i>
+            </a></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><link rel="stylesheet" href="/lib/valine/valine.min.css"><script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script><script src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.0/dist/autocomplete.min.js"></script><script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.8.5/dist/algoliasearch-lite.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script><script src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.1/sharer.min.js"></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"valine":{"appId":"0pPusmmAwGgfI3UumS1TPOdU-gzGzoHsz","appKey":"EhdNEkkUWjIpFlzsKFzb5EPR","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":false,"highlight":true,"lang":"zh-cn","pageSize":10,"placeholder":"你的评论 ...","recordIP":true,"serverURLs":"https://leancloud.hugoloveit.com","visitor":true}},"search":{"algoliaAppID":"88XAZXA5VT","algoliaIndex":"mcyblog","algoliaSearchKey":"a9134cae6f193946727628a7ce2ad0a2","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script src="/js/theme.min.js"></script></body></html>
