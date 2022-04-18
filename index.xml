@@ -4,9 +4,15 @@
         <link>https://blog.ayanamimcy.top/</link>
         <description>一只老猫的学习记录之旅</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>ayanamimcy@gmail.com (一只老猫)</managingEditor>
-            <webMaster>ayanamimcy@gmail.com (一只老猫)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 19 Jun 2018 00:00:00 &#43;0000</lastBuildDate>
+            <webMaster>ayanamimcy@gmail.com (一只老猫)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 02 Oct 2018 00:00:00 &#43;0000</lastBuildDate>
             <atom:link href="https://blog.ayanamimcy.top/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>Alfred工作流简单介绍</title>
+    <link>https://blog.ayanamimcy.top/mac-alfred-workflow-basic-introduce/</link>
+    <pubDate>Tue, 02 Oct 2018 00:00:00 &#43;0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/mac-alfred-workflow-basic-introduce/</guid>
+    <description><![CDATA[简介 每当有人问到有什么 macOS 上的提升效率的神器，Alfred 都是我脑海里第一个蹦出来的答案。Alfred with Powerpack 更是强上加强。 几乎 mac 里的一切都可以通]]></description>
+</item>
+<item>
     <title>java基础并发系列-初识线程</title>
     <link>https://blog.ayanamimcy.top/java-basic-thread/</link>
     <pubDate>Tue, 19 Jun 2018 00:00:00 &#43;0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/java-basic-thread/</guid>
