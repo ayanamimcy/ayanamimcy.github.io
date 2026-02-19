@@ -4,9 +4,21 @@
         <link>https://blog.ayanamimcy.top/</link>
         <description>一只老猫的学习记录之旅</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>ayanamimcy@gmail.com (一只老猫)</managingEditor>
-            <webMaster>ayanamimcy@gmail.com (一只老猫)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 02 Oct 2018 00:00:00 &#43;0000</lastBuildDate>
+            <webMaster>ayanamimcy@gmail.com (一只老猫)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 14 Sep 2025 00:00:00 &#43;0000</lastBuildDate>
             <atom:link href="https://blog.ayanamimcy.top/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>Deep Dive into Linear Regression: A Complete Analysis from Model to Optimization</title>
+    <link>https://blog.ayanamimcy.top/linear-regression/</link>
+    <pubDate>Sun, 14 Sep 2025 00:00:00 &#43;0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/linear-regression/</guid>
+    <description><![CDATA[Introduction Linear regression is the cornerstone of machine learning and deep learning. While it appears simple, the core concepts embedded within it—model representation, loss functions, empirical risk minimization, and gradient descent—form the foundational framework of modern deep learning. This article will explore the principles and mechanisms of these concepts in depth, helping]]></description>
+</item>
+<item>
+    <title>如何在fedora系统中开启gamescope</title>
+    <link>https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/</link>
+    <pubDate>Sun, 14 Sep 2025 00:00:00 &#43;0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/</guid>
+    <description><![CDATA[安装 gamescope 启动到 Steam Deck 界面 前置条件 Fedora Workstation（Wayland 默认即可）。 有 NVIDIA/AMD 独显的机器建议先装好官方驱动。 关闭 Secure Boot，避免驱动与]]></description>
+</item>
+<item>
     <title>Alfred工作流简单介绍</title>
     <link>https://blog.ayanamimcy.top/mac-alfred-workflow-basic-introduce/</link>
     <pubDate>Tue, 02 Oct 2018 00:00:00 &#43;0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/mac-alfred-workflow-basic-introduce/</guid>

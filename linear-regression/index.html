@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Deep Dive into Linear Regression: A Complete Analysis from Model to Optimization - 强哥的猫</title><meta name="description" content="一只老猫的学习记录之旅"><meta property="og:title" content="Deep Dive into Linear Regression: A Complete Analysis from Model to Optimization" />
+<meta property="og:description" content="Introduction Linear regression is the cornerstone of machine learning and deep learning. While it appears simple, the core concepts embedded within it—model representation, loss functions, empirical risk minimization, and gradient descent—form the foundational framework of modern deep learning. This article will explore the principles and mechanisms of these concepts in depth, helping" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.ayanamimcy.top/linear-regression/" /><meta property="og:image" content="https://blog.ayanamimcy.top/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2025-09-14T00:00:00+00:00" />
+<meta property="article:modified_time" content="2025-09-14T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://blog.ayanamimcy.top/logo.png"/>
+
+<meta name="twitter:title" content="Deep Dive into Linear Regression: A Complete Analysis from Model to Optimization"/>
+<meta name="twitter:description" content="Introduction Linear regression is the cornerstone of machine learning and deep learning. While it appears simple, the core concepts embedded within it—model representation, loss functions, empirical risk minimization, and gradient descent—form the foundational framework of modern deep learning. This article will explore the principles and mechanisms of these concepts in depth, helping"/>
+<meta name="application-name" content="强哥的猫">
+<meta name="apple-mobile-web-app-title" content="强哥的猫"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://blog.ayanamimcy.top/linear-regression/" /><link rel="prev" href="https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/" /><link rel="stylesheet" href="/css/page.min.css"><link rel="stylesheet" href="/css/home.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Deep Dive into Linear Regression: A Complete Analysis from Model to Optimization",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/blog.ayanamimcy.top\/linear-regression\/"
+        },"image": ["https:\/\/blog.ayanamimcy.top\/images\/Apple-Devices-Preview.webp"],"genre": "posts","keywords": "ml, math","wordcount":  1873 ,
+        "url": "https:\/\/blog.ayanamimcy.top\/linear-regression\/","datePublished": "2025-09-14T00:00:00+00:00","dateModified": "2025-09-14T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": "https:\/\/blog.ayanamimcy.top\/images\/w.webp"},"author": {
+                "@type": "Person",
+                "name": "一只老猫"
+            },"description": ""
+    }
+    </script></head><body data-header-desktop="fixed" data-header-mobile="auto"><script>(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="强哥的猫"><img
+        class="lazyload logo"
+        src="/svg/loading.min.svg"
+        data-src="/images/icon.png"
+        data-srcset="/images/icon.png, /images/icon.png 1.5x, /images/icon.png 2x"
+        data-sizes="auto"
+        alt="/images/icon.png"
+        title="/images/icon.png" />强哥的猫</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="https://github.com/ayanamimcy" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="#" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a class="menu-item" href="/index.xml" title="RSS"><i class="fas fa-rss fa-fw" title="RSS"></i> </a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="强哥的猫"><img
+        class="lazyload logo"
+        src="/svg/loading.min.svg"
+        data-src="/images/icon.png"
+        data-srcset="/images/icon.png, /images/icon.png 1.5x, /images/icon.png 2x"
+        data-sizes="auto"
+        alt="/images/icon.png"
+        title="/images/icon.png" />强哥的猫</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="#" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="#" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="https://github.com/ayanamimcy" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><div class="menu-item"><a href="/index.xml" title="RSS"><i class="fas fa-rss fa-fw" title="RSS"></i> </a>
+                <span>&nbsp;|&nbsp;</span><a href="javascript:void(0);" class="theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div></div>
+    </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single" data-toc="enable"><div class="single-card" ><h2 class="single-title animated flipInX">Deep Dive into Linear Regression: A Complete Analysis from Model to Optimization</h2><div class="post-meta">
+                <div class="post-meta-line"><span class="post-author"><a href="http://blog.ayanamimcy.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>一只老猫</a></span>&nbsp;<span class="post-category">出版于  <a href="/categories/ml/"><i class="far fa-folder fa-fw"></i>ml</a></span></div>
+                <div class="post-meta-line"><span><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2025-09-14">2025-09-14</time></span>&nbsp;<span><i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1873 字</span>&nbsp;
+                    <span><i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟</span>&nbsp;<span id="/linear-regression/" class="leancloud_visitors" data-flag-title="Deep Dive into Linear Regression: A Complete Analysis from Model to Optimization">
+                            <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+                        </span>&nbsp;</div>
+            </div>
+            
+            <hr><div class="details toc" id="toc-static"  data-kept="">
+                    <div class="details-summary toc-title">
+                        <span>目录</span>
+                        <span><i class="details-icon fas fa-angle-right"></i></span>
+                    </div>
+                    <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#part-1-the-essence-of-linear-regression-models">Part 1: The Essence of Linear Regression Models</a>
+      <ul>
+        <li><a href="#11-mathematical-representation-of-the-model">1.1 Mathematical Representation of the Model</a></li>
+        <li><a href="#12-extension-from-one-dimensional-to-multi-dimensional">1.2 Extension from One-Dimensional to Multi-Dimensional</a></li>
+        <li><a href="#13-geometric-intuition-of-the-model">1.3 Geometric Intuition of the Model</a></li>
+        <li><a href="#14-model-assumptions">1.4 Model Assumptions</a></li>
+      </ul>
+    </li>
+    <li><a href="#part-2-design-and-selection-of-loss-functions">Part 2: Design and Selection of Loss Functions</a>
+      <ul>
+        <li><a href="#21-squared-loss-l2-loss">2.1 Squared Loss (L2 Loss)</a>
+          <ul>
+            <li><a href="#how-it-works">How It Works:</a></li>
+            <li><a href="#mathematical-derivation">Mathematical Derivation:</a></li>
+            <li><a href="#advantages">Advantages:</a></li>
+            <li><a href="#disadvantages">Disadvantages:</a></li>
+          </ul>
+        </li>
+        <li><a href="#22-absolute-value-loss-l1-loss">2.2 Absolute Value Loss (L1 Loss)</a>
+          <ul>
+            <li><a href="#how-it-works-1">How It Works:</a></li>
+            <li><a href="#mathematical-properties">Mathematical Properties:</a></li>
+            <li><a href="#advantages-1">Advantages:</a></li>
+            <li><a href="#disadvantages-1">Disadvantages:</a></li>
+          </ul>
+        </li>
+        <li><a href="#23-loss-function-selection-strategy">2.3 Loss Function Selection Strategy</a></li>
+      </ul>
+    </li>
+    <li><a href="#part-3-empirical-risk-minimization-erm">Part 3: Empirical Risk Minimization (ERM)</a>
+      <ul>
+        <li><a href="#31-core-idea-of-erm">3.1 Core Idea of ERM</a></li>
+        <li><a href="#32-components-of-erm">3.2 Components of ERM</a></li>
+        <li><a href="#33-why-empirical-risk">3.3 Why &ldquo;Empirical&rdquo; Risk?</a></li>
+        <li><a href="#34-theoretical-guarantees-of-erm">3.4 Theoretical Guarantees of ERM</a></li>
+        <li><a href="#35-overfitting-and-regularization">3.5 Overfitting and Regularization</a></li>
+      </ul>
+    </li>
+    <li><a href="#part-4-gradient-descent---the-engine-of-optimization">Part 4: Gradient Descent - The Engine of Optimization</a>
+      <ul>
+        <li><a href="#41-core-idea-of-gradient-descent">4.1 Core Idea of Gradient Descent</a></li>
+        <li><a href="#42-geometric-meaning-of-gradients">4.2 Geometric Meaning of Gradients</a></li>
+        <li><a href="#43-learning-rate-selection">4.3 Learning Rate Selection</a></li>
+        <li><a href="#44-gradient-computation-examples">4.4 Gradient Computation Examples</a>
+          <ul>
+            <li><a href="#for-squared-loss">For Squared Loss:</a></li>
+            <li><a href="#for-absolute-value-loss">For Absolute Value Loss:</a></li>
+          </ul>
+        </li>
+        <li><a href="#45-variants-of-gradient-descent">4.5 Variants of Gradient Descent</a></li>
+        <li><a href="#46-convergence-analysis">4.6 Convergence Analysis</a></li>
+      </ul>
+    </li>
+    <li><a href="#part-5-practical-considerations">Part 5: Practical Considerations</a>
+      <ul>
+        <li><a href="#51-feature-scaling">5.1 Feature Scaling</a></li>
+        <li><a href="#52-initialization-strategies">5.2 Initialization Strategies</a></li>
+        <li><a href="#53-debugging-tips">5.3 Debugging Tips</a></li>
+        <li><a href="#54-implementation-example">5.4 Implementation Example</a></li>
+      </ul>
+    </li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ul>
+</nav></div>
+                </div><div class="content" id="content"><h2 id="introduction">Introduction</h2>
+<p>Linear regression is the cornerstone of machine learning and deep learning. While it appears simple, the core concepts embedded within it—model representation, loss functions, empirical risk minimization, and gradient descent—form the foundational framework of modern deep learning. This article will explore the principles and mechanisms of these concepts in depth, helping readers build a solid theoretical foundation.</p>
+<h2 id="part-1-the-essence-of-linear-regression-models">Part 1: The Essence of Linear Regression Models</h2>
+<h3 id="11-mathematical-representation-of-the-model">1.1 Mathematical Representation of the Model</h3>
+<p>The core idea of linear regression is to fit data with a line (or hyperplane). Its mathematical representation is:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">y</span> <span class="o">=</span> <span class="n">wx</span> <span class="o">+</span> <span class="n">b</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>This seemingly simple formula actually contains the core elements of machine learning:</p>
+<ul>
+<li><strong>Input Features (x)</strong>: Represents the data we observe, which can be one-dimensional (like house area) or multi-dimensional (like house area, location, age, and other features)</li>
+<li><strong>Weight Parameters (w)</strong>: Indicates the degree of influence each feature has on the output</li>
+<li><strong>Bias Term (b)</strong>: Allows the model&rsquo;s output not to pass through the origin, increasing model flexibility</li>
+<li><strong>Predicted Output (y)</strong>: The model&rsquo;s predicted value for given input</li>
+</ul>
+<h3 id="12-extension-from-one-dimensional-to-multi-dimensional">1.2 Extension from One-Dimensional to Multi-Dimensional</h3>
+<p>When we have multiple features, the model extends to:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">y</span> <span class="o">=</span> <span class="n">w</span><span class="err">₁</span><span class="n">x</span><span class="err">₁</span> <span class="o">+</span> <span class="n">w</span><span class="err">₂</span><span class="n">x</span><span class="err">₂</span> <span class="o">+</span> <span class="o">...</span> <span class="o">+</span> <span class="n">wₙxₙ</span> <span class="o">+</span> <span class="n">b</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Vector representation is more concise:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">y</span> <span class="o">=</span> <span class="n">w</span><span class="o">^</span><span class="n">T·x</span> <span class="o">+</span> <span class="n">b</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Where w^T represents the transpose of the weight vector, and · represents the dot product operation.</p>
+<h3 id="13-geometric-intuition-of-the-model">1.3 Geometric Intuition of the Model</h3>
+<p>From a geometric perspective, linear regression is finding a hyperplane in high-dimensional space that is as close as possible to all data points. In 2D space, this means finding a line; in 3D space, finding a plane; in higher dimensions, while difficult to visualize, the mathematical principles remain consistent.</p>
+<h3 id="14-model-assumptions">1.4 Model Assumptions</h3>
+<p>The linear regression model implies several important assumptions:</p>
+<ol>
+<li><strong>Linear Relationship</strong>: A linear relationship exists between inputs and outputs</li>
+<li><strong>Independent and Identically Distributed</strong>: Data points are independently sampled</li>
+<li><strong>Noise Assumption</strong>: Observations contain noise, typically assumed to follow a Gaussian distribution</li>
+</ol>
+<p>While these assumptions are rarely fully satisfied in reality, they provide us with a good starting point.</p>
+<h2 id="part-2-design-and-selection-of-loss-functions">Part 2: Design and Selection of Loss Functions</h2>
+<p>Loss functions are the bridge connecting model predictions and real data, quantifying the &ldquo;degree of error&rdquo; in predictions.</p>
+<h3 id="21-squared-loss-l2-loss">2.1 Squared Loss (L2 Loss)</h3>
+<p>Squared loss is the most commonly used loss function:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">L</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">ŷ</span><span class="p">)</span><span class="err">²</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="how-it-works">How It Works:</h4>
+<ol>
+<li><strong>Error Amplification Effect</strong>: Squaring operation makes the penalty for large errors grow quadratically</li>
+<li><strong>Differentiability</strong>: Differentiable at all points, convenient for optimization</li>
+<li><strong>Unique Optimal Solution</strong>: For linear models, squared loss has a closed-form solution</li>
+</ol>
+<h4 id="mathematical-derivation">Mathematical Derivation:</h4>
+<p>For all samples, the total loss is:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">J</span> <span class="o">=</span> <span class="n">Σᵢ</span> <span class="p">(</span><span class="n">yᵢ</span> <span class="o">-</span> <span class="p">(</span><span class="n">wxᵢ</span> <span class="o">+</span> <span class="n">b</span><span class="p">))</span><span class="err">²</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>By taking derivatives and setting them to zero, we can obtain the normal equation:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">w</span><span class="o">*</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span><span class="o">^</span><span class="n">T·X</span><span class="p">)</span><span class="err">⁻¹·</span><span class="n">X</span><span class="o">^</span><span class="n">T·y</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="advantages">Advantages:</h4>
+<ul>
+<li>Good mathematical properties, easy to optimize</li>
+<li>Has closed-form solution (for linear models)</li>
+<li>Simple gradient computation</li>
+</ul>
+<h4 id="disadvantages">Disadvantages:</h4>
+<ul>
+<li><strong>Sensitive to Outliers</strong>: One extreme outlier can severely affect the entire model</li>
+<li><strong>Assumes Gaussian Noise</strong>: May not hold in practice</li>
+</ul>
+<h3 id="22-absolute-value-loss-l1-loss">2.2 Absolute Value Loss (L1 Loss)</h3>
+<p>Absolute value loss provides another way to measure error:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">L</span> <span class="o">=</span> <span class="o">|</span><span class="n">y</span> <span class="o">-</span> <span class="n">ŷ</span><span class="o">|</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="how-it-works-1">How It Works:</h4>
+<ol>
+<li><strong>Linear Penalty</strong>: Error penalty is proportional to error magnitude</li>
+<li><strong>Robustness</strong>: Less sensitive to outliers than squared loss</li>
+<li><strong>Non-differentiable Points</strong>: Non-differentiable when prediction is perfectly accurate (error is 0)</li>
+</ol>
+<h4 id="mathematical-properties">Mathematical Properties:</h4>
+<p>The gradient of absolute value loss:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="err">∂</span><span class="n">L</span><span class="o">/</span><span class="err">∂</span><span class="n">ŷ</span> <span class="o">=</span> <span class="n">sign</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">ŷ</span><span class="p">)</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="k">if</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="n">ŷ</span>
+    <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="k">if</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="n">ŷ</span>
+    <span class="n">undefined</span><span class="p">,</span> <span class="k">if</span> <span class="n">y</span> <span class="o">=</span> <span class="n">ŷ</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="advantages-1">Advantages:</h4>
+<ul>
+<li><strong>Robust to Outliers</strong>: Outlier influence is linear, not amplified</li>
+<li><strong>Produces Sparse Solutions</strong>: In certain cases, can make some parameters zero</li>
+</ul>
+<h4 id="disadvantages-1">Disadvantages:</h4>
+<ul>
+<li>No closed-form solution, must use iterative optimization</li>
+<li>Non-differentiable at zero, requires special handling</li>
+<li>Convergence speed may be slower than squared loss</li>
+</ul>
+<h3 id="23-loss-function-selection-strategy">2.3 Loss Function Selection Strategy</h3>
+<p>Choosing a loss function requires considering:</p>
+<ol>
+<li>
+<p><strong>Data Characteristics</strong>:</p>
+<ul>
+<li>If data contains outliers, choose L1 loss</li>
+<li>If data is relatively clean, L2 loss is usually more effective</li>
+</ul>
+</li>
+<li>
+<p><strong>Optimization Convenience</strong>:</p>
+<ul>
+<li>L2 loss optimization is easier, converges faster</li>
+<li>L1 loss may require more iterations</li>
+</ul>
+</li>
+<li>
+<p><strong>Model Interpretability</strong>:</p>
+<ul>
+<li>L1 loss tends to produce sparse solutions (some weights are 0)</li>
+<li>L2 loss solutions typically have all non-zero weights</li>
+</ul>
+</li>
+</ol>
+<h2 id="part-3-empirical-risk-minimization-erm">Part 3: Empirical Risk Minimization (ERM)</h2>
+<h3 id="31-core-idea-of-erm">3.1 Core Idea of ERM</h3>
+<p>Empirical risk minimization is the fundamental principle of machine learning:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="nb">min</span> <span class="n">J</span><span class="p">(</span><span class="n">θ</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">m</span> <span class="n">Σᵢ</span> <span class="n">L</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">xᵢ</span><span class="p">;</span> <span class="n">θ</span><span class="p">),</span> <span class="n">yᵢ</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>This formula expresses a simple but profound idea: <strong>find the parameters that minimize the average loss on training data</strong>.</p>
+<h3 id="32-components-of-erm">3.2 Components of ERM</h3>
+<ol>
+<li><strong>Parameter Space (θ ∈ Θ)</strong>: The set of all possible parameter values</li>
+<li><strong>Model Function f(x; θ)</strong>: Function mapping inputs to outputs</li>
+<li><strong>Loss Function L</strong>: Measures prediction error</li>
+<li><strong>Training Data {(xᵢ, yᵢ)}</strong>: Samples used for learning</li>
+</ol>
+<h3 id="33-why-empirical-risk">3.3 Why &ldquo;Empirical&rdquo; Risk?</h3>
+<p>The term &ldquo;empirical&rdquo; emphasizes that we&rsquo;re using finite training data, not the true data distribution. Ideally, we want to minimize expected risk:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">R</span><span class="p">(</span><span class="n">θ</span><span class="p">)</span> <span class="o">=</span> <span class="n">E</span><span class="p">[</span><span class="n">L</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">;</span> <span class="n">θ</span><span class="p">),</span> <span class="n">y</span><span class="p">)]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>But since we don&rsquo;t know the true distribution, we approximate with empirical risk (average loss on training data):</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">J</span><span class="p">(</span><span class="n">θ</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">m</span> <span class="n">Σᵢ</span> <span class="n">L</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">xᵢ</span><span class="p">;</span> <span class="n">θ</span><span class="p">),</span> <span class="n">yᵢ</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="34-theoretical-guarantees-of-erm">3.4 Theoretical Guarantees of ERM</h3>
+<p>The Law of Large Numbers tells us: when the number of samples m is large enough, empirical risk converges to expected risk. This provides a theoretical foundation for ERM.</p>
+<h3 id="35-overfitting-and-regularization">3.5 Overfitting and Regularization</h3>
+<p>Pure ERM can lead to overfitting. Solutions include:</p>
+<ol>
+<li>
+<p><strong>Regularization</strong>: Add penalty terms</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">J_reg</span><span class="p">(</span><span class="n">θ</span><span class="p">)</span> <span class="o">=</span> <span class="n">J</span><span class="p">(</span><span class="n">θ</span><span class="p">)</span> <span class="o">+</span> <span class="n">λ·</span><span class="o">||</span><span class="n">θ</span><span class="o">||</span><span class="err">²</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>Early Stopping</strong>: Stop training before validation performance declines</p>
+</li>
+<li>
+<p><strong>Cross-Validation</strong>: Evaluate model generalization ability</p>
+</li>
+</ol>
+<h2 id="part-4-gradient-descent---the-engine-of-optimization">Part 4: Gradient Descent - The Engine of Optimization</h2>
+<h3 id="41-core-idea-of-gradient-descent">4.1 Core Idea of Gradient Descent</h3>
+<p>When the loss function has no closed-form solution (e.g., using L1 loss), we need iterative optimization methods. Gradient descent is the most fundamental and important optimization algorithm.</p>
+<p>Basic update rule:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iterations</span><span class="p">):</span>
+    <span class="n">gradient</span> <span class="o">=</span> <span class="n">compute_gradient</span><span class="p">(</span><span class="n">θ</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+    <span class="n">θ</span> <span class="o">=</span> <span class="n">θ</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">gradient</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="42-geometric-meaning-of-gradients">4.2 Geometric Meaning of Gradients</h3>
+<p>The gradient points in the direction of fastest function growth, so the negative gradient points in the direction of fastest descent. This is like being on a hillside, always walking in the steepest downhill direction, eventually reaching the valley.</p>
+<h3 id="43-learning-rate-selection">4.3 Learning Rate Selection</h3>
+<p>The learning rate controls the step size:</p>
+<ul>
+<li><strong>Too Large</strong>: May overshoot the optimum, or even diverge</li>
+<li><strong>Too Small</strong>: Slow convergence, high computational cost</li>
+<li><strong>Adaptive</strong>: Modern methods (like Adam) automatically adjust the learning rate</li>
+</ul>
+<h3 id="44-gradient-computation-examples">4.4 Gradient Computation Examples</h3>
+<h4 id="for-squared-loss">For Squared Loss:</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Gradient for single sample</span>
+<span class="err">∂</span><span class="n">L</span><span class="o">/</span><span class="err">∂</span><span class="n">w</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="p">(</span><span class="n">wx</span> <span class="o">+</span> <span class="n">b</span><span class="p">))</span> <span class="o">*</span> <span class="n">x</span>
+<span class="err">∂</span><span class="n">L</span><span class="o">/</span><span class="err">∂</span><span class="n">b</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="p">(</span><span class="n">wx</span> <span class="o">+</span> <span class="n">b</span><span class="p">))</span>
+
+<span class="c1"># Batch gradient</span>
+<span class="n">gradient_w</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="o">/</span><span class="n">m</span> <span class="o">*</span> <span class="n">Σᵢ</span> <span class="p">(</span><span class="n">yᵢ</span> <span class="o">-</span> <span class="p">(</span><span class="n">wxᵢ</span> <span class="o">+</span> <span class="n">b</span><span class="p">))</span> <span class="o">*</span> <span class="n">xᵢ</span>
+<span class="n">gradient_b</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="o">/</span><span class="n">m</span> <span class="o">*</span> <span class="n">Σᵢ</span> <span class="p">(</span><span class="n">yᵢ</span> <span class="o">-</span> <span class="p">(</span><span class="n">wxᵢ</span> <span class="o">+</span> <span class="n">b</span><span class="p">))</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="for-absolute-value-loss">For Absolute Value Loss:</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Gradient for single sample</span>
+<span class="err">∂</span><span class="n">L</span><span class="o">/</span><span class="err">∂</span><span class="n">w</span> <span class="o">=</span> <span class="o">-</span><span class="n">sign</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="p">(</span><span class="n">wx</span> <span class="o">+</span> <span class="n">b</span><span class="p">))</span> <span class="o">*</span> <span class="n">x</span>
+<span class="err">∂</span><span class="n">L</span><span class="o">/</span><span class="err">∂</span><span class="n">b</span> <span class="o">=</span> <span class="o">-</span><span class="n">sign</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="p">(</span><span class="n">wx</span> <span class="o">+</span> <span class="n">b</span><span class="p">))</span>
+
+<span class="c1"># Batch gradient</span>
+<span class="n">gradient_w</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">m</span> <span class="o">*</span> <span class="n">Σᵢ</span> <span class="n">sign</span><span class="p">(</span><span class="n">yᵢ</span> <span class="o">-</span> <span class="p">(</span><span class="n">wxᵢ</span> <span class="o">+</span> <span class="n">b</span><span class="p">))</span> <span class="o">*</span> <span class="n">xᵢ</span>
+<span class="n">gradient_b</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">m</span> <span class="o">*</span> <span class="n">Σᵢ</span> <span class="n">sign</span><span class="p">(</span><span class="n">yᵢ</span> <span class="o">-</span> <span class="p">(</span><span class="n">wxᵢ</span> <span class="o">+</span> <span class="n">b</span><span class="p">))</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="45-variants-of-gradient-descent">4.5 Variants of Gradient Descent</h3>
+<ol>
+<li>
+<p><strong>Batch Gradient Descent (BGD)</strong>:</p>
+<ul>
+<li>Uses all data to compute gradients</li>
+<li>Stable but computationally expensive</li>
+</ul>
+</li>
+<li>
+<p><strong>Stochastic Gradient Descent (SGD)</strong>:</p>
+<ul>
+<li>Uses one sample at a time</li>
+<li>Fast but noisy</li>
+</ul>
+</li>
+<li>
+<p><strong>Mini-batch Gradient Descent</strong>:</p>
+<ul>
+<li>Uses a small batch of samples</li>
+<li>Balances speed and stability</li>
+</ul>
+</li>
+</ol>
+<h3 id="46-convergence-analysis">4.6 Convergence Analysis</h3>
+<p>Gradient descent convergence depends on:</p>
+<ol>
+<li><strong>Convexity of Loss Function</strong>: Convex functions guarantee convergence to global optimum</li>
+<li><strong>Learning Rate</strong>: Must satisfy certain conditions (e.g., decreasing)</li>
+<li><strong>Lipschitz Continuity of Gradient</strong>: Ensures smooth optimization</li>
+</ol>
+<h2 id="part-5-practical-considerations">Part 5: Practical Considerations</h2>
+<h3 id="51-feature-scaling">5.1 Feature Scaling</h3>
+<p>Different feature scales affect optimization:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Standardization</span>
+<span class="n">x_scaled</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># Normalization</span>
+<span class="n">x_normalized</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="52-initialization-strategies">5.2 Initialization Strategies</h3>
+<p>Good initialization can accelerate convergence:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Random initialization</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_features</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.01</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="c1"># Xavier initialization</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_features</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">n_features</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="53-debugging-tips">5.3 Debugging Tips</h3>
+<ol>
+<li><strong>Gradient Checking</strong>: Verify analytical gradients with numerical gradients</li>
+<li><strong>Loss Curves</strong>: Monitor training progress</li>
+<li><strong>Learning Rate Scheduling</strong>: Dynamically adjust learning rate</li>
+</ol>
+<h3 id="54-implementation-example">5.4 Implementation Example</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="k">class</span> <span class="nc">LinearRegression</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss_type</span><span class="o">=</span><span class="s1">&#39;l2&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_type</span> <span class="o">=</span> <span class="n">loss_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="kc">None</span>
+    
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+        <span class="n">n_samples</span><span class="p">,</span> <span class="n">n_features</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+        
+        <span class="c1"># Initialize parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_features</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="mi">0</span>
+        
+        <span class="c1"># Gradient descent</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iterations</span><span class="p">):</span>
+            <span class="c1"># Predict</span>
+            <span class="n">y_pred</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span>
+            
+            <span class="c1"># Compute gradients</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_type</span> <span class="o">==</span> <span class="s1">&#39;l2&#39;</span><span class="p">:</span>
+                <span class="n">dw</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="n">n_samples</span><span class="p">)</span> <span class="o">*</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_pred</span><span class="p">)</span>
+                <span class="n">db</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="n">n_samples</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_pred</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># l1</span>
+                <span class="n">dw</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">n_samples</span><span class="p">)</span> <span class="o">*</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_pred</span><span class="p">))</span>
+                <span class="n">db</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">n_samples</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_pred</span><span class="p">))</span>
+            
+            <span class="c1"># Update parameters</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">-=</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">dw</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">-=</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">db</span>
+            
+            <span class="c1"># Print loss (optional)</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_loss</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Iteration </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">, Loss: </span><span class="si">{</span><span class="n">loss</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">compute_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_type</span> <span class="o">==</span> <span class="s1">&#39;l2&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_pred</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_pred</span><span class="p">))</span>
+    
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="conclusion">Conclusion</h2>
+<p>While linear regression is one of the simplest machine learning models, it contains the core elements of deep learning:</p>
+<ol>
+<li><strong>Model Representation</strong>: How to express our assumptions in mathematical form</li>
+<li><strong>Loss Functions</strong>: How to quantify the quality of predictions</li>
+<li><strong>Empirical Risk Minimization</strong>: Transforming learning problems into optimization problems</li>
+<li><strong>Gradient Descent</strong>: How to iteratively find optimal solutions</li>
+</ol>
+<p>These concepts apply not only to linear regression but form the foundation for understanding neural networks and deep learning. By deeply understanding these principles, we can:</p>
+<ul>
+<li>Better choose and design models</li>
+<li>Understand trade-offs between different loss functions</li>
+<li>Diagnose and solve optimization problems</li>
+<li>Build a solid foundation for learning more complex models</li>
+</ul>
+<p>The beauty of linear regression lies in its ability to demonstrate the core ideas of machine learning in the simplest form. Master these fundamentals, and you&rsquo;ll have the keys to explore the world of deep learning.</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info"><div class="post-info-tag"><span><a href="/tags/ml/">ml</a>
+                </span><span><a href="/tags/math/">math</a>
+                </span></div><div class="post-info-line"><div class="post-info-mod">
+                <span>更新于 2025-09-14</span>
+            </div><div class="post-info-mod"><span>
+                            <a class="link-to-markdown" href="/linear-regression/index.md" target="_blank">阅读原始文档</a>
+                        </span><span>
+                        &nbsp;|&nbsp;
+                        <a class="link-to-markdown" href="https://github.com/khusika/FeelIt/edit/main/exampleSite/content/posts/ml/linear-regression.md" target="_blank">Improve Article</a>
+                    </span></div>
+        </div><div class="post-info-share">
+            <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://blog.ayanamimcy.top/linear-regression/" data-title="Deep Dive into Linear Regression: A Complete Analysis from Model to Optimization" data-hashtags="ml,math"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://blog.ayanamimcy.top/linear-regression/" data-hashtag="ml"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://blog.ayanamimcy.top/linear-regression/" data-title="Deep Dive into Linear Regression: A Complete Analysis from Model to Optimization"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://blog.ayanamimcy.top/linear-regression/" data-title="Deep Dive into Linear Regression: A Complete Analysis from Model to Optimization"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://blog.ayanamimcy.top/linear-regression/" data-title="Deep Dive into Linear Regression: A Complete Analysis from Model to Optimization"><i class="fab fa-weibo fa-fw"></i></a></span>
+        </div></div><div class="post-nav"><a href="/how-to-enable-gamescope-mode-on-fedora/" class="prev" rel="prev" title="如何在fedora系统中开启gamescope"><i class="fas fa-angle-left fa-fw"></i>Previous Post</a></div></div>
+</div><div id="comments" class="single-card"><div id="valine"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript></div></article></div>
+            </main>
+            <footer class="footer"><div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.85.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/khusika/FeelIt" target="_blank" rel="noopener noreffer" title="FeelIt 1.0.1"><i class="fas fa-hand-holding-heart fa-fw"></i> FeelIt</a>
+        </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="http://blog.ayanamimcy.top">一只老猫</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker
+        .register('/sw.min.js?version=1.0.1', { scope: '/' })
+        .then(() => {
+            console.info('强哥的猫\u00A0Service Worker Registered');
+        }, err => console.error('强哥的猫\u00A0Service Worker registration failed: ', err));
+
+    navigator.serviceWorker
+        .ready
+        .then(() => {
+            console.info('强哥的猫\u00A0Service Worker Ready');
+        });
+}
+</script>
+</footer>
+        </div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-chevron-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment-alt fa-fw"></i>
+            </a></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><link rel="stylesheet" href="/lib/valine/valine.min.css"><script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script><script src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.0/dist/autocomplete.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script src="/lib/lunr/lunr.stemmer.support.min.js"></script><script src="/lib/lunr/lunr.zh.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script><script src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.1/sharer.min.js"></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"valine":{"appId":"0pPusmmAwGgfI3UumS1TPOdU-gzGzoHsz","appKey":"EhdNEkkUWjIpFlzsKFzb5EPR","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":false,"highlight":true,"lang":"zh-cn","pageSize":10,"placeholder":"你的评论 ...","recordIP":true,"serverURLs":"https://leancloud.hugoloveit.com","visitor":true}},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","lunrLanguageCode":"zh","lunrSegmentitURL":"/lib/lunr/lunr.segmentit.js","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"lunr"}};</script><script src="/js/theme.min.js"></script></body></html>

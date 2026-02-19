@@ -1,0 +1,14 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>game - 标签 - 强哥的猫</title>
+        <link>https://blog.ayanamimcy.top/tags/game/</link>
+        <description>game - 标签 - 强哥的猫</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>ayanamimcy@gmail.com (一只老猫)</managingEditor>
+            <webMaster>ayanamimcy@gmail.com (一只老猫)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 14 Sep 2025 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://blog.ayanamimcy.top/tags/game/" rel="self" type="application/rss+xml" /><item>
+    <title>如何在fedora系统中开启gamescope</title>
+    <link>https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/</link>
+    <pubDate>Sun, 14 Sep 2025 00:00:00 &#43;0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/</guid>
+    <description><![CDATA[安装 gamescope 启动到 Steam Deck 界面 前置条件 Fedora Workstation（Wayland 默认即可）。 有 NVIDIA/AMD 独显的机器建议先装好官方驱动。 关闭 Secure Boot，避免驱动与]]></description>
+</item>
+</channel>
+</rss>

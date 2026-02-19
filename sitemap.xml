@@ -2,14 +2,22 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
+            <loc>https://blog.ayanamimcy.top/categories/</loc><lastmod>2025-09-14T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.ayanamimcy.top/linear-regression/</loc><lastmod>2025-09-14T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.ayanamimcy.top/tags/game/</loc><lastmod>2025-09-14T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.ayanamimcy.top/tags/linux/</loc><lastmod>2025-09-14T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.ayanamimcy.top/categories/linux/</loc><lastmod>2025-09-14T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.ayanamimcy.top/tags/math/</loc><lastmod>2025-09-14T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.ayanamimcy.top/tags/ml/</loc><lastmod>2025-09-14T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.ayanamimcy.top/categories/ml/</loc><lastmod>2025-09-14T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.ayanamimcy.top/posts/</loc><lastmod>2025-09-14T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.ayanamimcy.top/tags/</loc><lastmod>2025-09-14T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/</loc><lastmod>2025-09-14T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://blog.ayanamimcy.top/</loc><lastmod>2025-09-14T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://blog.ayanamimcy.top/tags/alfred/</loc><lastmod>2018-10-02T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://blog.ayanamimcy.top/mac-alfred-workflow-basic-introduce/</loc><lastmod>2018-10-02T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-            <loc>https://blog.ayanamimcy.top/categories/</loc><lastmod>2018-10-02T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://blog.ayanamimcy.top/categories/mac/</loc><lastmod>2018-10-02T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://blog.ayanamimcy.top/tags/macos/</loc><lastmod>2018-10-02T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-            <loc>https://blog.ayanamimcy.top/posts/</loc><lastmod>2018-10-02T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-            <loc>https://blog.ayanamimcy.top/tags/</loc><lastmod>2018-10-02T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-            <loc>https://blog.ayanamimcy.top/</loc><lastmod>2018-10-02T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://blog.ayanamimcy.top/tags/%E6%95%88%E7%8E%87%E5%B7%A5%E5%85%B7/</loc><lastmod>2018-10-02T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://blog.ayanamimcy.top/tags/java/</loc><lastmod>2018-06-19T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://blog.ayanamimcy.top/categories/java%E5%9F%BA%E7%A1%80/</loc><lastmod>2018-06-19T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
