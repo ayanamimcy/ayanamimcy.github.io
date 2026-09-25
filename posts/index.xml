@@ -1,44 +1,68 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
-    <channel>
-        <title>所有文章 - 强哥的猫</title>
-        <link>https://blog.ayanamimcy.top/posts/</link>
-        <description>所有文章 | 强哥的猫</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>ayanamimcy@gmail.com (一只老猫)</managingEditor>
-            <webMaster>ayanamimcy@gmail.com (一只老猫)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 14 Sep 2025 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://blog.ayanamimcy.top/posts/" rel="self" type="application/rss+xml" /><item>
-    <title>Deep Dive into Linear Regression: A Complete Analysis from Model to Optimization</title>
-    <link>https://blog.ayanamimcy.top/linear-regression/</link>
-    <pubDate>Sun, 14 Sep 2025 00:00:00 &#43;0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/linear-regression/</guid>
-    <description><![CDATA[Introduction Linear regression is the cornerstone of machine learning and deep learning. While it appears simple, the core concepts embedded within it—model representation, loss functions, empirical risk minimization, and gradient descent—form the foundational framework of modern deep learning. This article will explore the principles and mechanisms of these concepts in depth, helping]]></description>
-</item>
-<item>
-    <title>如何在fedora系统中开启gamescope</title>
-    <link>https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/</link>
-    <pubDate>Sun, 14 Sep 2025 00:00:00 &#43;0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/</guid>
-    <description><![CDATA[安装 gamescope 启动到 Steam Deck 界面 前置条件 Fedora Workstation（Wayland 默认即可）。 有 NVIDIA/AMD 独显的机器建议先装好官方驱动。 关闭 Secure Boot，避免驱动与]]></description>
-</item>
-<item>
-    <title>Alfred工作流简单介绍</title>
-    <link>https://blog.ayanamimcy.top/mac-alfred-workflow-basic-introduce/</link>
-    <pubDate>Tue, 02 Oct 2018 00:00:00 &#43;0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/mac-alfred-workflow-basic-introduce/</guid>
-    <description><![CDATA[简介 每当有人问到有什么 macOS 上的提升效率的神器，Alfred 都是我脑海里第一个蹦出来的答案。Alfred with Powerpack 更是强上加强。 几乎 mac 里的一切都可以通]]></description>
-</item>
-<item>
-    <title>java基础并发系列-初识线程</title>
-    <link>https://blog.ayanamimcy.top/java-basic-thread/</link>
-    <pubDate>Tue, 19 Jun 2018 00:00:00 &#43;0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/java-basic-thread/</guid>
-    <description><![CDATA[1. 线程的8大核心基础知识 1.实现多线程的几种方式 实现多线程的正确方法是2种： 实现 Runnable 接口 继承 Thread 类 实现Runnable接口好在哪里？ 继承Thre]]></description>
-</item>
-<item>
-    <title>权限系统初识-基于rbac模型设计一个简单的权限</title>
-    <link>https://blog.ayanamimcy.top/rbac-simple-permission-system/</link>
-    <pubDate>Sun, 10 Jun 2018 00:00:00 &#43;0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/rbac-simple-permission-system/</guid>
-    <description><![CDATA[1. 认识权限 1. 什么是权限 权限在一个系统中占据着十分重要的地位，一些功能只有特定角色用户才能访问，要做权限判断。 2. 权限的分类 登录权限 这个是所有权]]></description>
-</item>
-<item>
-    <title>全文搜索引擎简介</title>
-    <link>https://blog.ayanamimcy.top/full-text-search-engine/</link>
-    <pubDate>Fri, 08 Jun 2018 23:58:53 &#43;0800</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/full-text-search-engine/</guid>
-    <description><![CDATA[全文检索概念 1. 什么是全文检索 对 非结构化数据 搜索/结构化数据就要全文检索，狭义的理解主要针对文本数据的搜索。 结构化数据： 业界指关系模型数据，即]]></description>
-</item>
-</channel>
-</rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>所有文章 - 强哥的猫</title><link>https://blog.ayanamimcy.top/posts/</link><description>所有文章 | 强哥的猫</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>ayanamimcy@gmail.com (一只老猫)</managingEditor><webMaster>ayanamimcy@gmail.com (一只老猫)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 14 Sep 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.ayanamimcy.top/posts/" rel="self" type="application/rss+xml"/><item><title>Deep Dive into Linear Regression: A Complete Analysis from Model to Optimization</title><link>https://blog.ayanamimcy.top/linear-regression/</link><pubDate>Sun, 14 Sep 2025 00:00:00 +0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/linear-regression/</guid><description>&lt;h2 id="introduction">Introduction&lt;/h2>
+&lt;p>Linear regression is the cornerstone of machine learning and deep learning. While it appears simple, the core concepts embedded within it—model representation, loss functions, empirical risk minimization, and gradient descent—form the foundational framework of modern deep learning. This article will explore the principles and mechanisms of these concepts in depth, helping readers build a solid theoretical foundation.&lt;/p></description></item><item><title>如何在fedora系统中开启gamescope</title><link>https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/</link><pubDate>Sun, 14 Sep 2025 00:00:00 +0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/</guid><description><![CDATA[<h2 id="安装-gamescope-启动到-steam-deck-界面">安装 gamescope 启动到 Steam Deck 界面</h2>
+<h3 id="前置条件">前置条件</h3>
+<ul>
+<li>Fedora Workstation（Wayland 默认即可）。</li>
+<li>有 NVIDIA/AMD 独显的机器建议先装好官方驱动。</li>
+<li>关闭 Secure Boot，避免驱动与 gamescope 依赖冲突。</li>
+</ul>
+<h3 id="快速安装">快速安装</h3>
+<ol>
+<li>安装 gamescope 与 HUD 工具：
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo dnf install -y gamescope mangohud
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>使用现成脚本一键部署 session：
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git clone https://github.com/shahnawazshahin/steam-using-gamescope-guide.git
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> steam-using-gamescope-guide
+</span></span><span class="line"><span class="cl">sudo ./install.sh
+</span></span></code></pre></td></tr></table>
+</div>
+</div>安装完成后在登录界面选择 <code>Gamescope+Steam</code>（名字可能略有差异），即可进入 Steam Deck 风格界面。</li>
+</ol>
+<h3 id="手动安装可控性更高">手动安装（可控性更高）</h3>
+<p>如果想自己掌握文件位置，可以从 ChimeraOS 的 session 仓库直接复制：</p>]]></description></item><item><title>Alfred工作流简单介绍</title><link>https://blog.ayanamimcy.top/mac-alfred-workflow-basic-introduce/</link><pubDate>Tue, 02 Oct 2018 00:00:00 +0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/mac-alfred-workflow-basic-introduce/</guid><description><![CDATA[<h4 id="简介">简介</h4>
+<p>每当有人问到有什么 macOS 上的提升效率的神器，Alfred 都是我脑海里第一个蹦出来的答案。Alfred with Powerpack 更是强上加强。
+几乎 mac 里的一切都可以通过简单的 <code>⌘ + space</code>（我的 Alfred 快捷键）获取到。
+Alfred 的 workflows 是一个使我非常兴奋的功能。它能充分满足程序员自给自足的乐趣。</p>]]></description></item><item><title>java基础并发系列-初识线程</title><link>https://blog.ayanamimcy.top/java-basic-thread/</link><pubDate>Tue, 19 Jun 2018 00:00:00 +0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/java-basic-thread/</guid><description><![CDATA[<h3 id="1-线程的8大核心基础知识">1. 线程的8大核心基础知识</h3>
+<h4 id="1实现多线程的几种方式">1.实现多线程的几种方式</h4>
+<p>实现多线程的正确方法是2种：</p>
+<ul>
+<li>实现 Runnable 接口</li>
+<li>继承 Thread 类</li>
+</ul>
+<ol>
+<li>实现Runnable接口好在哪里？</li>
+</ol>
+<p>继承Thread类是不推荐的，因为它有以下的一些缺点：</p>]]></description></item><item><title>权限系统初识-基于rbac模型设计一个简单的权限</title><link>https://blog.ayanamimcy.top/rbac-simple-permission-system/</link><pubDate>Sun, 10 Jun 2018 00:00:00 +0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/rbac-simple-permission-system/</guid><description><![CDATA[<h3 id="1-认识权限">1. 认识权限</h3>
+<h4 id="1-什么是权限">1. 什么是权限</h4>
+<p>权限在一个系统中占据着十分重要的地位，一些功能只有特定角色用户才能访问，要做权限判断。</p>
+<h4 id="2-权限的分类">2. 权限的分类</h4>
+<ol>
+<li>登录权限</li>
+</ol>
+<p>这个是所有权限的基础，也是接触最多的权限了， 所以这里就不在描述了</p>]]></description></item><item><title>全文搜索引擎简介</title><link>https://blog.ayanamimcy.top/full-text-search-engine/</link><pubDate>Fri, 08 Jun 2018 23:58:53 +0800</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/full-text-search-engine/</guid><description><![CDATA[<h2 id="全文检索概念">全文检索概念</h2>
+<h4 id="1-什么是全文检索">1. 什么是全文检索</h4>
+<p>对 非结构化数据 搜索/结构化数据就要全文检索，狭义的理解主要针对文本数据的搜索。</p>
+<ul>
+<li>结构化数据：
+业界指关系模型数据，即以关系数据库表形式管理的数据</li>
+<li>半结构数据：
+非关系模型的、有基本固定结构模式的数据，例如日志文件、XML文档、JSON文档、Email等。</li>
+<li>非结构化数据：
+没有固定模式的数据，如WORD、PDF、PPT、EXL，各种格式的图片、视频等。</li>
+</ul>
+<p>非结构化数据是数据结构不规则或不完整，没有预定义的数据模型，不方便用数据库二维逻辑表来表现的数据。包括所有格式的办公文档、文本、图片、XML, HTML、各类报表、图像和音频/视频信息等等</p>]]></description></item></channel></rss>

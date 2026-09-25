@@ -1,14 +1,12 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
-    <channel>
-        <title>Lucene - 标签 - 强哥的猫</title>
-        <link>https://blog.ayanamimcy.top/tags/lucene/</link>
-        <description>Lucene - 标签 - 强哥的猫</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>ayanamimcy@gmail.com (一只老猫)</managingEditor>
-            <webMaster>ayanamimcy@gmail.com (一只老猫)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Fri, 08 Jun 2018 23:58:53 &#43;0800</lastBuildDate><atom:link href="https://blog.ayanamimcy.top/tags/lucene/" rel="self" type="application/rss+xml" /><item>
-    <title>全文搜索引擎简介</title>
-    <link>https://blog.ayanamimcy.top/full-text-search-engine/</link>
-    <pubDate>Fri, 08 Jun 2018 23:58:53 &#43;0800</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/full-text-search-engine/</guid>
-    <description><![CDATA[全文检索概念 1. 什么是全文检索 对 非结构化数据 搜索/结构化数据就要全文检索，狭义的理解主要针对文本数据的搜索。 结构化数据： 业界指关系模型数据，即]]></description>
-</item>
-</channel>
-</rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Lucene - 标签 - 强哥的猫</title><link>https://blog.ayanamimcy.top/tags/lucene/</link><description>Lucene - 标签 - 强哥的猫</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>ayanamimcy@gmail.com (一只老猫)</managingEditor><webMaster>ayanamimcy@gmail.com (一只老猫)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Fri, 08 Jun 2018 23:58:53 +0800</lastBuildDate><atom:link href="https://blog.ayanamimcy.top/tags/lucene/" rel="self" type="application/rss+xml"/><item><title>全文搜索引擎简介</title><link>https://blog.ayanamimcy.top/full-text-search-engine/</link><pubDate>Fri, 08 Jun 2018 23:58:53 +0800</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/full-text-search-engine/</guid><description><![CDATA[<h2 id="全文检索概念">全文检索概念</h2>
+<h4 id="1-什么是全文检索">1. 什么是全文检索</h4>
+<p>对 非结构化数据 搜索/结构化数据就要全文检索，狭义的理解主要针对文本数据的搜索。</p>
+<ul>
+<li>结构化数据：
+业界指关系模型数据，即以关系数据库表形式管理的数据</li>
+<li>半结构数据：
+非关系模型的、有基本固定结构模式的数据，例如日志文件、XML文档、JSON文档、Email等。</li>
+<li>非结构化数据：
+没有固定模式的数据，如WORD、PDF、PPT、EXL，各种格式的图片、视频等。</li>
+</ul>
+<p>非结构化数据是数据结构不规则或不完整，没有预定义的数据模型，不方便用数据库二维逻辑表来表现的数据。包括所有格式的办公文档、文本、图片、XML, HTML、各类报表、图像和音频/视频信息等等</p>]]></description></item></channel></rss>

@@ -1,14 +1,2 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
-    <channel>
-        <title>math - 标签 - 强哥的猫</title>
-        <link>https://blog.ayanamimcy.top/tags/math/</link>
-        <description>math - 标签 - 强哥的猫</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>ayanamimcy@gmail.com (一只老猫)</managingEditor>
-            <webMaster>ayanamimcy@gmail.com (一只老猫)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 14 Sep 2025 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://blog.ayanamimcy.top/tags/math/" rel="self" type="application/rss+xml" /><item>
-    <title>Deep Dive into Linear Regression: A Complete Analysis from Model to Optimization</title>
-    <link>https://blog.ayanamimcy.top/linear-regression/</link>
-    <pubDate>Sun, 14 Sep 2025 00:00:00 &#43;0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/linear-regression/</guid>
-    <description><![CDATA[Introduction Linear regression is the cornerstone of machine learning and deep learning. While it appears simple, the core concepts embedded within it—model representation, loss functions, empirical risk minimization, and gradient descent—form the foundational framework of modern deep learning. This article will explore the principles and mechanisms of these concepts in depth, helping]]></description>
-</item>
-</channel>
-</rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Math - 标签 - 强哥的猫</title><link>https://blog.ayanamimcy.top/tags/math/</link><description>Math - 标签 - 强哥的猫</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>ayanamimcy@gmail.com (一只老猫)</managingEditor><webMaster>ayanamimcy@gmail.com (一只老猫)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 14 Sep 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.ayanamimcy.top/tags/math/" rel="self" type="application/rss+xml"/><item><title>Deep Dive into Linear Regression: A Complete Analysis from Model to Optimization</title><link>https://blog.ayanamimcy.top/linear-regression/</link><pubDate>Sun, 14 Sep 2025 00:00:00 +0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/linear-regression/</guid><description>&lt;h2 id="introduction">Introduction&lt;/h2>
+&lt;p>Linear regression is the cornerstone of machine learning and deep learning. While it appears simple, the core concepts embedded within it—model representation, loss functions, empirical risk minimization, and gradient descent—form the foundational framework of modern deep learning. This article will explore the principles and mechanisms of these concepts in depth, helping readers build a solid theoretical foundation.&lt;/p></description></item></channel></rss>

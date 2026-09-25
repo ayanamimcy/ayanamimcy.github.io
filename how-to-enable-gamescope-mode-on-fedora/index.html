@@ -1,623 +1,292 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="robots" content="noodp" />
-        <title>如何在fedora系统中开启gamescope - 强哥的猫</title><meta name="description" content="一只老猫的学习记录之旅"><meta property="og:title" content="如何在fedora系统中开启gamescope" />
-<meta property="og:description" content="安装 gamescope 启动到 Steam Deck 界面 前置条件 Fedora Workstation（Wayland 默认即可）。 有 NVIDIA/AMD 独显的机器建议先装好官方驱动。 关闭 Secure Boot，避免驱动与" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/" /><meta property="og:image" content="https://blog.ayanamimcy.top/logo.png"/><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2025-09-14T00:00:00+00:00" />
-<meta property="article:modified_time" content="2025-09-14T00:00:00+00:00" />
-
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://blog.ayanamimcy.top/logo.png"/>
-
-<meta name="twitter:title" content="如何在fedora系统中开启gamescope"/>
-<meta name="twitter:description" content="安装 gamescope 启动到 Steam Deck 界面 前置条件 Fedora Workstation（Wayland 默认即可）。 有 NVIDIA/AMD 独显的机器建议先装好官方驱动。 关闭 Secure Boot，避免驱动与"/>
-<meta name="application-name" content="强哥的猫">
-<meta name="apple-mobile-web-app-title" content="强哥的猫"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/" /><link rel="prev" href="https://blog.ayanamimcy.top/mac-alfred-workflow-basic-introduce/" /><link rel="next" href="https://blog.ayanamimcy.top/linear-regression/" /><link rel="stylesheet" href="/css/page.min.css"><link rel="stylesheet" href="/css/home.min.css"><script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "BlogPosting",
-        "headline": "如何在fedora系统中开启gamescope",
-        "inLanguage": "zh-CN",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "https:\/\/blog.ayanamimcy.top\/how-to-enable-gamescope-mode-on-fedora\/"
-        },"image": ["https:\/\/blog.ayanamimcy.top\/images\/Apple-Devices-Preview.webp"],"genre": "posts","keywords": "linux, game","wordcount":  1458 ,
-        "url": "https:\/\/blog.ayanamimcy.top\/how-to-enable-gamescope-mode-on-fedora\/","datePublished": "2025-09-14T00:00:00+00:00","dateModified": "2025-09-14T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
-            "@type": "Organization",
-            "name": "xxxx","logo": "https:\/\/blog.ayanamimcy.top\/images\/w.webp"},"author": {
-                "@type": "Person",
-                "name": "一只老猫"
-            },"description": ""
-    }
-    </script></head><body data-header-desktop="fixed" data-header-mobile="auto"><script>(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
-
-        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
-    <div class="header-wrapper">
-        <div class="header-title">
-            <a href="/" title="强哥的猫"><img
-        class="lazyload logo"
-        src="/svg/loading.min.svg"
-        data-src="/images/icon.png"
-        data-srcset="/images/icon.png, /images/icon.png 1.5x, /images/icon.png 2x"
-        data-sizes="auto"
-        alt="/images/icon.png"
-        title="/images/icon.png" />强哥的猫</a>
-        </div>
-        <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="https://github.com/ayanamimcy" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
-                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
-                        <a href="#" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <a href="#" class="search-button search-clear" id="search-clear-desktop" title="清空">
-                            <i class="fas fa-times-circle fa-fw"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-desktop">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
-                        </span>
-                    </span><a class="menu-item" href="/index.xml" title="RSS"><i class="fas fa-rss fa-fw" title="RSS"></i> </a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
-                    <i class="fas fa-adjust fa-fw"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-</header><header class="mobile" id="header-mobile">
-    <div class="header-container">
-        <div class="header-wrapper">
-            <div class="header-title">
-                <a href="/" title="强哥的猫"><img
-        class="lazyload logo"
-        src="/svg/loading.min.svg"
-        data-src="/images/icon.png"
-        data-srcset="/images/icon.png, /images/icon.png 1.5x, /images/icon.png 2x"
-        data-sizes="auto"
-        alt="/images/icon.png"
-        title="/images/icon.png" />强哥的猫</a>
-            </div>
-            <div class="menu-toggle" id="menu-toggle-mobile">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-        <div class="menu" id="menu-mobile"><div class="search-wrapper">
-                    <div class="search mobile" id="search-mobile">
-                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
-                        <a href="#" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <a href="#" class="search-button search-clear" id="search-clear-mobile" title="清空">
-                            <i class="fas fa-times-circle fa-fw"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-mobile">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
-                        </span>
-                    </div>
-                    <a href="#" class="search-cancel" id="search-cancel-mobile">
-                        取消
-                    </a>
-                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="https://github.com/ayanamimcy" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><div class="menu-item"><a href="/index.xml" title="RSS"><i class="fas fa-rss fa-fw" title="RSS"></i> </a>
-                <span>&nbsp;|&nbsp;</span><a href="javascript:void(0);" class="theme-switch" title="切换主题">
-                    <i class="fas fa-adjust fa-fw"></i>
-                </a>
-            </div></div>
-    </div>
-</header><div class="search-dropdown desktop">
-    <div id="search-dropdown-desktop"></div>
-</div>
-<div class="search-dropdown mobile">
-    <div id="search-dropdown-mobile"></div>
-</div><main class="main">
-                <div class="container"><div class="toc" id="toc-auto">
-            <h2 class="toc-title">目录</h2>
-            <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single" data-toc="enable"><div class="single-card" ><h2 class="single-title animated flipInX">如何在fedora系统中开启gamescope</h2><div class="post-meta">
-                <div class="post-meta-line"><span class="post-author"><a href="http://blog.ayanamimcy.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>一只老猫</a></span>&nbsp;<span class="post-category">出版于  <a href="/categories/linux/"><i class="far fa-folder fa-fw"></i>linux</a></span></div>
-                <div class="post-meta-line"><span><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2025-09-14">2025-09-14</time></span>&nbsp;<span><i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1458 字</span>&nbsp;
-                    <span><i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟</span>&nbsp;<span id="/how-to-enable-gamescope-mode-on-fedora/" class="leancloud_visitors" data-flag-title="如何在fedora系统中开启gamescope">
-                            <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
-                        </span>&nbsp;</div>
-            </div>
-            
-            <hr><div class="details toc" id="toc-static"  data-kept="">
-                    <div class="details-summary toc-title">
-                        <span>目录</span>
-                        <span><i class="details-icon fas fa-angle-right"></i></span>
-                    </div>
-                    <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
-  <ul>
-    <li><a href="#安装-gamescope-启动到-steam-deck-界面">安装 gamescope 启动到 Steam Deck 界面</a>
-      <ul>
-        <li><a href="#前置条件">前置条件</a></li>
-        <li><a href="#快速安装">快速安装</a></li>
-        <li><a href="#手动安装可控性更高">手动安装（可控性更高）</a></li>
-        <li><a href="#验证">验证</a></li>
-      </ul>
-    </li>
-    <li><a href="#sunshine">Sunshine</a></li>
-    <li><a href="#nvidia-显卡">Nvidia 显卡</a></li>
-    <li><a href="#关于-mangohud-无法检测到-cpu-功耗">关于 mangohud 无法检测到 CPU 功耗</a></li>
-  </ul>
-</nav></div>
-                </div><div class="content" id="content"><h2 id="安装-gamescope-启动到-steam-deck-界面">安装 gamescope 启动到 Steam Deck 界面</h2>
-<h3 id="前置条件">前置条件</h3>
-<ul>
-<li>Fedora Workstation（Wayland 默认即可）。</li>
-<li>有 NVIDIA/AMD 独显的机器建议先装好官方驱动。</li>
-<li>关闭 Secure Boot，避免驱动与 gamescope 依赖冲突。</li>
-</ul>
-<h3 id="快速安装">快速安装</h3>
-<ol>
-<li>安装 gamescope 与 HUD 工具：
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">sudo dnf install -y gamescope mangohud
-</code></pre></td></tr></table>
-</div>
-</div></li>
-<li>使用现成脚本一键部署 session：
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">git clone https://github.com/shahnawazshahin/steam-using-gamescope-guide.git
-<span class="nb">cd</span> steam-using-gamescope-guide
-sudo ./install.sh
-</code></pre></td></tr></table>
-</div>
-</div><p>安装完成后在登录界面选择 <code>Gamescope+Steam</code>（名字可能略有差异），即可进入 Steam Deck 风格界面。</p>
-</li>
-</ol>
-<h3 id="手动安装可控性更高">手动安装（可控性更高）</h3>
-<p>如果想自己掌握文件位置，可以从 ChimeraOS 的 session 仓库直接复制：</p>
-<ol>
-<li>下载仓库：
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">git clone https://github.com/ChimeraOS/gamescope-session-steam
-git clone https://github.com/ChimeraOS/gamescope-session
-</code></pre></td></tr></table>
-</div>
-</div></li>
-<li>将仓库中的 <code>usr/</code> 内容覆盖到系统 <code>/usr/</code>，并刷新 gdm：
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">sudo cp -r gamescope-session-steam/usr/* /usr/
-sudo cp -r gamescope-session/usr/* /usr/
-sudo systemctl daemon-reload
-</code></pre></td></tr></table>
-</div>
-</div></li>
-<li>重启后在 gdm 登录界面选择新的 gamescope 会话即可。</li>
-</ol>
-<h3 id="验证">验证</h3>
-<ul>
-<li>登录 gamescope 会话后，终端运行 <code>echo $XDG_SESSION_TYPE</code> 应为 <code>wayland</code>，且 <code>gamescope-session-plus@steam.service</code> 应在运行。</li>
-<li><code>mangohud steam</code> 可以查看帧率、功耗，确认 HUD 正常。</li>
-</ul>
-<h2 id="sunshine">Sunshine</h2>
-<p>目标：在锁屏、GNOME、gamescope 三种场景下都能串流，同时保证有声输出。</p>
-<p>思路：</p>
-<ul>
-<li>系统级 root 服务保证「即使没登录」也能看到画面。</li>
-<li>登录后切换到用户级服务，拿到正确的 PipeWire/音频权限。</li>
-</ul>
-<p>具体步骤：</p>
-<ol>
-<li>安装 Sunshine：<code>sudo dnf install sunshine</code>（或编译安装）。</li>
-<li>创建系统级服务 <code>sunshine-gdm.service</code>：</li>
-</ol>
-<p><code>sunshine-gdm.service</code>用于系统层级进行启动</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">[Unit]
-Description=Self-hosted game stream host for Moonlight
-StartLimitIntervalSec=500
-StartLimitBurst=5
-Requires=gdm.service
-After=gdm.service
-
-[Service]
-User=root
-Group=root
-Environment=&#34;HOME=/home/fedora&#34;
-ExecStartPre=/bin/sleep 2
-ExecStart=/usr/bin/sunshine
-Restart=on-failure
-RestartSec=5s
-
-[Install]
-WantedBy=multi-user.target
-</code></pre></td></tr></table>
-</div>
-</div><p>需要注意：<code>HOME</code> 要指向日常登录用户的主目录，避免客户端看到多个主机。</p>
-<ol start="3">
-<li>配置用户级服务，启动时停掉系统级，退出时再拉起系统级：</li>
-</ol>
-<p>基础服务 <code>sunshine.service</code></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">[Unit]
-Description=Sunshine is a self-hosted game stream host for Moonlight.
-StartLimitIntervalSec=500 
-StartLimitBurst=5
-
-[Service]
-ExecStartPre=/usr/bin/systemctl stop sunshine-gdm
-ExecStartPre=/bin/sleep 2
-ExecStopPost=/usr/bin/systemctl start sunshine-gdm
-ExecStart=/usr/bin/sunshine
-Restart=on-failure
-RestartSec=5s
-
-[Install]
-</code></pre></td></tr></table>
-</div>
-</div><p>这个服务只定义启动/停止逻辑，我们通过两个 hook 触发它，利用 <code>BindsTo</code> 和 <code>PartOf</code> 自动随会话启停。</p>
-<p><code>sunshine-on-gamescope.service</code></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">[Unit]
-Description=Start/Stop Sunshine with Gamescope session
-BindsTo=gamescope-session-plus@steam.service
-After=gamescope-session-plus@steam.service
-PartOf=gamescope-session-plus@steam.service
-
-[Service]
-Type=oneshot
-RemainAfterExit=yes
-ExecStart=/usr/bin/systemctl --user start sunshine.service
-ExecStop=/usr/bin/systemctl --user stop sunshine.service
-
-[Install]
-WantedBy=gamescope-session-plus@steam.service
-</code></pre></td></tr></table>
-</div>
-</div><p><code>sunshine-on-gnome.service</code></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">[Unit]
-Description=Start/Stop Sunshine with GNOME session
-BindsTo=gnome-session.target
-After=gnome-session.target
-PartOf=gnome-session.target
-
-[Service]
-Type=oneshot
-RemainAfterExit=yes
-ExecStart=/usr/bin/systemctl --user start sunshine.service
-ExecStop=/usr/bin/systemctl --user stop sunshine.service
-
-[Install]
-WantedBy=gnome-session.target
-</code></pre></td></tr></table>
-</div>
-</div><ol start="4">
-<li>
-<p>启用两个 hook（在用户 session 内执行）：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">systemctl --user <span class="nb">enable</span> --now sunshine-on-gnome.service
-systemctl --user <span class="nb">enable</span> --now sunshine-on-gamescope.service
-</code></pre></td></tr></table>
-</div>
-</div></li>
-<li>
-<p>免密授权：用户执行 <code>systemctl</code> 默认会弹认证，写一条 polkit 规则跳过：</p>
-</li>
-</ol>
-<p>创建文件 <code>/etc/polkit-1/rules.d/sunshine-sddm.rules</code></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">polkit.addRule(function(action, subject) {
-  if (action.id == &#34;org.freedesktop.systemd1.manage-units&#34; &amp;&amp;
-    action.lookup(&#34;unit&#34;) == &#34;sunshine-sddm.service&#34;)
-  {
-    return polkit.Result.YES;
-  }
-})
-
-</code></pre></td></tr></table>
-</div>
-</div><p>附加：如果在 BazziteOS 下想直接串流 gamescope 会话，可以使用 <code>sunshine-kms.service</code> 并将其绑定到 gamescope：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">systemctl --user add-wants gamescope-session-plus@steam.service sunshine-kms.service
-</code></pre></td></tr></table>
-</div>
-</div><h2 id="nvidia-显卡">Nvidia 显卡</h2>
-<p>外接显卡偶尔开机未加载驱动，为避免黑屏或没有硬件加速，添加一个自检脚本，缺卡时自动重启一次。</p>
-<p><code>check_nvidia_reboot.sh</code></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/bash
-</span><span class="cp"></span>
-<span class="c1"># 标记文件路径（用于防止无限重启）</span>
-<span class="nv">FLAG_FILE</span><span class="o">=</span><span class="s2">&#34;/var/tmp/nvidia_reboot_attempted&#34;</span>
-
-<span class="c1"># 等待几秒确保驱动模块有时间加载（可选，防止启动太快产生误报）</span>
-sleep <span class="m">5</span>
-
-<span class="c1"># 检查 nvidia-smi 是否能识别到显卡</span>
-<span class="c1"># -L 参数列出所有 GPU，如果返回结果包含 UUID 则说明识别正常</span>
-<span class="k">if</span> nvidia-smi -L <span class="p">|</span> grep -q <span class="s2">&#34;UUID&#34;</span><span class="p">;</span> <span class="k">then</span>
-    <span class="nb">echo</span> <span class="s2">&#34;[SUCCESS] Nvidia GPU detected.&#34;</span>
-    
-    <span class="c1"># 如果之前有过重启尝试的标记，现在检测成功了，就删除标记</span>
-    <span class="k">if</span> <span class="o">[</span> -f <span class="s2">&#34;</span><span class="nv">$FLAG_FILE</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-        rm -f <span class="s2">&#34;</span><span class="nv">$FLAG_FILE</span><span class="s2">&#34;</span>
-        <span class="nb">echo</span> <span class="s2">&#34;Resetting reboot attempt flag.&#34;</span>
-    <span class="k">fi</span>
-    <span class="nb">exit</span> <span class="m">0</span>
-<span class="k">else</span>
-    <span class="nb">echo</span> <span class="s2">&#34;[FAILURE] Nvidia GPU NOT detected!&#34;</span>
-
-    <span class="c1"># 检查是否已经尝试过重启</span>
-    <span class="k">if</span> <span class="o">[</span> -f <span class="s2">&#34;</span><span class="nv">$FLAG_FILE</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-        <span class="nb">echo</span> <span class="s2">&#34;System already rebooted once to fix this. Preventing infinite loop.&#34;</span>
-        <span class="c1"># 这里可以选择发送通知或者记录更详细的日志</span>
-        <span class="nb">exit</span> <span class="m">1</span>
-    <span class="k">else</span>
-        <span class="nb">echo</span> <span class="s2">&#34;First failure detected. Initiating reboot...&#34;</span>
-        <span class="c1"># 创建标记文件</span>
-        touch <span class="s2">&#34;</span><span class="nv">$FLAG_FILE</span><span class="s2">&#34;</span>
-        <span class="c1"># 执行重启</span>
-        /usr/bin/systemctl reboot
-    <span class="k">fi</span>
-<span class="k">fi</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>service
-<code>check-nvidia-boot.service</code></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">[Unit]
-Description=Check Nvidia GPU presence and reboot once if missing
-# 确保在图形界面或多用户环境就绪后运行
-After=multi-user.target graphical.target systemd-modules-load.service
-
-[Service]
-Type=oneshot
-ExecStart=/usr/local/bin/check_nvidia_reboot.sh
-# 运行完即退出，不驻留后台
-RemainAfterExit=no
-# 以 root 权限运行以便执行 reboot
-User=root
-
-[Install]
-WantedBy=multi-user.target
-</code></pre></td></tr></table>
-</div>
-</div><p>启用：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">sudo cp check_nvidia_reboot.sh /usr/local/bin/
-sudo chmod +x /usr/local/bin/check_nvidia_reboot.sh
-sudo cp check-nvidia-boot.service /etc/systemd/system/
-sudo systemctl <span class="nb">enable</span> --now check-nvidia-boot.service
-</code></pre></td></tr></table>
-</div>
-</div><p>这样开机会先检查一次，若驱动未加载则自动重启一次，最多尝试一轮避免重启循环。</p>
-<h2 id="关于-mangohud-无法检测到-cpu-功耗">关于 mangohud 无法检测到 CPU 功耗</h2>
-<p>原因：普通用户没有读取 <code>energy_uj</code> 的权限，HUD 无法显示 CPU Package 功耗。</p>
-<p>解决：在 <code>/etc/udev/rules.d/99-intel-rapl.rules</code> 追加：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback"># 允许所有用户读取 Intel RAPL 功耗数据
-ENV{SUBSYSTEM}==&#34;powercap&#34;, ACTION==&#34;add|change&#34;, OWNER=&#34;root&#34;, PROGRAM+=&#34;/usr/bin/find /sys$env{DEVPATH} -name energy_uj -exec chmod g+r -R {} + -exec chown root:wheel {} +&#34;
-</code></pre></td></tr></table>
-</div>
-</div></div><div class="post-footer" id="post-footer">
-    <div class="post-info"><div class="post-info-tag"><span><a href="/tags/linux/">linux</a>
-                </span><span><a href="/tags/game/">game</a>
-                </span></div><div class="post-info-line"><div class="post-info-mod">
-                <span>更新于 2025-09-14</span>
-            </div><div class="post-info-mod"><span>
-                            <a class="link-to-markdown" href="/how-to-enable-gamescope-mode-on-fedora/index.md" target="_blank">阅读原始文档</a>
-                        </span><span>
-                        &nbsp;|&nbsp;
-                        <a class="link-to-markdown" href="https://github.com/khusika/FeelIt/edit/main/exampleSite/content/posts/homelab/how-to-enable-gamescope-mode-on-fedora.md" target="_blank">Improve Article</a>
-                    </span></div>
-        </div><div class="post-info-share">
-            <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/" data-title="如何在fedora系统中开启gamescope" data-hashtags="linux,game"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/" data-hashtag="linux"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/" data-title="如何在fedora系统中开启gamescope"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/" data-title="如何在fedora系统中开启gamescope"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/" data-title="如何在fedora系统中开启gamescope"><i class="fab fa-weibo fa-fw"></i></a></span>
-        </div></div><div class="post-nav"><a href="/mac-alfred-workflow-basic-introduce/" class="prev" rel="prev" title="Alfred工作流简单介绍"><i class="fas fa-angle-left fa-fw"></i>Previous Post</a>
-            <a href="/linear-regression/" class="next" rel="next" title="Deep Dive into Linear Regression: A Complete Analysis from Model to Optimization">Next Post<i class="fas fa-angle-right fa-fw"></i></a></div></div>
-</div><div id="comments" class="single-card"><div id="valine"></div><noscript>
-                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
-            </noscript></div></article></div>
-            </main>
-            <footer class="footer"><div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.85.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/khusika/FeelIt" target="_blank" rel="noopener noreffer" title="FeelIt 1.0.1"><i class="fas fa-hand-holding-heart fa-fw"></i> FeelIt</a>
-        </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="http://blog.ayanamimcy.top">一只老猫</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
-</div>
-<script>
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker
-        .register('/sw.min.js?version=1.0.1', { scope: '/' })
-        .then(() => {
-            console.info('强哥的猫\u00A0Service Worker Registered');
-        }, err => console.error('强哥的猫\u00A0Service Worker registration failed: ', err));
-
-    navigator.serviceWorker
-        .ready
-        .then(() => {
-            console.info('强哥的猫\u00A0Service Worker Ready');
-        });
-}
-</script>
-</footer>
-        </div>
-
-        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
-                <i class="fas fa-chevron-up fa-fw"></i>
-            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
-                <i class="fas fa-comment-alt fa-fw"></i>
-            </a></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><link rel="stylesheet" href="/lib/valine/valine.min.css"><script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script><script src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.0/dist/autocomplete.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script><script src="/lib/lunr/lunr.stemmer.support.min.js"></script><script src="/lib/lunr/lunr.zh.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script><script src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.1/sharer.min.js"></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"valine":{"appId":"0pPusmmAwGgfI3UumS1TPOdU-gzGzoHsz","appKey":"EhdNEkkUWjIpFlzsKFzb5EPR","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":false,"highlight":true,"lang":"zh-cn","pageSize":10,"placeholder":"你的评论 ...","recordIP":true,"serverURLs":"https://leancloud.hugoloveit.com","visitor":true}},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","lunrLanguageCode":"zh","lunrSegmentitURL":"/lib/lunr/lunr.segmentit.js","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"lunr"}};</script><script src="/js/theme.min.js"></script></body></html>
+<!doctype html><html lang=zh-CN><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>如何在fedora系统中开启gamescope - 强哥的猫</title><meta name=description content="一只老猫的学习记录之旅"><meta property="og:url" content="https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/"><meta property="og:site_name" content="强哥的猫"><meta property="og:title" content="如何在fedora系统中开启gamescope"><meta property="og:description" content="安装 gamescope 启动到 Steam Deck 界面 前置条件 Fedora Workstation（Wayland 默认即可）。 有 NVIDIA/AMD 独显的机器建议先装好官方驱动。 关闭 Secure Boot，避免驱动与 gamescope 依赖冲突。 快速安装 安装 gamescope 与 HUD 工具： 1 sudo dnf install -y gamescope mangohud 使用现成脚本一键部署 session： 1 2 3 git clone https://github.com/shahnawazshahin/steam-using-gamescope-guide.git cd steam-using-gamescope-guide sudo ./install.sh 安装完成后在登录界面选择 Gamescope+Steam（名字可能略有差异），即可进入 Steam Deck 风格界面。 手动安装（可控性更高） 如果想自己掌握文件位置，可以从 ChimeraOS 的 session 仓库直接复制："><meta property="og:locale" content="zh_CN"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2025-09-14T00:00:00+00:00"><meta property="article:modified_time" content="2026-09-25T10:21:29+09:00"><meta property="article:tag" content="Linux"><meta property="article:tag" content="Game"><meta property="og:image" content="https://blog.ayanamimcy.top/logo.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://blog.ayanamimcy.top/logo.png"><meta name=twitter:title content="如何在fedora系统中开启gamescope"><meta name=twitter:description content="安装 gamescope 启动到 Steam Deck 界面 前置条件 Fedora Workstation（Wayland 默认即可）。 有 NVIDIA/AMD 独显的机器建议先装好官方驱动。 关闭 Secure Boot，避免驱动与 gamescope 依赖冲突。 快速安装 安装 gamescope 与 HUD 工具： 1 sudo dnf install -y gamescope mangohud 使用现成脚本一键部署 session： 1 2 3 git clone https://github.com/shahnawazshahin/steam-using-gamescope-guide.git cd steam-using-gamescope-guide sudo ./install.sh 安装完成后在登录界面选择 Gamescope+Steam（名字可能略有差异），即可进入 Steam Deck 风格界面。 手动安装（可控性更高） 如果想自己掌握文件位置，可以从 ChimeraOS 的 session 仓库直接复制："><meta name=application-name content="强哥的猫"><meta name=apple-mobile-web-app-title content="强哥的猫"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/><link rel=prev href=https://blog.ayanamimcy.top/mac-alfred-workflow-basic-introduce/><link rel=next href=https://blog.ayanamimcy.top/linear-regression/><link rel=stylesheet href=/css/page.min.css><link rel=stylesheet href=/css/home.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"如何在fedora系统中开启gamescope","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.ayanamimcy.top\/how-to-enable-gamescope-mode-on-fedora\/"},"image":["https:\/\/blog.ayanamimcy.top\/images\/Apple-Devices-Preview.webp"],"genre":"posts","keywords":"linux, game","wordcount":1457,"url":"https:\/\/blog.ayanamimcy.top\/how-to-enable-gamescope-mode-on-fedora\/","datePublished":"2025-09-14T00:00:00+00:00","dateModified":"2026-09-25T10:21:29+09:00","license":"This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher":{"@type":"Organization","name":"xxxx","logo":"https:\/\/blog.ayanamimcy.top\/images\/w.webp"},"author":{"@type":"Person","name":"一只老猫"},"description":""}</script></head><body data-header-desktop=fixed data-header-mobile=auto><script>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"auto"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"auto"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title=强哥的猫><img class="lazyload logo" src=/svg/loading.min.svg data-src=/images/icon.png data-srcset="/images/icon.png, /images/icon.png 1.5x, /images/icon.png 2x" data-sizes=auto alt=/images/icon.png title=/images/icon.png>强哥的猫</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>所有文章
+</a><a class=menu-item href=/tags/>标签
+</a><a class=menu-item href=/categories/>分类
+</a><a class=menu-item href=https://github.com/ayanamimcy title=GitHub rel="noopener noreffer" target=_blank><i class='fab fa-github fa-fw'></i>
+</a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder=搜索文章标题或内容... id=search-input-desktop>
+<a href=# class="search-button search-toggle" id=search-toggle-desktop title=搜索><i class="fa-solid fa-search fa-fw"></i>
+</a><a href=# class="search-button search-clear" id=search-clear-desktop title=清空><i class="fa-solid fa-times-circle fa-fw"></i>
+</a><span class="search-button search-loading" id=search-loading-desktop><i class="fa-solid fa-spinner fa-fw fa-spin"></i>
+</span></span><a href=# onclick=return!1 class="menu-item theme-switch" title=切换主题><i class="fa-solid fa-adjust fa-fw"></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title=强哥的猫><img class="lazyload logo" src=/svg/loading.min.svg data-src=/images/icon.png data-srcset="/images/icon.png, /images/icon.png 1.5x, /images/icon.png 2x" data-sizes=auto alt=/images/icon.png title=/images/icon.png>强哥的猫</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
+<a href=# class="search-button search-toggle" id=search-toggle-mobile title=搜索><i class="fa-solid fa-search fa-fw"></i>
+</a><a href=# class="search-button search-clear" id=search-clear-mobile title=清空><i class="fa-solid fa-times-circle fa-fw"></i>
+</a><span class="search-button search-loading" id=search-loading-mobile><i class="fa-solid fa-spinner fa-fw fa-spin"></i></span></div><a href=# class=search-cancel id=search-cancel-mobile>取消</a></div><a class=menu-item href=/posts/ title>所有文章</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=https://github.com/ayanamimcy title=GitHub rel="noopener noreffer" target=_blank><i class='fab fa-github fa-fw'></i></a><div class=menu-item><a href=# onclick=return!1 class=theme-switch title=切换主题><i class="fa-solid fa-adjust fa-fw"></i></a></div></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>目录</h2><div class=toc-content id=toc-content-auto></div></div><article class="page single" data-toc=enable><div class=single-card><h2 class="single-title animated flipInX">如何在fedora系统中开启gamescope</h2><div class=post-meta><div class=post-meta-line><span class=post-author><a href=https://blog.ayanamimcy.top title=Author rel=author class=author><img class="lazyload avatar" src=/svg/loading.min.svg data-src=/images/avatar.png data-srcset="/images/avatar.png, /images/avatar.png 1.5x, /images/avatar.png 2x" data-sizes=auto alt=/images/avatar.png title=/images/avatar.png><span class=post-author-name>一只老猫&nbsp;</span>
+</a></span><span class=post-category>出版于 <a href=/categories/linux/><i class="fa-regular fa-folder fa-fw"></i>Linux</a></span></div><div class=post-meta-line><span><i class="fa-regular fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2025-09-14>2025-09-14</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw"></i>&nbsp;约 1457 字</span>&nbsp;
+<span><i class="fa-regular fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟</span>&nbsp;</div></div><hr><div class="details toc" id=toc-static data-kept><div class="details-summary toc-title"><span>目录</span>
+<span><i class="details-icon fa-solid fa-angle-right"></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#安装-gamescope-启动到-steam-deck-界面>安装 gamescope 启动到 Steam Deck 界面</a><ul><li><a href=#前置条件>前置条件</a></li><li><a href=#快速安装>快速安装</a></li><li><a href=#手动安装可控性更高>手动安装（可控性更高）</a></li><li><a href=#验证>验证</a></li></ul></li><li><a href=#sunshine>Sunshine</a></li><li><a href=#nvidia-显卡>Nvidia 显卡</a></li><li><a href=#关于-mangohud-无法检测到-cpu-功耗>关于 mangohud 无法检测到 CPU 功耗</a></li></ul></nav></div></div><div class=content id=content><h2 id=安装-gamescope-启动到-steam-deck-界面>安装 gamescope 启动到 Steam Deck 界面</h2><h3 id=前置条件>前置条件</h3><ul><li>Fedora Workstation（Wayland 默认即可）。</li><li>有 NVIDIA/AMD 独显的机器建议先装好官方驱动。</li><li>关闭 Secure Boot，避免驱动与 gamescope 依赖冲突。</li></ul><h3 id=快速安装>快速安装</h3><ol><li>安装 gamescope 与 HUD 工具：<div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>sudo dnf install -y gamescope mangohud
+</span></span></code></pre></td></tr></table></div></div></li><li>使用现成脚本一键部署 session：<div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>git clone https://github.com/shahnawazshahin/steam-using-gamescope-guide.git
+</span></span><span class=line><span class=cl><span class=nb>cd</span> steam-using-gamescope-guide
+</span></span><span class=line><span class=cl>sudo ./install.sh
+</span></span></code></pre></td></tr></table></div></div>安装完成后在登录界面选择 <code>Gamescope+Steam</code>（名字可能略有差异），即可进入 Steam Deck 风格界面。</li></ol><h3 id=手动安装可控性更高>手动安装（可控性更高）</h3><p>如果想自己掌握文件位置，可以从 ChimeraOS 的 session 仓库直接复制：</p><ol><li>下载仓库：<div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>git clone https://github.com/ChimeraOS/gamescope-session-steam
+</span></span><span class=line><span class=cl>git clone https://github.com/ChimeraOS/gamescope-session
+</span></span></code></pre></td></tr></table></div></div></li><li>将仓库中的 <code>usr/</code> 内容覆盖到系统 <code>/usr/</code>，并刷新 gdm：<div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>sudo cp -r gamescope-session-steam/usr/* /usr/
+</span></span><span class=line><span class=cl>sudo cp -r gamescope-session/usr/* /usr/
+</span></span><span class=line><span class=cl>sudo systemctl daemon-reload
+</span></span></code></pre></td></tr></table></div></div></li><li>重启后在 gdm 登录界面选择新的 gamescope 会话即可。</li></ol><h3 id=验证>验证</h3><ul><li>登录 gamescope 会话后，终端运行 <code>echo $XDG_SESSION_TYPE</code> 应为 <code>wayland</code>，且 <code>gamescope-session-plus@steam.service</code> 应在运行。</li><li><code>mangohud steam</code> 可以查看帧率、功耗，确认 HUD 正常。</li></ul><h2 id=sunshine>Sunshine</h2><p>目标：在锁屏、GNOME、gamescope 三种场景下都能串流，同时保证有声输出。</p><p>思路：</p><ul><li>系统级 root 服务保证「即使没登录」也能看到画面。</li><li>登录后切换到用户级服务，拿到正确的 PipeWire/音频权限。</li></ul><p>具体步骤：</p><ol><li>安装 Sunshine：<code>sudo dnf install sunshine</code>（或编译安装）。</li><li>创建系统级服务 <code>sunshine-gdm.service</code>：</li></ol><p><code>sunshine-gdm.service</code>用于系统层级进行启动</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>[Unit]
+</span></span><span class=line><span class=cl>Description=Self-hosted game stream host for Moonlight
+</span></span><span class=line><span class=cl>StartLimitIntervalSec=500
+</span></span><span class=line><span class=cl>StartLimitBurst=5
+</span></span><span class=line><span class=cl>Requires=gdm.service
+</span></span><span class=line><span class=cl>After=gdm.service
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[Service]
+</span></span><span class=line><span class=cl>User=root
+</span></span><span class=line><span class=cl>Group=root
+</span></span><span class=line><span class=cl>Environment=&#34;HOME=/home/fedora&#34;
+</span></span><span class=line><span class=cl>ExecStartPre=/bin/sleep 2
+</span></span><span class=line><span class=cl>ExecStart=/usr/bin/sunshine
+</span></span><span class=line><span class=cl>Restart=on-failure
+</span></span><span class=line><span class=cl>RestartSec=5s
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[Install]
+</span></span><span class=line><span class=cl>WantedBy=multi-user.target
+</span></span></code></pre></td></tr></table></div></div><p>需要注意：<code>HOME</code> 要指向日常登录用户的主目录，避免客户端看到多个主机。</p><ol start=3><li>配置用户级服务，启动时停掉系统级，退出时再拉起系统级：</li></ol><p>基础服务 <code>sunshine.service</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>[Unit]
+</span></span><span class=line><span class=cl>Description=Sunshine is a self-hosted game stream host for Moonlight.
+</span></span><span class=line><span class=cl>StartLimitIntervalSec=500 
+</span></span><span class=line><span class=cl>StartLimitBurst=5
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[Service]
+</span></span><span class=line><span class=cl>ExecStartPre=/usr/bin/systemctl stop sunshine-gdm
+</span></span><span class=line><span class=cl>ExecStartPre=/bin/sleep 2
+</span></span><span class=line><span class=cl>ExecStopPost=/usr/bin/systemctl start sunshine-gdm
+</span></span><span class=line><span class=cl>ExecStart=/usr/bin/sunshine
+</span></span><span class=line><span class=cl>Restart=on-failure
+</span></span><span class=line><span class=cl>RestartSec=5s
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[Install]
+</span></span></code></pre></td></tr></table></div></div><p>这个服务只定义启动/停止逻辑，我们通过两个 hook 触发它，利用 <code>BindsTo</code> 和 <code>PartOf</code> 自动随会话启停。</p><p><code>sunshine-on-gamescope.service</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>[Unit]
+</span></span><span class=line><span class=cl>Description=Start/Stop Sunshine with Gamescope session
+</span></span><span class=line><span class=cl>BindsTo=gamescope-session-plus@steam.service
+</span></span><span class=line><span class=cl>After=gamescope-session-plus@steam.service
+</span></span><span class=line><span class=cl>PartOf=gamescope-session-plus@steam.service
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[Service]
+</span></span><span class=line><span class=cl>Type=oneshot
+</span></span><span class=line><span class=cl>RemainAfterExit=yes
+</span></span><span class=line><span class=cl>ExecStart=/usr/bin/systemctl --user start sunshine.service
+</span></span><span class=line><span class=cl>ExecStop=/usr/bin/systemctl --user stop sunshine.service
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[Install]
+</span></span><span class=line><span class=cl>WantedBy=gamescope-session-plus@steam.service
+</span></span></code></pre></td></tr></table></div></div><p><code>sunshine-on-gnome.service</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>[Unit]
+</span></span><span class=line><span class=cl>Description=Start/Stop Sunshine with GNOME session
+</span></span><span class=line><span class=cl>BindsTo=gnome-session.target
+</span></span><span class=line><span class=cl>After=gnome-session.target
+</span></span><span class=line><span class=cl>PartOf=gnome-session.target
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[Service]
+</span></span><span class=line><span class=cl>Type=oneshot
+</span></span><span class=line><span class=cl>RemainAfterExit=yes
+</span></span><span class=line><span class=cl>ExecStart=/usr/bin/systemctl --user start sunshine.service
+</span></span><span class=line><span class=cl>ExecStop=/usr/bin/systemctl --user stop sunshine.service
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>[Install]
+</span></span><span class=line><span class=cl>WantedBy=gnome-session.target
+</span></span></code></pre></td></tr></table></div></div><ol start=4><li><p>启用两个 hook（在用户 session 内执行）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>systemctl --user <span class=nb>enable</span> --now sunshine-on-gnome.service
+</span></span><span class=line><span class=cl>systemctl --user <span class=nb>enable</span> --now sunshine-on-gamescope.service
+</span></span></code></pre></td></tr></table></div></div></li><li><p>免密授权：用户执行 <code>systemctl</code> 默认会弹认证，写一条 polkit 规则跳过：</p></li></ol><p>创建文件 <code>/etc/polkit-1/rules.d/sunshine-sddm.rules</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>polkit.addRule(function(action, subject) {
+</span></span><span class=line><span class=cl>  if (action.id == &#34;org.freedesktop.systemd1.manage-units&#34; &amp;&amp;
+</span></span><span class=line><span class=cl>    action.lookup(&#34;unit&#34;) == &#34;sunshine-sddm.service&#34;)
+</span></span><span class=line><span class=cl>  {
+</span></span><span class=line><span class=cl>    return polkit.Result.YES;
+</span></span><span class=line><span class=cl>  }
+</span></span><span class=line><span class=cl>})
+</span></span></code></pre></td></tr></table></div></div><p>附加：如果在 BazziteOS 下想直接串流 gamescope 会话，可以使用 <code>sunshine-kms.service</code> 并将其绑定到 gamescope：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>systemctl --user add-wants gamescope-session-plus@steam.service sunshine-kms.service
+</span></span></code></pre></td></tr></table></div></div><h2 id=nvidia-显卡>Nvidia 显卡</h2><p>外接显卡偶尔开机未加载驱动，为避免黑屏或没有硬件加速，添加一个自检脚本，缺卡时自动重启一次。</p><p><code>check_nvidia_reboot.sh</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=cp>#!/bin/bash
+</span></span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 标记文件路径（用于防止无限重启）</span>
+</span></span><span class=line><span class=cl><span class=nv>FLAG_FILE</span><span class=o>=</span><span class=s2>&#34;/var/tmp/nvidia_reboot_attempted&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 等待几秒确保驱动模块有时间加载（可选，防止启动太快产生误报）</span>
+</span></span><span class=line><span class=cl>sleep <span class=m>5</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 检查 nvidia-smi 是否能识别到显卡</span>
+</span></span><span class=line><span class=cl><span class=c1># -L 参数列出所有 GPU，如果返回结果包含 UUID 则说明识别正常</span>
+</span></span><span class=line><span class=cl><span class=k>if</span> nvidia-smi -L <span class=p>|</span> grep -q <span class=s2>&#34;UUID&#34;</span><span class=p>;</span> <span class=k>then</span>
+</span></span><span class=line><span class=cl>    <span class=nb>echo</span> <span class=s2>&#34;[SUCCESS] Nvidia GPU detected.&#34;</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=c1># 如果之前有过重启尝试的标记，现在检测成功了，就删除标记</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=o>[</span> -f <span class=s2>&#34;</span><span class=nv>$FLAG_FILE</span><span class=s2>&#34;</span> <span class=o>]</span><span class=p>;</span> <span class=k>then</span>
+</span></span><span class=line><span class=cl>        rm -f <span class=s2>&#34;</span><span class=nv>$FLAG_FILE</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=nb>echo</span> <span class=s2>&#34;Resetting reboot attempt flag.&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=k>fi</span>
+</span></span><span class=line><span class=cl>    <span class=nb>exit</span> <span class=m>0</span>
+</span></span><span class=line><span class=cl><span class=k>else</span>
+</span></span><span class=line><span class=cl>    <span class=nb>echo</span> <span class=s2>&#34;[FAILURE] Nvidia GPU NOT detected!&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># 检查是否已经尝试过重启</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=o>[</span> -f <span class=s2>&#34;</span><span class=nv>$FLAG_FILE</span><span class=s2>&#34;</span> <span class=o>]</span><span class=p>;</span> <span class=k>then</span>
+</span></span><span class=line><span class=cl>        <span class=nb>echo</span> <span class=s2>&#34;System already rebooted once to fix this. Preventing infinite loop.&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=c1># 这里可以选择发送通知或者记录更详细的日志</span>
+</span></span><span class=line><span class=cl>        <span class=nb>exit</span> <span class=m>1</span>
+</span></span><span class=line><span class=cl>    <span class=k>else</span>
+</span></span><span class=line><span class=cl>        <span class=nb>echo</span> <span class=s2>&#34;First failure detected. Initiating reboot...&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=c1># 创建标记文件</span>
+</span></span><span class=line><span class=cl>        touch <span class=s2>&#34;</span><span class=nv>$FLAG_FILE</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=c1># 执行重启</span>
+</span></span><span class=line><span class=cl>        /usr/bin/systemctl reboot
+</span></span><span class=line><span class=cl>    <span class=k>fi</span>
+</span></span><span class=line><span class=cl><span class=k>fi</span>
+</span></span></code></pre></td></tr></table></div></div><p>service
+<code>check-nvidia-boot.service</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gdscript3 data-lang=gdscript3><span class=line><span class=cl><span class=p>[</span><span class=n>Unit</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=n>Description</span><span class=o>=</span><span class=n>Check</span> <span class=n>Nvidia</span> <span class=n>GPU</span> <span class=n>presence</span> <span class=ow>and</span> <span class=n>reboot</span> <span class=n>once</span> <span class=k>if</span> <span class=n>missing</span>
+</span></span><span class=line><span class=cl><span class=c1># 确保在图形界面或多用户环境就绪后运行</span>
+</span></span><span class=line><span class=cl><span class=n>After</span><span class=o>=</span><span class=n>multi</span><span class=o>-</span><span class=n>user</span><span class=o>.</span><span class=n>target</span> <span class=n>graphical</span><span class=o>.</span><span class=n>target</span> <span class=n>systemd</span><span class=o>-</span><span class=n>modules</span><span class=o>-</span><span class=nb>load</span><span class=o>.</span><span class=n>service</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>[</span><span class=n>Service</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=n>Type</span><span class=o>=</span><span class=n>oneshot</span>
+</span></span><span class=line><span class=cl><span class=n>ExecStart</span><span class=o>=/</span><span class=n>usr</span><span class=o>/</span><span class=n>local</span><span class=o>/</span><span class=n>bin</span><span class=o>/</span><span class=n>check_nvidia_reboot</span><span class=o>.</span><span class=n>sh</span>
+</span></span><span class=line><span class=cl><span class=c1># 运行完即退出，不驻留后台</span>
+</span></span><span class=line><span class=cl><span class=n>RemainAfterExit</span><span class=o>=</span><span class=n>no</span>
+</span></span><span class=line><span class=cl><span class=c1># 以 root 权限运行以便执行 reboot</span>
+</span></span><span class=line><span class=cl><span class=n>User</span><span class=o>=</span><span class=n>root</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>[</span><span class=n>Install</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=n>WantedBy</span><span class=o>=</span><span class=n>multi</span><span class=o>-</span><span class=n>user</span><span class=o>.</span><span class=n>target</span>
+</span></span></code></pre></td></tr></table></div></div><p>启用：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>sudo cp check_nvidia_reboot.sh /usr/local/bin/
+</span></span><span class=line><span class=cl>sudo chmod +x /usr/local/bin/check_nvidia_reboot.sh
+</span></span><span class=line><span class=cl>sudo cp check-nvidia-boot.service /etc/systemd/system/
+</span></span><span class=line><span class=cl>sudo systemctl <span class=nb>enable</span> --now check-nvidia-boot.service
+</span></span></code></pre></td></tr></table></div></div><p>这样开机会先检查一次，若驱动未加载则自动重启一次，最多尝试一轮避免重启循环。</p><h2 id=关于-mangohud-无法检测到-cpu-功耗>关于 mangohud 无法检测到 CPU 功耗</h2><p>原因：普通用户没有读取 <code>energy_uj</code> 的权限，HUD 无法显示 CPU Package 功耗。</p><p>解决：在 <code>/etc/udev/rules.d/99-intel-rapl.rules</code> 追加：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl># 允许所有用户读取 Intel RAPL 功耗数据
+</span></span><span class=line><span class=cl>ENV{SUBSYSTEM}==&#34;powercap&#34;, ACTION==&#34;add|change&#34;, OWNER=&#34;root&#34;, PROGRAM+=&#34;/usr/bin/find /sys$env{DEVPATH} -name energy_uj -exec chmod g+r -R {} + -exec chown root:wheel {} +&#34;
+</span></span></code></pre></td></tr></table></div></div></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-tag><span><a href=/tags/linux/>Linux</a>
+</span><span><a href=/tags/game/>Game</a></span></div><div class=post-info-line><div class=post-info-mod><span>更新于 2026-09-25</span></div><div class=post-info-mod><span><a class=link-to-markdown href=/how-to-enable-gamescope-mode-on-fedora/index.md target=_blank>阅读原始文档</a>
+</span><span>&nbsp;|&nbsp;
+<a class=link-to-markdown href=https://github.com/khusika/FeelIt/edit/main/exampleSite/content/posts/homelab/how-to-enable-gamescope-mode-on-fedora.md target=_blank>Improve Article</a></span></div></div><div class=post-info-share><span><a href=# onclick=return!1 title="分享到 Twitter" data-sharer=twitter data-url=https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/ data-title=如何在fedora系统中开启gamescope data-hashtags=linux,game><i class="fa-brands fa-square-x-twitter fa-fw"></i></a><a href=# onclick=return!1 title="分享到 Facebook" data-sharer=facebook data-url=https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/ data-hashtag=linux><i class="fa-brands fa-facebook-square fa-fw"></i></a><a href=# onclick=return!1 title="分享到 Hacker News" data-sharer=hackernews data-url=https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/ data-title=如何在fedora系统中开启gamescope><i class="fa-brands fa-hacker-news fa-fw"></i></a><a href=# onclick=return!1 title="分享到 Line" data-sharer=line data-url=https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/ data-title=如何在fedora系统中开启gamescope><i class="fa-brands fa-line fa-fw"></i></a><a href=# onclick=return!1 title="分享到 微博" data-sharer=weibo data-url=https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/ data-title=如何在fedora系统中开启gamescope><i class="fa-brands fa-weibo fa-fw"></i></a></span></div></div><div class=post-nav><a href=/mac-alfred-workflow-basic-introduce/ class=prev rel=prev title=Alfred工作流简单介绍><i class="fa-solid fa-angle-left fa-fw"></i>Previous Post</a>
+<a href=/linear-regression/ class=next rel=next title="Deep Dive into Linear Regression: A Complete Analysis from Model to Optimization">Next Post<i class="fa-solid fa-angle-right fa-fw"></i></a></div></div></div><div id=comments class=single-card></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.160.0 (652fc5acddf94e0501f778e196a8b630566b39ad)">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/khusika/FeelIt target=_blank rel="noopener noreffer" title="FeelIt 1.0.3"><i class="fa-solid fa-hand-holding-heart fa-fw"></i> FeelIt</a></div><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="fa-regular fa-copyright fa-fw"></i><span itemprop=copyrightYear>2018 - 2026</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://blog.ayanamimcy.top>一只老猫</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div><script>"serviceWorker"in navigator&&(navigator.serviceWorker.register("/sw.min.js?version=1.0.3-1790300345",{scope:"/"}).then(()=>{console.info("强哥的猫 Service Worker Registered")},e=>console.error("强哥的猫 Service Worker registration failed: ",e)),navigator.serviceWorker.ready.then(()=>{console.info("强哥的猫 Service Worker Ready")}))</script></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部><i class="fa-solid fa-chevron-up fa-fw"></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论><i class="fa-solid fa-comment-alt fa-fw"></i></a></div><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/copy-tex.min.css><script src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.0/dist/autocomplete.min.js></script><script src=https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js></script><script src=/lib/lunr/lunr.stemmer.support.min.js></script><script src=/lib/lunr/lunr.zh.min.js></script><script src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js></script><script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js></script><script src=https://cdn.jsdelivr.net/npm/sharer.js@0.4.1/sharer.min.js></script><script src=https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js></script><script src=https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js></script><script src=https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/copy-tex.min.js></script><script src=https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/mhchem.min.js></script><script>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:10},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{highlightTag:"em",lunrIndexURL:"/index.json",lunrLanguageCode:"zh",lunrSegmentitURL:"/lib/lunr/lunr.segmentit.js",maxResultLength:10,noResultsFound:"没有找到结果",snippetLength:50,type:"lunr"}}</script><script src=/js/theme.min.js></script></body></html>

@@ -11,9 +11,9 @@ Linear regression is the cornerstone of machine learning and deep learning. Whil
 
 The core idea of linear regression is to fit data with a line (or hyperplane). Its mathematical representation is:
 
-```python
+$$
 y = wx + b
-```
+$$
 
 This seemingly simple formula actually contains the core elements of machine learning:
 
@@ -26,17 +26,17 @@ This seemingly simple formula actually contains the core elements of machine lea
 
 When we have multiple features, the model extends to:
 
-```python
-y = w₁x₁ + w₂x₂ + ... + wₙxₙ + b
-```
+$$
+y = w_1x_1 + w_2x_2 + \cdots + w_nx_n + b
+$$
 
 Vector representation is more concise:
 
-```python
-y = w^T·x + b
-```
+$$
+y = \mathbf{w}^\top \mathbf{x} + b
+$$
 
-Where w^T represents the transpose of the weight vector, and · represents the dot product operation.
+Where $\mathbf{w}^\top$ represents the transpose of the weight vector, and $\mathbf{w}^\top \mathbf{x}$ is the dot product of the weight and feature vectors.
 
 ### 1.3 Geometric Intuition of the Model
 
@@ -60,9 +60,9 @@ Loss functions are the bridge connecting model predictions and real data, quanti
 
 Squared loss is the most commonly used loss function:
 
-```python
-L = (y - ŷ)²
-```
+$$
+L = (y - \hat{y})^2
+$$
 
 #### How It Works:
 
@@ -74,15 +74,15 @@ L = (y - ŷ)²
 
 For all samples, the total loss is:
 
-```python
-J = Σᵢ (yᵢ - (wxᵢ + b))²
-```
+$$
+J = \sum_{i} \left(y_i - (wx_i + b)\right)^2
+$$
 
 By taking derivatives and setting them to zero, we can obtain the normal equation:
 
-```python
-w* = (X^T·X)⁻¹·X^T·y
-```
+$$
+\mathbf{w}^* = (X^\top X)^{-1} X^\top \mathbf{y}
+$$
 
 #### Advantages:
 - Good mathematical properties, easy to optimize
@@ -97,9 +97,9 @@ w* = (X^T·X)⁻¹·X^T·y
 
 Absolute value loss provides another way to measure error:
 
-```python
-L = |y - ŷ|
-```
+$$
+L = |y - \hat{y}|
+$$
 
 #### How It Works:
 
@@ -111,13 +111,14 @@ L = |y - ŷ|
 
 The gradient of absolute value loss:
 
-```python
-∂L/∂ŷ = sign(y - ŷ) = {
-    +1, if y > ŷ
-    -1, if y < ŷ
-    undefined, if y = ŷ
-}
-```
+$$
+\frac{\partial L}{\partial \hat{y}} = -\operatorname{sign}(y - \hat{y}) =
+\begin{cases}
+-1, & \text{if } y > \hat{y} \\
++1, & \text{if } y < \hat{y} \\
+\text{undefined}, & \text{if } y = \hat{y}
+\end{cases}
+$$
 
 #### Advantages:
 - **Robust to Outliers**: Outlier influence is linear, not amplified
@@ -150,45 +151,45 @@ Choosing a loss function requires considering:
 
 Empirical risk minimization is the fundamental principle of machine learning:
 
-```python
-min J(θ) = 1/m Σᵢ L(f(xᵢ; θ), yᵢ)
-```
+$$
+\min_{\theta} J(\theta) = \frac{1}{m} \sum_{i=1}^{m} L\left(f(x_i; \theta), y_i\right)
+$$
 
 This formula expresses a simple but profound idea: **find the parameters that minimize the average loss on training data**.
 
 ### 3.2 Components of ERM
 
-1. **Parameter Space (θ ∈ Θ)**: The set of all possible parameter values
-2. **Model Function f(x; θ)**: Function mapping inputs to outputs
-3. **Loss Function L**: Measures prediction error
-4. **Training Data {(xᵢ, yᵢ)}**: Samples used for learning
+1. **Parameter Space ($\theta \in \Theta$)**: The set of all possible parameter values
+2. **Model Function $f(x; \theta)$**: Function mapping inputs to outputs
+3. **Loss Function $L$**: Measures prediction error
+4. **Training Data $\{(x_i, y_i)\}$**: Samples used for learning
 
 ### 3.3 Why "Empirical" Risk?
 
 The term "empirical" emphasizes that we're using finite training data, not the true data distribution. Ideally, we want to minimize expected risk:
 
-```python
-R(θ) = E[L(f(x; θ), y)]
-```
+$$
+R(\theta) = \mathbb{E}\left[L\left(f(x; \theta), y\right)\right]
+$$
 
 But since we don't know the true distribution, we approximate with empirical risk (average loss on training data):
 
-```python
-J(θ) = 1/m Σᵢ L(f(xᵢ; θ), yᵢ)
-```
+$$
+J(\theta) = \frac{1}{m} \sum_{i=1}^{m} L\left(f(x_i; \theta), y_i\right)
+$$
 
 ### 3.4 Theoretical Guarantees of ERM
 
-The Law of Large Numbers tells us: when the number of samples m is large enough, empirical risk converges to expected risk. This provides a theoretical foundation for ERM.
+The Law of Large Numbers tells us: when the number of samples $m$ is large enough, empirical risk converges to expected risk. This provides a theoretical foundation for ERM.
 
 ### 3.5 Overfitting and Regularization
 
 Pure ERM can lead to overfitting. Solutions include:
 
 1. **Regularization**: Add penalty terms
-   ```python
-   J_reg(θ) = J(θ) + λ·||θ||²
-   ```
+   $$
+   J_{\text{reg}}(\theta) = J(\theta) + \lambda \|\theta\|^2
+   $$
 
 2. **Early Stopping**: Stop training before validation performance declines
 
@@ -224,27 +225,35 @@ The learning rate controls the step size:
 
 #### For Squared Loss:
 
-```python
-# Gradient for single sample
-∂L/∂w = -2(y - (wx + b)) * x
-∂L/∂b = -2(y - (wx + b))
+Gradient for a single sample:
 
-# Batch gradient
-gradient_w = -2/m * Σᵢ (yᵢ - (wxᵢ + b)) * xᵢ
-gradient_b = -2/m * Σᵢ (yᵢ - (wxᵢ + b))
-```
+$$
+\frac{\partial L}{\partial w} = -2\left(y - (wx + b)\right) x, \qquad
+\frac{\partial L}{\partial b} = -2\left(y - (wx + b)\right)
+$$
+
+Batch gradient:
+
+$$
+\frac{\partial J}{\partial w} = -\frac{2}{m} \sum_{i=1}^{m} \left(y_i - (wx_i + b)\right) x_i, \qquad
+\frac{\partial J}{\partial b} = -\frac{2}{m} \sum_{i=1}^{m} \left(y_i - (wx_i + b)\right)
+$$
 
 #### For Absolute Value Loss:
 
-```python
-# Gradient for single sample
-∂L/∂w = -sign(y - (wx + b)) * x
-∂L/∂b = -sign(y - (wx + b))
+Gradient for a single sample:
 
-# Batch gradient
-gradient_w = -1/m * Σᵢ sign(yᵢ - (wxᵢ + b)) * xᵢ
-gradient_b = -1/m * Σᵢ sign(yᵢ - (wxᵢ + b))
-```
+$$
+\frac{\partial L}{\partial w} = -\operatorname{sign}\left(y - (wx + b)\right) x, \qquad
+\frac{\partial L}{\partial b} = -\operatorname{sign}\left(y - (wx + b)\right)
+$$
+
+Batch gradient:
+
+$$
+\frac{\partial J}{\partial w} = -\frac{1}{m} \sum_{i=1}^{m} \operatorname{sign}\left(y_i - (wx_i + b)\right) x_i, \qquad
+\frac{\partial J}{\partial b} = -\frac{1}{m} \sum_{i=1}^{m} \operatorname{sign}\left(y_i - (wx_i + b)\right)
+$$
 
 ### 4.5 Variants of Gradient Descent
 
