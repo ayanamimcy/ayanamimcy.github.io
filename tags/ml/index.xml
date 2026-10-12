@@ -1,2 +1,386 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Ml - 标签 - 强哥的猫</title><link>https://blog.ayanamimcy.top/tags/ml/</link><description>Ml - 标签 - 强哥的猫</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>ayanamimcy@gmail.com (一只老猫)</managingEditor><webMaster>ayanamimcy@gmail.com (一只老猫)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 14 Sep 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.ayanamimcy.top/tags/ml/" rel="self" type="application/rss+xml"/><item><title>Deep Dive into Linear Regression: A Complete Analysis from Model to Optimization</title><link>https://blog.ayanamimcy.top/linear-regression/</link><pubDate>Sun, 14 Sep 2025 00:00:00 +0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/linear-regression/</guid><description>&lt;h2 id="introduction">Introduction&lt;/h2>
-&lt;p>Linear regression is the cornerstone of machine learning and deep learning. While it appears simple, the core concepts embedded within it—model representation, loss functions, empirical risk minimization, and gradient descent—form the foundational framework of modern deep learning. This article will explore the principles and mechanisms of these concepts in depth, helping readers build a solid theoretical foundation.&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Ml on 强哥的猫</title><link>https://blog.ayanamimcy.top/tags/ml/</link><description>Recent content in Ml on 强哥的猫</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>一只老猫</copyright><lastBuildDate>Fri, 25 Sep 2026 10:21:29 +0900</lastBuildDate><atom:link href="https://blog.ayanamimcy.top/tags/ml/index.xml" rel="self" type="application/rss+xml"/><item><title>Deep Dive into Linear Regression: A Complete Analysis from Model to Optimization</title><link>https://blog.ayanamimcy.top/linear-regression/</link><pubDate>Sun, 14 Sep 2025 00:00:00 +0000</pubDate><guid>https://blog.ayanamimcy.top/linear-regression/</guid><description>&lt;h2 id="introduction"&gt;Introduction
+&lt;/h2&gt;&lt;p&gt;Linear regression is the cornerstone of machine learning and deep learning. While it appears simple, the core concepts embedded within it—model representation, loss functions, empirical risk minimization, and gradient descent—form the foundational framework of modern deep learning. This article will explore the principles and mechanisms of these concepts in depth, helping readers build a solid theoretical foundation.&lt;/p&gt;
+&lt;h2 id="part-1-the-essence-of-linear-regression-models"&gt;Part 1: The Essence of Linear Regression Models
+&lt;/h2&gt;&lt;h3 id="11-mathematical-representation-of-the-model"&gt;1.1 Mathematical Representation of the Model
+&lt;/h3&gt;&lt;p&gt;The core idea of linear regression is to fit data with a line (or hyperplane). Its mathematical representation is:&lt;/p&gt;
+$$
+y = wx + b
+$$&lt;p&gt;This seemingly simple formula actually contains the core elements of machine learning:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Input Features (x)&lt;/strong&gt;: Represents the data we observe, which can be one-dimensional (like house area) or multi-dimensional (like house area, location, age, and other features)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Weight Parameters (w)&lt;/strong&gt;: Indicates the degree of influence each feature has on the output&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Bias Term (b)&lt;/strong&gt;: Allows the model&amp;rsquo;s output not to pass through the origin, increasing model flexibility&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Predicted Output (y)&lt;/strong&gt;: The model&amp;rsquo;s predicted value for given input&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="12-extension-from-one-dimensional-to-multi-dimensional"&gt;1.2 Extension from One-Dimensional to Multi-Dimensional
+&lt;/h3&gt;&lt;p&gt;When we have multiple features, the model extends to:&lt;/p&gt;
+$$
+y = w_1x_1 + w_2x_2 + \cdots + w_nx_n + b
+$$&lt;p&gt;Vector representation is more concise:&lt;/p&gt;
+$$
+y = \mathbf{w}^\top \mathbf{x} + b
+$$&lt;p&gt;Where $\mathbf{w}^\top$ represents the transpose of the weight vector, and $\mathbf{w}^\top \mathbf{x}$ is the dot product of the weight and feature vectors.&lt;/p&gt;
+&lt;h3 id="13-geometric-intuition-of-the-model"&gt;1.3 Geometric Intuition of the Model
+&lt;/h3&gt;&lt;p&gt;From a geometric perspective, linear regression is finding a hyperplane in high-dimensional space that is as close as possible to all data points. In 2D space, this means finding a line; in 3D space, finding a plane; in higher dimensions, while difficult to visualize, the mathematical principles remain consistent.&lt;/p&gt;
+&lt;h3 id="14-model-assumptions"&gt;1.4 Model Assumptions
+&lt;/h3&gt;&lt;p&gt;The linear regression model implies several important assumptions:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Linear Relationship&lt;/strong&gt;: A linear relationship exists between inputs and outputs&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Independent and Identically Distributed&lt;/strong&gt;: Data points are independently sampled&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Noise Assumption&lt;/strong&gt;: Observations contain noise, typically assumed to follow a Gaussian distribution&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;While these assumptions are rarely fully satisfied in reality, they provide us with a good starting point.&lt;/p&gt;
+&lt;h2 id="part-2-design-and-selection-of-loss-functions"&gt;Part 2: Design and Selection of Loss Functions
+&lt;/h2&gt;&lt;p&gt;Loss functions are the bridge connecting model predictions and real data, quantifying the &amp;ldquo;degree of error&amp;rdquo; in predictions.&lt;/p&gt;
+&lt;h3 id="21-squared-loss-l2-loss"&gt;2.1 Squared Loss (L2 Loss)
+&lt;/h3&gt;&lt;p&gt;Squared loss is the most commonly used loss function:&lt;/p&gt;
+$$
+L = (y - \hat{y})^2
+$$&lt;h4 id="how-it-works"&gt;How It Works:
+&lt;/h4&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Error Amplification Effect&lt;/strong&gt;: Squaring operation makes the penalty for large errors grow quadratically&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Differentiability&lt;/strong&gt;: Differentiable at all points, convenient for optimization&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Unique Optimal Solution&lt;/strong&gt;: For linear models, squared loss has a closed-form solution&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id="mathematical-derivation"&gt;Mathematical Derivation:
+&lt;/h4&gt;&lt;p&gt;For all samples, the total loss is:&lt;/p&gt;
+$$
+J = \sum_{i} \left(y_i - (wx_i + b)\right)^2
+$$&lt;p&gt;By taking derivatives and setting them to zero, we can obtain the normal equation:&lt;/p&gt;
+$$
+\mathbf{w}^* = (X^\top X)^{-1} X^\top \mathbf{y}
+$$&lt;h4 id="advantages"&gt;Advantages:
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Good mathematical properties, easy to optimize&lt;/li&gt;
+&lt;li&gt;Has closed-form solution (for linear models)&lt;/li&gt;
+&lt;li&gt;Simple gradient computation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="disadvantages"&gt;Disadvantages:
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Sensitive to Outliers&lt;/strong&gt;: One extreme outlier can severely affect the entire model&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Assumes Gaussian Noise&lt;/strong&gt;: May not hold in practice&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="22-absolute-value-loss-l1-loss"&gt;2.2 Absolute Value Loss (L1 Loss)
+&lt;/h3&gt;&lt;p&gt;Absolute value loss provides another way to measure error:&lt;/p&gt;
+$$
+L = |y - \hat{y}|
+$$&lt;h4 id="how-it-works-1"&gt;How It Works:
+&lt;/h4&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Linear Penalty&lt;/strong&gt;: Error penalty is proportional to error magnitude&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Robustness&lt;/strong&gt;: Less sensitive to outliers than squared loss&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Non-differentiable Points&lt;/strong&gt;: Non-differentiable when prediction is perfectly accurate (error is 0)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id="mathematical-properties"&gt;Mathematical Properties:
+&lt;/h4&gt;&lt;p&gt;The gradient of absolute value loss:&lt;/p&gt;
+$$
+\frac{\partial L}{\partial \hat{y}} = -\operatorname{sign}(y - \hat{y}) =
+\begin{cases}
+-1, &amp; \text{if } y &gt; \hat{y} \\
++1, &amp; \text{if } y &lt; \hat{y} \\
+\text{undefined}, &amp; \text{if } y = \hat{y}
+\end{cases}
+$$&lt;h4 id="advantages-1"&gt;Advantages:
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Robust to Outliers&lt;/strong&gt;: Outlier influence is linear, not amplified&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Produces Sparse Solutions&lt;/strong&gt;: In certain cases, can make some parameters zero&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="disadvantages-1"&gt;Disadvantages:
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;No closed-form solution, must use iterative optimization&lt;/li&gt;
+&lt;li&gt;Non-differentiable at zero, requires special handling&lt;/li&gt;
+&lt;li&gt;Convergence speed may be slower than squared loss&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="23-loss-function-selection-strategy"&gt;2.3 Loss Function Selection Strategy
+&lt;/h3&gt;&lt;p&gt;Choosing a loss function requires considering:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Data Characteristics&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;If data contains outliers, choose L1 loss&lt;/li&gt;
+&lt;li&gt;If data is relatively clean, L2 loss is usually more effective&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Optimization Convenience&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;L2 loss optimization is easier, converges faster&lt;/li&gt;
+&lt;li&gt;L1 loss may require more iterations&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Model Interpretability&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;L1 loss tends to produce sparse solutions (some weights are 0)&lt;/li&gt;
+&lt;li&gt;L2 loss solutions typically have all non-zero weights&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="part-3-empirical-risk-minimization-erm"&gt;Part 3: Empirical Risk Minimization (ERM)
+&lt;/h2&gt;&lt;h3 id="31-core-idea-of-erm"&gt;3.1 Core Idea of ERM
+&lt;/h3&gt;&lt;p&gt;Empirical risk minimization is the fundamental principle of machine learning:&lt;/p&gt;
+$$
+\min_{\theta} J(\theta) = \frac{1}{m} \sum_{i=1}^{m} L\left(f(x_i; \theta), y_i\right)
+$$&lt;p&gt;This formula expresses a simple but profound idea: &lt;strong&gt;find the parameters that minimize the average loss on training data&lt;/strong&gt;.&lt;/p&gt;
+&lt;h3 id="32-components-of-erm"&gt;3.2 Components of ERM
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Parameter Space ($\theta \in \Theta$)&lt;/strong&gt;: The set of all possible parameter values&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Model Function $f(x; \theta)$&lt;/strong&gt;: Function mapping inputs to outputs&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Loss Function $L$&lt;/strong&gt;: Measures prediction error&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Training Data $\{(x_i, y_i)\}$&lt;/strong&gt;: Samples used for learning&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="33-why-empirical-risk"&gt;3.3 Why &amp;ldquo;Empirical&amp;rdquo; Risk?
+&lt;/h3&gt;&lt;p&gt;The term &amp;ldquo;empirical&amp;rdquo; emphasizes that we&amp;rsquo;re using finite training data, not the true data distribution. Ideally, we want to minimize expected risk:&lt;/p&gt;
+$$
+R(\theta) = \mathbb{E}\left[L\left(f(x; \theta), y\right)\right]
+$$&lt;p&gt;But since we don&amp;rsquo;t know the true distribution, we approximate with empirical risk (average loss on training data):&lt;/p&gt;
+$$
+J(\theta) = \frac{1}{m} \sum_{i=1}^{m} L\left(f(x_i; \theta), y_i\right)
+$$&lt;h3 id="34-theoretical-guarantees-of-erm"&gt;3.4 Theoretical Guarantees of ERM
+&lt;/h3&gt;&lt;p&gt;The Law of Large Numbers tells us: when the number of samples $m$ is large enough, empirical risk converges to expected risk. This provides a theoretical foundation for ERM.&lt;/p&gt;
+&lt;h3 id="35-overfitting-and-regularization"&gt;3.5 Overfitting and Regularization
+&lt;/h3&gt;&lt;p&gt;Pure ERM can lead to overfitting. Solutions include:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Regularization&lt;/strong&gt;: Add penalty terms
+&lt;/p&gt;
+$$
+ J_{\text{reg}}(\theta) = J(\theta) + \lambda \|\theta\|^2
+ $$&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Early Stopping&lt;/strong&gt;: Stop training before validation performance declines&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Cross-Validation&lt;/strong&gt;: Evaluate model generalization ability&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="part-4-gradient-descent---the-engine-of-optimization"&gt;Part 4: Gradient Descent - The Engine of Optimization
+&lt;/h2&gt;&lt;h3 id="41-core-idea-of-gradient-descent"&gt;4.1 Core Idea of Gradient Descent
+&lt;/h3&gt;&lt;p&gt;When the loss function has no closed-form solution (e.g., using L1 loss), we need iterative optimization methods. Gradient descent is the most fundamental and important optimization algorithm.&lt;/p&gt;
+&lt;p&gt;Basic update rule:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iterations&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;gradient&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;compute_gradient&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;θ&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;θ&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;θ&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;learning_rate&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;gradient&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="42-geometric-meaning-of-gradients"&gt;4.2 Geometric Meaning of Gradients
+&lt;/h3&gt;&lt;p&gt;The gradient points in the direction of fastest function growth, so the negative gradient points in the direction of fastest descent. This is like being on a hillside, always walking in the steepest downhill direction, eventually reaching the valley.&lt;/p&gt;
+&lt;h3 id="43-learning-rate-selection"&gt;4.3 Learning Rate Selection
+&lt;/h3&gt;&lt;p&gt;The learning rate controls the step size:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Too Large&lt;/strong&gt;: May overshoot the optimum, or even diverge&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Too Small&lt;/strong&gt;: Slow convergence, high computational cost&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Adaptive&lt;/strong&gt;: Modern methods (like Adam) automatically adjust the learning rate&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="44-gradient-computation-examples"&gt;4.4 Gradient Computation Examples
+&lt;/h3&gt;&lt;h4 id="for-squared-loss"&gt;For Squared Loss:
+&lt;/h4&gt;&lt;p&gt;Gradient for a single sample:&lt;/p&gt;
+$$
+\frac{\partial L}{\partial w} = -2\left(y - (wx + b)\right) x, \qquad
+\frac{\partial L}{\partial b} = -2\left(y - (wx + b)\right)
+$$&lt;p&gt;Batch gradient:&lt;/p&gt;
+$$
+\frac{\partial J}{\partial w} = -\frac{2}{m} \sum_{i=1}^{m} \left(y_i - (wx_i + b)\right) x_i, \qquad
+\frac{\partial J}{\partial b} = -\frac{2}{m} \sum_{i=1}^{m} \left(y_i - (wx_i + b)\right)
+$$&lt;h4 id="for-absolute-value-loss"&gt;For Absolute Value Loss:
+&lt;/h4&gt;&lt;p&gt;Gradient for a single sample:&lt;/p&gt;
+$$
+\frac{\partial L}{\partial w} = -\operatorname{sign}\left(y - (wx + b)\right) x, \qquad
+\frac{\partial L}{\partial b} = -\operatorname{sign}\left(y - (wx + b)\right)
+$$&lt;p&gt;Batch gradient:&lt;/p&gt;
+$$
+\frac{\partial J}{\partial w} = -\frac{1}{m} \sum_{i=1}^{m} \operatorname{sign}\left(y_i - (wx_i + b)\right) x_i, \qquad
+\frac{\partial J}{\partial b} = -\frac{1}{m} \sum_{i=1}^{m} \operatorname{sign}\left(y_i - (wx_i + b)\right)
+$$&lt;h3 id="45-variants-of-gradient-descent"&gt;4.5 Variants of Gradient Descent
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Batch Gradient Descent (BGD)&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Uses all data to compute gradients&lt;/li&gt;
+&lt;li&gt;Stable but computationally expensive&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Stochastic Gradient Descent (SGD)&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Uses one sample at a time&lt;/li&gt;
+&lt;li&gt;Fast but noisy&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Mini-batch Gradient Descent&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Uses a small batch of samples&lt;/li&gt;
+&lt;li&gt;Balances speed and stability&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="46-convergence-analysis"&gt;4.6 Convergence Analysis
+&lt;/h3&gt;&lt;p&gt;Gradient descent convergence depends on:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Convexity of Loss Function&lt;/strong&gt;: Convex functions guarantee convergence to global optimum&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Learning Rate&lt;/strong&gt;: Must satisfy certain conditions (e.g., decreasing)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Lipschitz Continuity of Gradient&lt;/strong&gt;: Ensures smooth optimization&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="part-5-practical-considerations"&gt;Part 5: Practical Considerations
+&lt;/h2&gt;&lt;h3 id="51-feature-scaling"&gt;5.1 Feature Scaling
+&lt;/h3&gt;&lt;p&gt;Different feature scales affect optimization:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Standardization&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;x_scaled&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;mean&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Normalization&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;x_normalized&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nb"&gt;min&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;max&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nb"&gt;min&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="52-initialization-strategies"&gt;5.2 Initialization Strategies
+&lt;/h3&gt;&lt;p&gt;Good initialization can accelerate convergence:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Random initialization&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;randn&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_features&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="mf"&gt;0.01&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Xavier initialization&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;randn&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_features&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;n_features&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="53-debugging-tips"&gt;5.3 Debugging Tips
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Gradient Checking&lt;/strong&gt;: Verify analytical gradients with numerical gradients&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Loss Curves&lt;/strong&gt;: Monitor training progress&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Learning Rate Scheduling&lt;/strong&gt;: Dynamically adjust learning rate&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="54-implementation-example"&gt;5.4 Implementation Example
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;span class="lnt"&gt;27
+&lt;/span&gt;&lt;span class="lnt"&gt;28
+&lt;/span&gt;&lt;span class="lnt"&gt;29
+&lt;/span&gt;&lt;span class="lnt"&gt;30
+&lt;/span&gt;&lt;span class="lnt"&gt;31
+&lt;/span&gt;&lt;span class="lnt"&gt;32
+&lt;/span&gt;&lt;span class="lnt"&gt;33
+&lt;/span&gt;&lt;span class="lnt"&gt;34
+&lt;/span&gt;&lt;span class="lnt"&gt;35
+&lt;/span&gt;&lt;span class="lnt"&gt;36
+&lt;/span&gt;&lt;span class="lnt"&gt;37
+&lt;/span&gt;&lt;span class="lnt"&gt;38
+&lt;/span&gt;&lt;span class="lnt"&gt;39
+&lt;/span&gt;&lt;span class="lnt"&gt;40
+&lt;/span&gt;&lt;span class="lnt"&gt;41
+&lt;/span&gt;&lt;span class="lnt"&gt;42
+&lt;/span&gt;&lt;span class="lnt"&gt;43
+&lt;/span&gt;&lt;span class="lnt"&gt;44
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;LinearRegression&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="fm"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;loss_type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;l2&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;loss_type&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;loss_type&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;None&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;None&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;fit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;learning_rate&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;0.01&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;iterations&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;n_samples&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;n_features&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;# Initialize parameters&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;zeros&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_features&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;# Gradient descent&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;iterations&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;# Predict&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;y_pred&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;# Compute gradients&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;loss_type&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;l2&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;dw&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;n_samples&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;T&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;y_pred&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;db&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;n_samples&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;y_pred&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="c1"&gt;# l1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;dw&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;n_samples&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;T&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sign&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;y_pred&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;db&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;n_samples&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sign&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;y_pred&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;# Update parameters&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;-=&lt;/span&gt; &lt;span class="n"&gt;learning_rate&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;dw&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;-=&lt;/span&gt; &lt;span class="n"&gt;learning_rate&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;db&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;# Print loss (optional)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;loss&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;compute_loss&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sa"&gt;f&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;Iteration &lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;, Loss: &lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="n"&gt;loss&lt;/span&gt;&lt;span class="si"&gt;:&lt;/span&gt;&lt;span class="s2"&gt;.4f&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;compute_loss&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;y_pred&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;loss_type&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;l2&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;mean&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;y_pred&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;mean&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;abs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;y_pred&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;predict&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="conclusion"&gt;Conclusion
+&lt;/h2&gt;&lt;p&gt;While linear regression is one of the simplest machine learning models, it contains the core elements of deep learning:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Model Representation&lt;/strong&gt;: How to express our assumptions in mathematical form&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Loss Functions&lt;/strong&gt;: How to quantify the quality of predictions&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Empirical Risk Minimization&lt;/strong&gt;: Transforming learning problems into optimization problems&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Gradient Descent&lt;/strong&gt;: How to iteratively find optimal solutions&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;These concepts apply not only to linear regression but form the foundation for understanding neural networks and deep learning. By deeply understanding these principles, we can:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Better choose and design models&lt;/li&gt;
+&lt;li&gt;Understand trade-offs between different loss functions&lt;/li&gt;
+&lt;li&gt;Diagnose and solve optimization problems&lt;/li&gt;
+&lt;li&gt;Build a solid foundation for learning more complex models&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The beauty of linear regression lies in its ability to demonstrate the core ideas of machine learning in the simplest form. Master these fundamentals, and you&amp;rsquo;ll have the keys to explore the world of deep learning.&lt;/p&gt;</description></item></channel></rss>

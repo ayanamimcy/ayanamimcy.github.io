@@ -1,36 +1,637 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Linux - 标签 - 强哥的猫</title><link>https://blog.ayanamimcy.top/tags/linux/</link><description>Linux - 标签 - 强哥的猫</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>ayanamimcy@gmail.com (一只老猫)</managingEditor><webMaster>ayanamimcy@gmail.com (一只老猫)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 14 Sep 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.ayanamimcy.top/tags/linux/" rel="self" type="application/rss+xml"/><item><title>如何在fedora系统中开启gamescope</title><link>https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/</link><pubDate>Sun, 14 Sep 2025 00:00:00 +0000</pubDate><author>ayanamimcy@gmail.com (一只老猫)</author><guid>https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/</guid><description><![CDATA[<h2 id="安装-gamescope-启动到-steam-deck-界面">安装 gamescope 启动到 Steam Deck 界面</h2>
-<h3 id="前置条件">前置条件</h3>
-<ul>
-<li>Fedora Workstation（Wayland 默认即可）。</li>
-<li>有 NVIDIA/AMD 独显的机器建议先装好官方驱动。</li>
-<li>关闭 Secure Boot，避免驱动与 gamescope 依赖冲突。</li>
-</ul>
-<h3 id="快速安装">快速安装</h3>
-<ol>
-<li>安装 gamescope 与 HUD 工具：
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo dnf install -y gamescope mangohud
-</span></span></code></pre></td></tr></table>
-</div>
-</div></li>
-<li>使用现成脚本一键部署 session：
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git clone https://github.com/shahnawazshahin/steam-using-gamescope-guide.git
-</span></span><span class="line"><span class="cl"><span class="nb">cd</span> steam-using-gamescope-guide
-</span></span><span class="line"><span class="cl">sudo ./install.sh
-</span></span></code></pre></td></tr></table>
-</div>
-</div>安装完成后在登录界面选择 <code>Gamescope+Steam</code>（名字可能略有差异），即可进入 Steam Deck 风格界面。</li>
-</ol>
-<h3 id="手动安装可控性更高">手动安装（可控性更高）</h3>
-<p>如果想自己掌握文件位置，可以从 ChimeraOS 的 session 仓库直接复制：</p>]]></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Linux on 强哥的猫</title><link>https://blog.ayanamimcy.top/tags/linux/</link><description>Recent content in Linux on 强哥的猫</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>一只老猫</copyright><lastBuildDate>Mon, 12 Oct 2026 16:36:25 +0900</lastBuildDate><atom:link href="https://blog.ayanamimcy.top/tags/linux/index.xml" rel="self" type="application/rss+xml"/><item><title>用 CachyOS 把 MS-01 改成无头串流游戏主机</title><link>https://blog.ayanamimcy.top/ms01-cachyos-headless-gaming-host/</link><pubDate>Mon, 12 Oct 2026 00:00:00 +0000</pubDate><guid>https://blog.ayanamimcy.top/ms01-cachyos-headless-gaming-host/</guid><description>&lt;p&gt;去年在 Fedora 上折腾过一次 gamescope（见&lt;a class="link" href="https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/" &gt;如何在fedora系统中开启gamescope&lt;/a&gt;）。这次换了个思路：给 Minisforum MS-01 装上 CachyOS，不接显示器，开机直接进 SteamOS 风格的游戏模式，平时在 Mac 上用 Moonlight 串流玩。&lt;/p&gt;
+&lt;p&gt;下面按搭建顺序记一下过程和踩过的坑。所有配置我都写成了脚本放在 git 仓库里，重装时按顺序跑一遍就能恢复。&lt;/p&gt;
+&lt;h2 id="硬件和思路"&gt;硬件和思路
+&lt;/h2&gt;&lt;!-- TODO: 放一张机器照片 --&gt;
+&lt;ul&gt;
+&lt;li&gt;Minisforum MS-01：i9-13900H，三个网口，两个雷电 4 口&lt;/li&gt;
+&lt;li&gt;RTX 4070 Ti SUPER：机身的 PCIe 槽放不下这么大的卡，所以用 PCIe 转 OCuLink 外接&lt;/li&gt;
+&lt;li&gt;一个 HDMI 假负载，骗显卡说“接了屏幕”&lt;/li&gt;
+&lt;li&gt;一块 USB 外接的 2TB SATA SSD，放 Steam 游戏库&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;主力机是 MacBook，桌面和游戏都通过 Sunshine + Moonlight 串流过去。主机开机进 gamescope + Steam 大屏幕，用起来像一台 Steam Machine；需要桌面时从 Steam 里“切换到桌面”进 KDE Plasma。&lt;/p&gt;
+&lt;p&gt;选 CachyOS 是因为它基于 Arch，软件新，有 AUR 兜底；默认就带了游戏向的内核和调度优化；而且有现成的 &lt;code&gt;gamescope-session-cachyos&lt;/code&gt;，不用像在 Fedora 上那样自己拼 session。&lt;/p&gt;
+&lt;h2 id="没有显示器怎么输出-mac-的分辨率"&gt;没有显示器，怎么输出 Mac 的分辨率
+&lt;/h2&gt;&lt;p&gt;Mac 屏幕是 3024x1890，我希望串流画面一像素对一像素。在 KDE 里用 &lt;code&gt;kscreen-doctor&lt;/code&gt; 加自定义分辨率：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;kscreen-doctor output.HDMI-A-1.addCustomMode.3024.1890.60000
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;模式是加上了，切换时却被 NVIDIA 驱动拒绝。原因是 NVIDIA 只接受 EDID（显示器自报的能力表）里列出的模式，而假负载的 EDID 里没有这个分辨率。&lt;/p&gt;
+&lt;p&gt;好在 &lt;code&gt;nvidia_modeset&lt;/code&gt; 支持用 &lt;code&gt;config_file&lt;/code&gt; 指定一份配置，在里面把某个接口的 EDID 换成自己的文件。做法是：读出假负载原来的 EDID，用小脚本在空位里加上 3024x1890@60 和 @90，重新算校验和，放到 &lt;code&gt;/etc&lt;/code&gt; 下，再在配置里指向它：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;# /etc/modprobe.d/ 里给 nvidia_modeset 加上
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;options nvidia_modeset config_file=/etc/nvidia-modeset.conf
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这个模块在 initramfs 阶段就会加载，所以要把配置打进 initramfs 再重启。之后 &lt;code&gt;journalctl -b -k | grep nvidia-modeset&lt;/code&gt; 能看到 &lt;code&gt;Successfully read /etc/nvidia-modeset.conf&lt;/code&gt;，&lt;code&gt;kscreen-doctor -o&lt;/code&gt; 里也有 3024x1890 了。&lt;/p&gt;
+&lt;p&gt;有几个限制：假负载只支持 HDMI 2.0，像素时钟上限 600 MHz，所以最高只能到 90Hz（120Hz 大约需要 764 MHz）；EDID 里的空位最多只够加两个模式；另外同一个接口，NVIDIA 配置里叫 &lt;code&gt;HDMI-0&lt;/code&gt;，KDE 里却叫 &lt;code&gt;HDMI-A-1&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;改 EDID 很容易改到没画面。那时可以 SSH 进去删配置、重建 initramfs，或者在启动菜单里选改动前的 snapper 快照。CachyOS 默认的 btrfs + snapper + Limine 在这种时候特别省心。&lt;/p&gt;
+&lt;h2 id="串流sunshine--moonlight"&gt;串流：Sunshine + Moonlight
+&lt;/h2&gt;&lt;h3 id="按客户端自动切分辨率"&gt;按客户端自动切分辨率
+&lt;/h3&gt;&lt;p&gt;不同设备串流时要的分辨率不一样。Sunshine 的 &lt;code&gt;global_prep_cmd&lt;/code&gt; 会在串流开始和结束时各执行一条命令，并把客户端请求的分辨率和帧率放在 &lt;code&gt;SUNSHINE_CLIENT_WIDTH&lt;/code&gt; / &lt;code&gt;_HEIGHT&lt;/code&gt; / &lt;code&gt;_FPS&lt;/code&gt; 环境变量里。我写了个脚本挂上去：在 KDE 下用 &lt;code&gt;kscreen-doctor&lt;/code&gt; 切分辨率，顺便按分辨率设置缩放（4K 级 2 倍、2K 级 1.5 倍、1080p 不缩放），结束后再恢复；游戏模式下 gamescope 不认 kscreen-doctor，就改它自己的 &lt;code&gt;~/.config/gamescope/modes.cfg&lt;/code&gt;（也就是 Steam 显示设置写入的那个文件），再通知它重新读取。&lt;/p&gt;
+&lt;p&gt;Sunshine 不记录 prep 命令的输出，建议让脚本自己写日志，排查时能省不少事。&lt;/p&gt;
+&lt;h3 id="断线自动暂停"&gt;断线自动暂停
+&lt;/h3&gt;&lt;p&gt;玩到一半网络断了，或者合上了 Mac，游戏还在主机上接着跑。Sunshine 只会在 Moonlight 里主动退出时执行 undo 命令，单纯断线和重连时什么都不做。所以我参考 Decky 插件 Pause Games 写了个用户服务：盯着 Sunshine 日志里的 &lt;code&gt;CLIENT DISCONNECTED&lt;/code&gt; / &lt;code&gt;CLIENT CONNECTED&lt;/code&gt;，断开时给游戏进程树发 &lt;code&gt;SIGSTOP&lt;/code&gt;，重连时发 &lt;code&gt;SIGCONT&lt;/code&gt;。它只恢复自己暂停的进程，不会去动插件暂停的那些。&lt;/p&gt;
+&lt;h3 id="游戏模式下-sunshine-悄悄退出"&gt;游戏模式下 Sunshine 悄悄退出
+&lt;/h3&gt;&lt;p&gt;切到游戏模式后怎么也连不上，一看 Sunshine 进程已经没了，systemd 也没把它拉起来。原因是 gamescope 下没有系统托盘，Sunshine 初始化托盘失败后主循环直接结束，而且退出码是成功，&lt;code&gt;Restart=on-failure&lt;/code&gt; 自然不会触发。在 &lt;code&gt;sunshine.conf&lt;/code&gt; 里加一行就好：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ini" data-lang="ini"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;system_tray&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;disabled&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="avahi-不停改名"&gt;avahi 不停改名
+&lt;/h3&gt;&lt;p&gt;有一阵子 Moonlight 时而能发现主机、时而不能，日志也被刷爆了（CachyOS 的 journald 默认只留 50M，最后只剩一天的日志）。日志里 avahi 一直在给主机改名：&lt;code&gt;cachyos-x8664-2.local&lt;/code&gt;、&lt;code&gt;-3.local&lt;/code&gt;……&lt;/p&gt;
+&lt;p&gt;原来 systemd-resolved 默认也开着 mDNS。这台机器三个网口都接在同一个网段，resolved 在每个口上都应答本机名，avahi 以为名字被别人占了，就不停地换。解决办法是关掉 resolved 的 mDNS，交给 avahi 一个人负责：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ini" data-lang="ini"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# /etc/systemd/resolved.conf.d/no-mdns.conf&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;[Resolve]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;MulticastDNS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;no&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;再在 &lt;code&gt;avahi-daemon.conf&lt;/code&gt; 里用 &lt;code&gt;allow-interfaces&lt;/code&gt; 限定只用主网口。注意重启 avahi 之后，Sunshine 也要跟着重启，它不会自己重连 avahi。&lt;/p&gt;
+&lt;h2 id="开机直接进游戏模式"&gt;开机直接进游戏模式
+&lt;/h2&gt;&lt;p&gt;Sunshine 是用户服务，机器停在登录界面就没法串流，所以自动登录是必须的。装好 &lt;code&gt;gamescope-session-cachyos&lt;/code&gt; 后配置：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ini" data-lang="ini"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# /etc/plasmalogin.conf.d/10-autologin.conf&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;[Autologin]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;User&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;lt;用户名&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;Session&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;gamescope-session.desktop&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;Relogin&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这里踩了两个坑。一是开机总进 Plasma：&lt;code&gt;/etc/plasmalogin.conf&lt;/code&gt; 会覆盖 &lt;code&gt;conf.d&lt;/code&gt; 里的配置，而装系统时它里面已经写了一行 &lt;code&gt;Session=&lt;/code&gt;，删掉之后才生效。二是从 Steam“切换到桌面”后卡在登录界面，串流跟着断开，&lt;code&gt;Relogin=true&lt;/code&gt; 就是为这个加的，有了它注销后才会以新会话重新自动登录。&lt;/p&gt;
+&lt;p&gt;另外，我在 KDE 桌面放了个“返回游戏模式”的启动项，还写了个 SSH 救援脚本，画面出问题时能远程切回桌面。写脚本判断当前是不是游戏模式时要注意：&lt;code&gt;pgrep -x gamescope&lt;/code&gt; 找不到进程，它的进程名其实是 &lt;code&gt;gamescope-wl&lt;/code&gt;。更可靠的写法是：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;systemctl --user is-active gamescope-session.service
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="散热和稳定性"&gt;散热和稳定性
+&lt;/h2&gt;&lt;p&gt;MS-01 待机时风扇有点吵。主板的 Super I/O 芯片是 Nuvoton NCT6798，用的是 &lt;code&gt;nct6775&lt;/code&gt; 驱动（默认不会自动加载）。它在 SmartFan IV 模式下按 5 个温度点组成的曲线自己控制风扇，BIOS 每次开机写入这条曲线，所以不需要常驻程序，开机时改写一次就行：&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;风扇&lt;/th&gt;
+ &lt;th&gt;温度源&lt;/th&gt;
+ &lt;th&gt;BIOS 曲线（°C:PWM）&lt;/th&gt;
+ &lt;th&gt;现在的曲线&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;CPU 风扇（pwm2）&lt;/td&gt;
+ &lt;td&gt;PECI&lt;/td&gt;
+ &lt;td&gt;40:50 50:100 75:150 90:190 95:255&lt;/td&gt;
+ &lt;td&gt;50:50 65:90 80:140 90:200 95:255&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;系统风扇（pwm1）&lt;/td&gt;
+ &lt;td&gt;CPUTIN&lt;/td&gt;
+ &lt;td&gt;45:70 60:100 75:120 85:150 95:255&lt;/td&gt;
+ &lt;td&gt;50:70 65:90 75:120 85:160 95:255&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;改完之后，待机时 CPU 风扇从约 2500 RPM 降到了约 1700 RPM。&lt;/p&gt;
+&lt;p&gt;我还把 CPU 限到了 4.9 GHz。13900H 的优选核心标称能到 5.4G，但 BIOS 温度墙是 90°C，实测不限频时单核也只能维持在 5.0G 左右，而且打游戏时温度会突然冲高，风扇跟着狂转。限到 4.9G 后单核性能只差 0～5%，温度尖峰少了很多。多核本来就被功耗墙（70/100W）卡着，到不了 4.9G，所以不受影响。&lt;/p&gt;
+&lt;!-- TODO: 可以补一张限频前后的温度对比图 --&gt;
+&lt;p&gt;外接显卡偶尔会在开机时初始化失败（驱动日志里是 GSP 相关的错误）。我加了个开机检查：检测不到显卡就自动重启一次，15 分钟内不重复。从睡眠恢复时也可能出同样的问题，所以我干脆不用睡眠，每天半夜定时关机，第二天让 BIOS 定时开机。&lt;/p&gt;
+&lt;h2 id="游戏体验"&gt;游戏体验
+&lt;/h2&gt;&lt;p&gt;游戏模式的插件商店 Decky Loader 在 CachyOS 上用官方脚本就能装。我常用的插件是 Pause Games、SteamGridDB、ProtonDB Badges 和 CSS Loader。商店装插件时偶尔会卡住，原因是它要先去一个很慢的服务器记一次下载次数。遇到这种情况，执行 &lt;code&gt;sudo systemctl restart plugin_loader&lt;/code&gt; 后再装一次就好。&lt;/p&gt;
+&lt;p&gt;最有用的插件是 decky-launch-options，它可以设置对所有游戏生效的启动参数。我全局加了两个：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;game-performance %command%&lt;/code&gt;：CachyOS 自带，游戏运行时切到性能电源模式&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;PROTON_DLSS_UPGRADE=1 %command%&lt;/code&gt;：让 proton-cachyos 把游戏自带的 DLSS 自动升级到最新版&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;想确认升级是否生效，可以临时加上 &lt;code&gt;PROTON_DLSS_INDICATOR=1&lt;/code&gt;。另外，插件不会自动去重，如果某个游戏原来手动写过 &lt;code&gt;game-performance&lt;/code&gt;，记得把那条清掉。&lt;/p&gt;
+&lt;p&gt;我还基于 Decky Translator 改了个 AI 翻译插件，玩日语文字游戏时按一下键就能截图、OCR、翻译，并把译文叠在原文上面。这个以后单独写一篇。&lt;/p&gt;
+&lt;h2 id="输入法"&gt;输入法
+&lt;/h2&gt;&lt;p&gt;桌面模式用的是 fcitx5（拼音 + Mozc），在 KDE Wayland 下有几个要点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在系统设置的虚拟键盘里选 Fcitx 5，让 KWin 去启动它，不要设置 &lt;code&gt;GTK_IM_MODULE&lt;/code&gt; / &lt;code&gt;QT_IM_MODULE&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;XWayland 程序需要 &lt;code&gt;XMODIFIERS=@im=fcitx&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Chromium/Electron 系的程序要加 &lt;code&gt;--enable-wayland-ime&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;改配置文件前先停掉 fcitx5，否则它退出时会用内存里的设置覆盖你的修改&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;游戏模式下用的是 Steam 屏幕键盘（Steam + X）。它有中文布局，但我一开始怎么都打不出中文，这是整个过程里花时间最多的一个问题。&lt;/p&gt;
+&lt;p&gt;切到中文键盘时，Steam 会提示“请在 设置 → 系统 里加入测试版”。照做了也没用，这个提示是误导。真正的原因是 Steam 屏幕键盘的中日韩输入依赖 ibus，而且引擎名是写死的，ibus 没运行或找不到对应引擎时就会弹这个提示（见 &lt;a class="link" href="https://github.com/ValveSoftware/steam-for-linux/issues/13350" target="_blank" rel="noopener"
+ &gt;steam-for-linux#13350&lt;/a&gt;）。&lt;code&gt;gamescope-session-cachyos&lt;/code&gt; 已经自带了启动 ibus 的服务，所以只需要装好 ibus 和引擎。&lt;/p&gt;
+&lt;p&gt;问题在于引擎名：Steam 要的简体中文引擎叫 &lt;code&gt;pinyin&lt;/code&gt;，而官方源里的 &lt;code&gt;ibus-libpinyin&lt;/code&gt; 注册的名字是 &lt;code&gt;libpinyin&lt;/code&gt;，Steam 不认。得用 AUR 里的 &lt;code&gt;ibus-pinyin&lt;/code&gt;，日语则用 &lt;code&gt;ibus-anthy&lt;/code&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo pacman -S --needed base-devel intltool gnome-common pyzy lua ibus ibus-anthy
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git clone https://aur.archlinux.org/ibus-pinyin.git ~/aur/ibus-pinyin
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; ~/aur/ibus-pinyin &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; makepkg -si
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;可以在游戏模式的环境里检查一下引擎：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;set&lt;/span&gt; -a&lt;span class="p"&gt;;&lt;/span&gt; . /run/user/&lt;span class="k"&gt;$(&lt;/span&gt;id -u&lt;span class="k"&gt;)&lt;/span&gt;/gamescope-environment&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt; +a
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ibus list-engine &lt;span class="p"&gt;|&lt;/span&gt; grep -E &lt;span class="s1"&gt;&amp;#39;pinyin|anthy&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ibus engine &lt;span class="c1"&gt;# Steam 连上之后这里会显示 pinyin&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;装好后候选词能出来了，可选中“你好”之后，输入框里出现的却是 &lt;code&gt;12&lt;/code&gt;。这是 libxkbcommon 1.12 之后的 bug（&lt;a class="link" href="https://github.com/ValveSoftware/gamescope/issues/2387" target="_blank" rel="noopener"
+ &gt;gamescope#2387&lt;/a&gt;），目前只能降级到 1.11.0（参考了&lt;a class="link" href="https://blog.sotkg.com/2025/11/cachyos-handheld-chinese-input" target="_blank" rel="noopener"
+ &gt;这篇文章&lt;/a&gt;）。注意 &lt;code&gt;libxkbcommon-x11&lt;/code&gt; 要一起降：我第一次只降了主库，结果桌面模式的 fcitx5 一启动就在 &lt;code&gt;xkb_state_unref&lt;/code&gt; 段错误，因为 x11 包里的代码按新版的数据结构创建对象，交给旧版主库释放时就对不上了。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo pacman -U &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; https://archive.archlinux.org/packages/l/libxkbcommon/libxkbcommon-1.11.0-1-x86_64.pkg.tar.zst &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; https://archive.archlinux.org/packages/l/libxkbcommon-x11/libxkbcommon-x11-1.11.0-1-x86_64.pkg.tar.zst
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;然后在 &lt;code&gt;/etc/pacman.conf&lt;/code&gt; 里锁住这两个包，再重启：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ini" data-lang="ini"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;IgnorePkg&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;libxkbcommon libxkbcommon-x11&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;降级前我确认过，1.12 之后新增的导出函数只有 &lt;code&gt;xkb_keymap_get_as_string2&lt;/code&gt;，系统里只有 libxkbcommon 自带的命令行工具用到它。等上游修好后，记得把 &lt;code&gt;IgnorePkg&lt;/code&gt; 删掉。&lt;/p&gt;
+&lt;h2 id="最后"&gt;最后
+&lt;/h2&gt;&lt;p&gt;现在这台机器开机就进游戏模式，Mac 上打开 Moonlight 就能玩，分辨率自动匹配，断线会自动暂停，两种模式下都能输入中文，风扇也安静了不少。&lt;/p&gt;
+&lt;p&gt;回头看，有三点体会：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;所有改动都写成脚本放进 git，每个功能一个目录，带 &lt;code&gt;install.sh&lt;/code&gt; / &lt;code&gt;uninstall.sh&lt;/code&gt;，出问题能快速回退，重装也省事。&lt;/li&gt;
+&lt;li&gt;btrfs + snapper 快照是底气。改 EDID、改启动配置这种可能导致开机没画面的操作，有快照就敢放手去试。&lt;/li&gt;
+&lt;li&gt;表面现象不一定说实话。“请加入测试版”其实是缺 ibus 引擎，Sunshine 托盘初始化失败却以成功状态退出，Moonlight 时好时坏其实是 avahi 在不停改名。遇到奇怪的问题，先去翻更底层的日志。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;还剩两件事没解决：游戏内的文本框能不能收到屏幕键盘输入的中文，要看游戏本身的支持；libxkbcommon 还锁在旧版本，得等上游修复。&lt;/p&gt;
+&lt;!-- TODO: 放一张最终的架构图：Mac ⇄ Moonlight ⇄ Sunshine / gamescope / Steam --&gt;</description></item><item><title>如何在fedora系统中开启gamescope</title><link>https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/</link><pubDate>Sun, 14 Sep 2025 00:00:00 +0000</pubDate><guid>https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/</guid><description>&lt;h2 id="安装-gamescope-启动到-steam-deck-界面"&gt;安装 gamescope 启动到 Steam Deck 界面
+&lt;/h2&gt;&lt;h3 id="前置条件"&gt;前置条件
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;Fedora Workstation（Wayland 默认即可）。&lt;/li&gt;
+&lt;li&gt;有 NVIDIA/AMD 独显的机器建议先装好官方驱动。&lt;/li&gt;
+&lt;li&gt;关闭 Secure Boot，避免驱动与 gamescope 依赖冲突。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="快速安装"&gt;快速安装
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;安装 gamescope 与 HUD 工具：
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo dnf install -y gamescope mangohud
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;使用现成脚本一键部署 session：
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git clone https://github.com/shahnawazshahin/steam-using-gamescope-guide.git
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; steam-using-gamescope-guide
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo ./install.sh
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;安装完成后在登录界面选择 &lt;code&gt;Gamescope+Steam&lt;/code&gt;（名字可能略有差异），即可进入 Steam Deck 风格界面。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="手动安装可控性更高"&gt;手动安装（可控性更高）
+&lt;/h3&gt;&lt;p&gt;如果想自己掌握文件位置，可以从 ChimeraOS 的 session 仓库直接复制：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;下载仓库：
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git clone https://github.com/ChimeraOS/gamescope-session-steam
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git clone https://github.com/ChimeraOS/gamescope-session
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;将仓库中的 &lt;code&gt;usr/&lt;/code&gt; 内容覆盖到系统 &lt;code&gt;/usr/&lt;/code&gt;，并刷新 gdm：
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo cp -r gamescope-session-steam/usr/* /usr/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo cp -r gamescope-session/usr/* /usr/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo systemctl daemon-reload
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;重启后在 gdm 登录界面选择新的 gamescope 会话即可。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="验证"&gt;验证
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;登录 gamescope 会话后，终端运行 &lt;code&gt;echo $XDG_SESSION_TYPE&lt;/code&gt; 应为 &lt;code&gt;wayland&lt;/code&gt;，且 &lt;code&gt;gamescope-session-plus@steam.service&lt;/code&gt; 应在运行。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mangohud steam&lt;/code&gt; 可以查看帧率、功耗，确认 HUD 正常。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="sunshine"&gt;Sunshine
+&lt;/h2&gt;&lt;p&gt;目标：在锁屏、GNOME、gamescope 三种场景下都能串流，同时保证有声输出。&lt;/p&gt;
+&lt;p&gt;思路：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;系统级 root 服务保证「即使没登录」也能看到画面。&lt;/li&gt;
+&lt;li&gt;登录后切换到用户级服务，拿到正确的 PipeWire/音频权限。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;具体步骤：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;安装 Sunshine：&lt;code&gt;sudo dnf install sunshine&lt;/code&gt;（或编译安装）。&lt;/li&gt;
+&lt;li&gt;创建系统级服务 &lt;code&gt;sunshine-gdm.service&lt;/code&gt;：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;sunshine-gdm.service&lt;/code&gt;用于系统层级进行启动&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[Unit]
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Description=Self-hosted game stream host for Moonlight
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;StartLimitIntervalSec=500
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;StartLimitBurst=5
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Requires=gdm.service
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;After=gdm.service
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[Service]
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;User=root
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Group=root
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Environment=&amp;#34;HOME=/home/fedora&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ExecStartPre=/bin/sleep 2
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ExecStart=/usr/bin/sunshine
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Restart=on-failure
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;RestartSec=5s
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[Install]
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;WantedBy=multi-user.target
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;需要注意：&lt;code&gt;HOME&lt;/code&gt; 要指向日常登录用户的主目录，避免客户端看到多个主机。&lt;/p&gt;
+&lt;ol start="3"&gt;
+&lt;li&gt;配置用户级服务，启动时停掉系统级，退出时再拉起系统级：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;基础服务 &lt;code&gt;sunshine.service&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[Unit]
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Description=Sunshine is a self-hosted game stream host for Moonlight.
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;StartLimitIntervalSec=500 
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;StartLimitBurst=5
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[Service]
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ExecStartPre=/usr/bin/systemctl stop sunshine-gdm
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ExecStartPre=/bin/sleep 2
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ExecStopPost=/usr/bin/systemctl start sunshine-gdm
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ExecStart=/usr/bin/sunshine
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Restart=on-failure
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;RestartSec=5s
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[Install]
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这个服务只定义启动/停止逻辑，我们通过两个 hook 触发它，利用 &lt;code&gt;BindsTo&lt;/code&gt; 和 &lt;code&gt;PartOf&lt;/code&gt; 自动随会话启停。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sunshine-on-gamescope.service&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[Unit]
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Description=Start/Stop Sunshine with Gamescope session
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;BindsTo=gamescope-session-plus@steam.service
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;After=gamescope-session-plus@steam.service
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;PartOf=gamescope-session-plus@steam.service
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[Service]
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Type=oneshot
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;RemainAfterExit=yes
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ExecStart=/usr/bin/systemctl --user start sunshine.service
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ExecStop=/usr/bin/systemctl --user stop sunshine.service
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[Install]
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;WantedBy=gamescope-session-plus@steam.service
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;sunshine-on-gnome.service&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[Unit]
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Description=Start/Stop Sunshine with GNOME session
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;BindsTo=gnome-session.target
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;After=gnome-session.target
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;PartOf=gnome-session.target
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[Service]
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Type=oneshot
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;RemainAfterExit=yes
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ExecStart=/usr/bin/systemctl --user start sunshine.service
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ExecStop=/usr/bin/systemctl --user stop sunshine.service
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[Install]
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;WantedBy=gnome-session.target
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start="4"&gt;
+&lt;li&gt;
+&lt;p&gt;启用两个 hook（在用户 session 内执行）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;systemctl --user &lt;span class="nb"&gt;enable&lt;/span&gt; --now sunshine-on-gnome.service
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;systemctl --user &lt;span class="nb"&gt;enable&lt;/span&gt; --now sunshine-on-gamescope.service
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;免密授权：用户执行 &lt;code&gt;systemctl&lt;/code&gt; 默认会弹认证，写一条 polkit 规则跳过：&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;创建文件 &lt;code&gt;/etc/polkit-1/rules.d/sunshine-sddm.rules&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;polkit.addRule(function(action, subject) {
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; if (action.id == &amp;#34;org.freedesktop.systemd1.manage-units&amp;#34; &amp;amp;&amp;amp;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; action.lookup(&amp;#34;unit&amp;#34;) == &amp;#34;sunshine-sddm.service&amp;#34;)
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; return polkit.Result.YES;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;})
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;附加：如果在 BazziteOS 下想直接串流 gamescope 会话，可以使用 &lt;code&gt;sunshine-kms.service&lt;/code&gt; 并将其绑定到 gamescope：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;systemctl --user add-wants gamescope-session-plus@steam.service sunshine-kms.service
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="nvidia-显卡"&gt;Nvidia 显卡
+&lt;/h2&gt;&lt;p&gt;外接显卡偶尔开机未加载驱动，为避免黑屏或没有硬件加速，添加一个自检脚本，缺卡时自动重启一次。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;check_nvidia_reboot.sh&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;span class="lnt"&gt;27
+&lt;/span&gt;&lt;span class="lnt"&gt;28
+&lt;/span&gt;&lt;span class="lnt"&gt;29
+&lt;/span&gt;&lt;span class="lnt"&gt;30
+&lt;/span&gt;&lt;span class="lnt"&gt;31
+&lt;/span&gt;&lt;span class="lnt"&gt;32
+&lt;/span&gt;&lt;span class="lnt"&gt;33
+&lt;/span&gt;&lt;span class="lnt"&gt;34
+&lt;/span&gt;&lt;span class="lnt"&gt;35
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#!/bin/bash
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 标记文件路径（用于防止无限重启）&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;FLAG_FILE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;/var/tmp/nvidia_reboot_attempted&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 等待几秒确保驱动模块有时间加载（可选，防止启动太快产生误报）&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sleep &lt;span class="m"&gt;5&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 检查 nvidia-smi 是否能识别到显卡&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# -L 参数列出所有 GPU，如果返回结果包含 UUID 则说明识别正常&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;if&lt;/span&gt; nvidia-smi -L &lt;span class="p"&gt;|&lt;/span&gt; grep -q &lt;span class="s2"&gt;&amp;#34;UUID&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;[SUCCESS] Nvidia GPU detected.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;# 如果之前有过重启尝试的标记，现在检测成功了，就删除标记&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; -f &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$FLAG_FILE&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; rm -f &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$FLAG_FILE&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;Resetting reboot attempt flag.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;fi&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;exit&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;else&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;[FAILURE] Nvidia GPU NOT detected!&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;# 检查是否已经尝试过重启&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; -f &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$FLAG_FILE&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;System already rebooted once to fix this. Preventing infinite loop.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;# 这里可以选择发送通知或者记录更详细的日志&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;exit&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;else&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;First failure detected. Initiating reboot...&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;# 创建标记文件&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; touch &lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="nv"&gt;$FLAG_FILE&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;# 执行重启&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; /usr/bin/systemctl reboot
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;fi&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;fi&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;service
+&lt;code&gt;check-nvidia-boot.service&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-gdscript3" data-lang="gdscript3"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;Unit&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Description&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;Check&lt;/span&gt; &lt;span class="n"&gt;Nvidia&lt;/span&gt; &lt;span class="n"&gt;GPU&lt;/span&gt; &lt;span class="n"&gt;presence&lt;/span&gt; &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="n"&gt;reboot&lt;/span&gt; &lt;span class="n"&gt;once&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;missing&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 确保在图形界面或多用户环境就绪后运行&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;After&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;multi&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;target&lt;/span&gt; &lt;span class="n"&gt;graphical&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;target&lt;/span&gt; &lt;span class="n"&gt;systemd&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;modules&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nb"&gt;load&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;service&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;Service&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;oneshot&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;ExecStart&lt;/span&gt;&lt;span class="o"&gt;=/&lt;/span&gt;&lt;span class="n"&gt;usr&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;local&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;bin&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;check_nvidia_reboot&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sh&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 运行完即退出，不驻留后台&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;RemainAfterExit&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;no&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 以 root 权限运行以便执行 reboot&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;User&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;root&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;Install&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;WantedBy&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;multi&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;target&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;启用：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo cp check_nvidia_reboot.sh /usr/local/bin/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo chmod +x /usr/local/bin/check_nvidia_reboot.sh
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo cp check-nvidia-boot.service /etc/systemd/system/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo systemctl &lt;span class="nb"&gt;enable&lt;/span&gt; --now check-nvidia-boot.service
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这样开机会先检查一次，若驱动未加载则自动重启一次，最多尝试一轮避免重启循环。&lt;/p&gt;
+&lt;h2 id="关于-mangohud-无法检测到-cpu-功耗"&gt;关于 mangohud 无法检测到 CPU 功耗
+&lt;/h2&gt;&lt;p&gt;原因：普通用户没有读取 &lt;code&gt;energy_uj&lt;/code&gt; 的权限，HUD 无法显示 CPU Package 功耗。&lt;/p&gt;
+&lt;p&gt;解决：在 &lt;code&gt;/etc/udev/rules.d/99-intel-rapl.rules&lt;/code&gt; 追加：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;# 允许所有用户读取 Intel RAPL 功耗数据
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ENV{SUBSYSTEM}==&amp;#34;powercap&amp;#34;, ACTION==&amp;#34;add|change&amp;#34;, OWNER=&amp;#34;root&amp;#34;, PROGRAM+=&amp;#34;/usr/bin/find /sys$env{DEVPATH} -name energy_uj -exec chmod g+r -R {} + -exec chown root:wheel {} +&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description></item></channel></rss>

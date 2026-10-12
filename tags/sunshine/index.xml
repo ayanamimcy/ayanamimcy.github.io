@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Sunshine on 强哥的猫</title><link>https://blog.ayanamimcy.top/tags/sunshine/</link><description>Recent content in Sunshine on 强哥的猫</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>一只老猫</copyright><lastBuildDate>Mon, 12 Oct 2026 16:36:25 +0900</lastBuildDate><atom:link href="https://blog.ayanamimcy.top/tags/sunshine/index.xml" rel="self" type="application/rss+xml"/><item><title>用 CachyOS 把 MS-01 改成无头串流游戏主机</title><link>https://blog.ayanamimcy.top/ms01-cachyos-headless-gaming-host/</link><pubDate>Mon, 12 Oct 2026 00:00:00 +0000</pubDate><guid>https://blog.ayanamimcy.top/ms01-cachyos-headless-gaming-host/</guid><description>&lt;p&gt;去年在 Fedora 上折腾过一次 gamescope（见&lt;a class="link" href="https://blog.ayanamimcy.top/how-to-enable-gamescope-mode-on-fedora/" &gt;如何在fedora系统中开启gamescope&lt;/a&gt;）。这次换了个思路：给 Minisforum MS-01 装上 CachyOS，不接显示器，开机直接进 SteamOS 风格的游戏模式，平时在 Mac 上用 Moonlight 串流玩。&lt;/p&gt;
+&lt;p&gt;下面按搭建顺序记一下过程和踩过的坑。所有配置我都写成了脚本放在 git 仓库里，重装时按顺序跑一遍就能恢复。&lt;/p&gt;
+&lt;h2 id="硬件和思路"&gt;硬件和思路
+&lt;/h2&gt;&lt;!-- TODO: 放一张机器照片 --&gt;
+&lt;ul&gt;
+&lt;li&gt;Minisforum MS-01：i9-13900H，三个网口，两个雷电 4 口&lt;/li&gt;
+&lt;li&gt;RTX 4070 Ti SUPER：机身的 PCIe 槽放不下这么大的卡，所以用 PCIe 转 OCuLink 外接&lt;/li&gt;
+&lt;li&gt;一个 HDMI 假负载，骗显卡说“接了屏幕”&lt;/li&gt;
+&lt;li&gt;一块 USB 外接的 2TB SATA SSD，放 Steam 游戏库&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;主力机是 MacBook，桌面和游戏都通过 Sunshine + Moonlight 串流过去。主机开机进 gamescope + Steam 大屏幕，用起来像一台 Steam Machine；需要桌面时从 Steam 里“切换到桌面”进 KDE Plasma。&lt;/p&gt;
+&lt;p&gt;选 CachyOS 是因为它基于 Arch，软件新，有 AUR 兜底；默认就带了游戏向的内核和调度优化；而且有现成的 &lt;code&gt;gamescope-session-cachyos&lt;/code&gt;，不用像在 Fedora 上那样自己拼 session。&lt;/p&gt;
+&lt;h2 id="没有显示器怎么输出-mac-的分辨率"&gt;没有显示器，怎么输出 Mac 的分辨率
+&lt;/h2&gt;&lt;p&gt;Mac 屏幕是 3024x1890，我希望串流画面一像素对一像素。在 KDE 里用 &lt;code&gt;kscreen-doctor&lt;/code&gt; 加自定义分辨率：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;kscreen-doctor output.HDMI-A-1.addCustomMode.3024.1890.60000
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;模式是加上了，切换时却被 NVIDIA 驱动拒绝。原因是 NVIDIA 只接受 EDID（显示器自报的能力表）里列出的模式，而假负载的 EDID 里没有这个分辨率。&lt;/p&gt;
+&lt;p&gt;好在 &lt;code&gt;nvidia_modeset&lt;/code&gt; 支持用 &lt;code&gt;config_file&lt;/code&gt; 指定一份配置，在里面把某个接口的 EDID 换成自己的文件。做法是：读出假负载原来的 EDID，用小脚本在空位里加上 3024x1890@60 和 @90，重新算校验和，放到 &lt;code&gt;/etc&lt;/code&gt; 下，再在配置里指向它：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;# /etc/modprobe.d/ 里给 nvidia_modeset 加上
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;options nvidia_modeset config_file=/etc/nvidia-modeset.conf
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这个模块在 initramfs 阶段就会加载，所以要把配置打进 initramfs 再重启。之后 &lt;code&gt;journalctl -b -k | grep nvidia-modeset&lt;/code&gt; 能看到 &lt;code&gt;Successfully read /etc/nvidia-modeset.conf&lt;/code&gt;，&lt;code&gt;kscreen-doctor -o&lt;/code&gt; 里也有 3024x1890 了。&lt;/p&gt;
+&lt;p&gt;有几个限制：假负载只支持 HDMI 2.0，像素时钟上限 600 MHz，所以最高只能到 90Hz（120Hz 大约需要 764 MHz）；EDID 里的空位最多只够加两个模式；另外同一个接口，NVIDIA 配置里叫 &lt;code&gt;HDMI-0&lt;/code&gt;，KDE 里却叫 &lt;code&gt;HDMI-A-1&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;改 EDID 很容易改到没画面。那时可以 SSH 进去删配置、重建 initramfs，或者在启动菜单里选改动前的 snapper 快照。CachyOS 默认的 btrfs + snapper + Limine 在这种时候特别省心。&lt;/p&gt;
+&lt;h2 id="串流sunshine--moonlight"&gt;串流：Sunshine + Moonlight
+&lt;/h2&gt;&lt;h3 id="按客户端自动切分辨率"&gt;按客户端自动切分辨率
+&lt;/h3&gt;&lt;p&gt;不同设备串流时要的分辨率不一样。Sunshine 的 &lt;code&gt;global_prep_cmd&lt;/code&gt; 会在串流开始和结束时各执行一条命令，并把客户端请求的分辨率和帧率放在 &lt;code&gt;SUNSHINE_CLIENT_WIDTH&lt;/code&gt; / &lt;code&gt;_HEIGHT&lt;/code&gt; / &lt;code&gt;_FPS&lt;/code&gt; 环境变量里。我写了个脚本挂上去：在 KDE 下用 &lt;code&gt;kscreen-doctor&lt;/code&gt; 切分辨率，顺便按分辨率设置缩放（4K 级 2 倍、2K 级 1.5 倍、1080p 不缩放），结束后再恢复；游戏模式下 gamescope 不认 kscreen-doctor，就改它自己的 &lt;code&gt;~/.config/gamescope/modes.cfg&lt;/code&gt;（也就是 Steam 显示设置写入的那个文件），再通知它重新读取。&lt;/p&gt;
+&lt;p&gt;Sunshine 不记录 prep 命令的输出，建议让脚本自己写日志，排查时能省不少事。&lt;/p&gt;
+&lt;h3 id="断线自动暂停"&gt;断线自动暂停
+&lt;/h3&gt;&lt;p&gt;玩到一半网络断了，或者合上了 Mac，游戏还在主机上接着跑。Sunshine 只会在 Moonlight 里主动退出时执行 undo 命令，单纯断线和重连时什么都不做。所以我参考 Decky 插件 Pause Games 写了个用户服务：盯着 Sunshine 日志里的 &lt;code&gt;CLIENT DISCONNECTED&lt;/code&gt; / &lt;code&gt;CLIENT CONNECTED&lt;/code&gt;，断开时给游戏进程树发 &lt;code&gt;SIGSTOP&lt;/code&gt;，重连时发 &lt;code&gt;SIGCONT&lt;/code&gt;。它只恢复自己暂停的进程，不会去动插件暂停的那些。&lt;/p&gt;
+&lt;h3 id="游戏模式下-sunshine-悄悄退出"&gt;游戏模式下 Sunshine 悄悄退出
+&lt;/h3&gt;&lt;p&gt;切到游戏模式后怎么也连不上，一看 Sunshine 进程已经没了，systemd 也没把它拉起来。原因是 gamescope 下没有系统托盘，Sunshine 初始化托盘失败后主循环直接结束，而且退出码是成功，&lt;code&gt;Restart=on-failure&lt;/code&gt; 自然不会触发。在 &lt;code&gt;sunshine.conf&lt;/code&gt; 里加一行就好：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ini" data-lang="ini"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;system_tray&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;disabled&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="avahi-不停改名"&gt;avahi 不停改名
+&lt;/h3&gt;&lt;p&gt;有一阵子 Moonlight 时而能发现主机、时而不能，日志也被刷爆了（CachyOS 的 journald 默认只留 50M，最后只剩一天的日志）。日志里 avahi 一直在给主机改名：&lt;code&gt;cachyos-x8664-2.local&lt;/code&gt;、&lt;code&gt;-3.local&lt;/code&gt;……&lt;/p&gt;
+&lt;p&gt;原来 systemd-resolved 默认也开着 mDNS。这台机器三个网口都接在同一个网段，resolved 在每个口上都应答本机名，avahi 以为名字被别人占了，就不停地换。解决办法是关掉 resolved 的 mDNS，交给 avahi 一个人负责：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ini" data-lang="ini"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# /etc/systemd/resolved.conf.d/no-mdns.conf&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;[Resolve]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;MulticastDNS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;no&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;再在 &lt;code&gt;avahi-daemon.conf&lt;/code&gt; 里用 &lt;code&gt;allow-interfaces&lt;/code&gt; 限定只用主网口。注意重启 avahi 之后，Sunshine 也要跟着重启，它不会自己重连 avahi。&lt;/p&gt;
+&lt;h2 id="开机直接进游戏模式"&gt;开机直接进游戏模式
+&lt;/h2&gt;&lt;p&gt;Sunshine 是用户服务，机器停在登录界面就没法串流，所以自动登录是必须的。装好 &lt;code&gt;gamescope-session-cachyos&lt;/code&gt; 后配置：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ini" data-lang="ini"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# /etc/plasmalogin.conf.d/10-autologin.conf&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;[Autologin]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;User&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;lt;用户名&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;Session&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;gamescope-session.desktop&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;Relogin&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这里踩了两个坑。一是开机总进 Plasma：&lt;code&gt;/etc/plasmalogin.conf&lt;/code&gt; 会覆盖 &lt;code&gt;conf.d&lt;/code&gt; 里的配置，而装系统时它里面已经写了一行 &lt;code&gt;Session=&lt;/code&gt;，删掉之后才生效。二是从 Steam“切换到桌面”后卡在登录界面，串流跟着断开，&lt;code&gt;Relogin=true&lt;/code&gt; 就是为这个加的，有了它注销后才会以新会话重新自动登录。&lt;/p&gt;
+&lt;p&gt;另外，我在 KDE 桌面放了个“返回游戏模式”的启动项，还写了个 SSH 救援脚本，画面出问题时能远程切回桌面。写脚本判断当前是不是游戏模式时要注意：&lt;code&gt;pgrep -x gamescope&lt;/code&gt; 找不到进程，它的进程名其实是 &lt;code&gt;gamescope-wl&lt;/code&gt;。更可靠的写法是：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;systemctl --user is-active gamescope-session.service
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="散热和稳定性"&gt;散热和稳定性
+&lt;/h2&gt;&lt;p&gt;MS-01 待机时风扇有点吵。主板的 Super I/O 芯片是 Nuvoton NCT6798，用的是 &lt;code&gt;nct6775&lt;/code&gt; 驱动（默认不会自动加载）。它在 SmartFan IV 模式下按 5 个温度点组成的曲线自己控制风扇，BIOS 每次开机写入这条曲线，所以不需要常驻程序，开机时改写一次就行：&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;风扇&lt;/th&gt;
+ &lt;th&gt;温度源&lt;/th&gt;
+ &lt;th&gt;BIOS 曲线（°C:PWM）&lt;/th&gt;
+ &lt;th&gt;现在的曲线&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;CPU 风扇（pwm2）&lt;/td&gt;
+ &lt;td&gt;PECI&lt;/td&gt;
+ &lt;td&gt;40:50 50:100 75:150 90:190 95:255&lt;/td&gt;
+ &lt;td&gt;50:50 65:90 80:140 90:200 95:255&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;系统风扇（pwm1）&lt;/td&gt;
+ &lt;td&gt;CPUTIN&lt;/td&gt;
+ &lt;td&gt;45:70 60:100 75:120 85:150 95:255&lt;/td&gt;
+ &lt;td&gt;50:70 65:90 75:120 85:160 95:255&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;改完之后，待机时 CPU 风扇从约 2500 RPM 降到了约 1700 RPM。&lt;/p&gt;
+&lt;p&gt;我还把 CPU 限到了 4.9 GHz。13900H 的优选核心标称能到 5.4G，但 BIOS 温度墙是 90°C，实测不限频时单核也只能维持在 5.0G 左右，而且打游戏时温度会突然冲高，风扇跟着狂转。限到 4.9G 后单核性能只差 0～5%，温度尖峰少了很多。多核本来就被功耗墙（70/100W）卡着，到不了 4.9G，所以不受影响。&lt;/p&gt;
+&lt;!-- TODO: 可以补一张限频前后的温度对比图 --&gt;
+&lt;p&gt;外接显卡偶尔会在开机时初始化失败（驱动日志里是 GSP 相关的错误）。我加了个开机检查：检测不到显卡就自动重启一次，15 分钟内不重复。从睡眠恢复时也可能出同样的问题，所以我干脆不用睡眠，每天半夜定时关机，第二天让 BIOS 定时开机。&lt;/p&gt;
+&lt;h2 id="游戏体验"&gt;游戏体验
+&lt;/h2&gt;&lt;p&gt;游戏模式的插件商店 Decky Loader 在 CachyOS 上用官方脚本就能装。我常用的插件是 Pause Games、SteamGridDB、ProtonDB Badges 和 CSS Loader。商店装插件时偶尔会卡住，原因是它要先去一个很慢的服务器记一次下载次数。遇到这种情况，执行 &lt;code&gt;sudo systemctl restart plugin_loader&lt;/code&gt; 后再装一次就好。&lt;/p&gt;
+&lt;p&gt;最有用的插件是 decky-launch-options，它可以设置对所有游戏生效的启动参数。我全局加了两个：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;game-performance %command%&lt;/code&gt;：CachyOS 自带，游戏运行时切到性能电源模式&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;PROTON_DLSS_UPGRADE=1 %command%&lt;/code&gt;：让 proton-cachyos 把游戏自带的 DLSS 自动升级到最新版&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;想确认升级是否生效，可以临时加上 &lt;code&gt;PROTON_DLSS_INDICATOR=1&lt;/code&gt;。另外，插件不会自动去重，如果某个游戏原来手动写过 &lt;code&gt;game-performance&lt;/code&gt;，记得把那条清掉。&lt;/p&gt;
+&lt;p&gt;我还基于 Decky Translator 改了个 AI 翻译插件，玩日语文字游戏时按一下键就能截图、OCR、翻译，并把译文叠在原文上面。这个以后单独写一篇。&lt;/p&gt;
+&lt;h2 id="输入法"&gt;输入法
+&lt;/h2&gt;&lt;p&gt;桌面模式用的是 fcitx5（拼音 + Mozc），在 KDE Wayland 下有几个要点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在系统设置的虚拟键盘里选 Fcitx 5，让 KWin 去启动它，不要设置 &lt;code&gt;GTK_IM_MODULE&lt;/code&gt; / &lt;code&gt;QT_IM_MODULE&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;XWayland 程序需要 &lt;code&gt;XMODIFIERS=@im=fcitx&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Chromium/Electron 系的程序要加 &lt;code&gt;--enable-wayland-ime&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;改配置文件前先停掉 fcitx5，否则它退出时会用内存里的设置覆盖你的修改&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;游戏模式下用的是 Steam 屏幕键盘（Steam + X）。它有中文布局，但我一开始怎么都打不出中文，这是整个过程里花时间最多的一个问题。&lt;/p&gt;
+&lt;p&gt;切到中文键盘时，Steam 会提示“请在 设置 → 系统 里加入测试版”。照做了也没用，这个提示是误导。真正的原因是 Steam 屏幕键盘的中日韩输入依赖 ibus，而且引擎名是写死的，ibus 没运行或找不到对应引擎时就会弹这个提示（见 &lt;a class="link" href="https://github.com/ValveSoftware/steam-for-linux/issues/13350" target="_blank" rel="noopener"
+ &gt;steam-for-linux#13350&lt;/a&gt;）。&lt;code&gt;gamescope-session-cachyos&lt;/code&gt; 已经自带了启动 ibus 的服务，所以只需要装好 ibus 和引擎。&lt;/p&gt;
+&lt;p&gt;问题在于引擎名：Steam 要的简体中文引擎叫 &lt;code&gt;pinyin&lt;/code&gt;，而官方源里的 &lt;code&gt;ibus-libpinyin&lt;/code&gt; 注册的名字是 &lt;code&gt;libpinyin&lt;/code&gt;，Steam 不认。得用 AUR 里的 &lt;code&gt;ibus-pinyin&lt;/code&gt;，日语则用 &lt;code&gt;ibus-anthy&lt;/code&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo pacman -S --needed base-devel intltool gnome-common pyzy lua ibus ibus-anthy
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git clone https://aur.archlinux.org/ibus-pinyin.git ~/aur/ibus-pinyin
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; ~/aur/ibus-pinyin &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; makepkg -si
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;可以在游戏模式的环境里检查一下引擎：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;set&lt;/span&gt; -a&lt;span class="p"&gt;;&lt;/span&gt; . /run/user/&lt;span class="k"&gt;$(&lt;/span&gt;id -u&lt;span class="k"&gt;)&lt;/span&gt;/gamescope-environment&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt; +a
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ibus list-engine &lt;span class="p"&gt;|&lt;/span&gt; grep -E &lt;span class="s1"&gt;&amp;#39;pinyin|anthy&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ibus engine &lt;span class="c1"&gt;# Steam 连上之后这里会显示 pinyin&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;装好后候选词能出来了，可选中“你好”之后，输入框里出现的却是 &lt;code&gt;12&lt;/code&gt;。这是 libxkbcommon 1.12 之后的 bug（&lt;a class="link" href="https://github.com/ValveSoftware/gamescope/issues/2387" target="_blank" rel="noopener"
+ &gt;gamescope#2387&lt;/a&gt;），目前只能降级到 1.11.0（参考了&lt;a class="link" href="https://blog.sotkg.com/2025/11/cachyos-handheld-chinese-input" target="_blank" rel="noopener"
+ &gt;这篇文章&lt;/a&gt;）。注意 &lt;code&gt;libxkbcommon-x11&lt;/code&gt; 要一起降：我第一次只降了主库，结果桌面模式的 fcitx5 一启动就在 &lt;code&gt;xkb_state_unref&lt;/code&gt; 段错误，因为 x11 包里的代码按新版的数据结构创建对象，交给旧版主库释放时就对不上了。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo pacman -U &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; https://archive.archlinux.org/packages/l/libxkbcommon/libxkbcommon-1.11.0-1-x86_64.pkg.tar.zst &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; https://archive.archlinux.org/packages/l/libxkbcommon-x11/libxkbcommon-x11-1.11.0-1-x86_64.pkg.tar.zst
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;然后在 &lt;code&gt;/etc/pacman.conf&lt;/code&gt; 里锁住这两个包，再重启：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ini" data-lang="ini"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;IgnorePkg&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;libxkbcommon libxkbcommon-x11&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;降级前我确认过，1.12 之后新增的导出函数只有 &lt;code&gt;xkb_keymap_get_as_string2&lt;/code&gt;，系统里只有 libxkbcommon 自带的命令行工具用到它。等上游修好后，记得把 &lt;code&gt;IgnorePkg&lt;/code&gt; 删掉。&lt;/p&gt;
+&lt;h2 id="最后"&gt;最后
+&lt;/h2&gt;&lt;p&gt;现在这台机器开机就进游戏模式，Mac 上打开 Moonlight 就能玩，分辨率自动匹配，断线会自动暂停，两种模式下都能输入中文，风扇也安静了不少。&lt;/p&gt;
+&lt;p&gt;回头看，有三点体会：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;所有改动都写成脚本放进 git，每个功能一个目录，带 &lt;code&gt;install.sh&lt;/code&gt; / &lt;code&gt;uninstall.sh&lt;/code&gt;，出问题能快速回退，重装也省事。&lt;/li&gt;
+&lt;li&gt;btrfs + snapper 快照是底气。改 EDID、改启动配置这种可能导致开机没画面的操作，有快照就敢放手去试。&lt;/li&gt;
+&lt;li&gt;表面现象不一定说实话。“请加入测试版”其实是缺 ibus 引擎，Sunshine 托盘初始化失败却以成功状态退出，Moonlight 时好时坏其实是 avahi 在不停改名。遇到奇怪的问题，先去翻更底层的日志。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;还剩两件事没解决：游戏内的文本框能不能收到屏幕键盘输入的中文，要看游戏本身的支持；libxkbcommon 还锁在旧版本，得等上游修复。&lt;/p&gt;
+&lt;!-- TODO: 放一张最终的架构图：Mac ⇄ Moonlight ⇄ Sunshine / gamescope / Steam --&gt;</description></item></channel></rss>
